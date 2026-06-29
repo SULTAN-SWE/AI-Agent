@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "DagVOnuYurxtBFH3rjlEb"
+uri = "file://nexus-ai-platform.zip"
+type = "unspecified"
+title = "Nexus AI Platform — Windows Ready"

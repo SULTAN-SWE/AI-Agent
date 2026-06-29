@@ -1,0 +1,28 @@
+FROM node:24-alpine AS base
+RUN npm install -g pnpm
+WORKDIR /app
+
+FROM base AS deps
+COPY pnpm-workspace.yaml package.json ./
+COPY lib/db/package.json ./lib/db/
+COPY lib/api-zod/package.json ./lib/api-zod/
+COPY lib/api-client-react/package.json ./lib/api-client-react/
+COPY lib/api-spec/package.json ./lib/api-spec/
+COPY artifacts/api-server/package.json ./artifacts/api-server/
+RUN pnpm install --ignore-scripts --frozen-lockfile
+
+FROM deps AS build
+COPY lib/ ./lib/
+COPY artifacts/api-server/ ./artifacts/api-server/
+COPY tsconfig.base.json tsconfig.json ./
+RUN pnpm run typecheck:libs
+RUN pnpm --filter @workspace/api-server run build
+
+FROM node:24-alpine AS runner
+RUN npm install -g pnpm
+WORKDIR /app
+COPY --from=build /app/artifacts/api-server/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/artifacts/api-server/node_modules ./artifacts/api-server/node_modules
+EXPOSE 8080
+CMD ["node", "--enable-source-maps", "./dist/index.mjs"]

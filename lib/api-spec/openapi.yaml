@@ -1,0 +1,814 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Enterprise AI Operations Platform API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: dashboard
+    description: Dashboard and summary operations
+  - name: requests
+    description: Employee request operations
+  - name: approvals
+    description: Approval workflow operations
+  - name: knowledge
+    description: Knowledge base operations
+  - name: reports
+    description: Executive reports operations
+  - name: audit
+    description: Audit log operations
+  - name: notifications
+    description: Notification operations
+  - name: workflows
+    description: Workflow run operations
+  - name: agents
+    description: AI agent operations
+  - name: settings
+    description: User settings operations
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OkResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [dashboard]
+      summary: Get dashboard summary
+      responses:
+        "200":
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+
+  /requests:
+    get:
+      operationId: listRequests
+      tags: [requests]
+      summary: List requests
+      parameters:
+        - name: module
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: List of requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Request"
+    post:
+      operationId: createRequest
+      tags: [requests]
+      summary: Submit a new request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestInput"
+      responses:
+        "201":
+          description: Request created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestResult"
+
+  /requests/{id}:
+    get:
+      operationId: getRequest
+      tags: [requests]
+      summary: Get a request by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Request details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Request"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /requests/simulate:
+    post:
+      operationId: simulateRequest
+      tags: [requests]
+      summary: Simulate AI routing for a prompt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SimulateInput"
+      responses:
+        "200":
+          description: Classification result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClassificationResult"
+
+  /approvals:
+    get:
+      operationId: listApprovals
+      tags: [approvals]
+      summary: List approvals
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of approvals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Approval"
+
+  /approvals/{id}/decide:
+    post:
+      operationId: decideApproval
+      tags: [approvals]
+      summary: Approve or reject a pending approval
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApprovalDecision"
+      responses:
+        "200":
+          description: Decision recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OkResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /knowledge:
+    get:
+      operationId: listKnowledge
+      tags: [knowledge]
+      summary: List knowledge base articles
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: q
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Knowledge articles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/KnowledgeArticle"
+
+  /knowledge/{id}:
+    get:
+      operationId: getKnowledgeArticle
+      tags: [knowledge]
+      summary: Get a knowledge article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Article details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeArticle"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /reports:
+    get:
+      operationId: listReports
+      tags: [reports]
+      summary: List executive reports
+      responses:
+        "200":
+          description: Reports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Report"
+
+  /reports/{id}:
+    get:
+      operationId: getReport
+      tags: [reports]
+      summary: Get a report
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Report details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /audit:
+    get:
+      operationId: listAuditLog
+      tags: [audit]
+      summary: List audit log entries
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Audit log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditEntry"
+
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      summary: List notifications for current user
+      responses:
+        "200":
+          description: Notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      tags: [notifications]
+      summary: Mark a notification as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Marked as read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OkResponse"
+
+  /workflows:
+    get:
+      operationId: listWorkflowRuns
+      tags: [workflows]
+      summary: List workflow runs
+      responses:
+        "200":
+          description: Workflow runs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WorkflowRun"
+
+  /agents:
+    get:
+      operationId: listAgents
+      tags: [agents]
+      summary: List AI agents
+      responses:
+        "200":
+          description: Agents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Agent"
+
+  /insights:
+    get:
+      operationId: listInsights
+      tags: [agents]
+      summary: List AI insights
+      responses:
+        "200":
+          description: Insights
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Insight"
+
+  /settings:
+    patch:
+      operationId: updateSettings
+      tags: [settings]
+      summary: Update user settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingsInput"
+      responses:
+        "200":
+          description: Settings updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OkResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    OkResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+
+    LoginInput:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    User:
+      type: object
+      required: [id, username, displayName, role, department, lang, theme]
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        displayName:
+          type: string
+        role:
+          type: string
+        department:
+          type: string
+        lang:
+          type: string
+        theme:
+          type: string
+
+    Dashboard:
+      type: object
+      required: [summary, modules, recentRequests, pendingApprovals]
+      properties:
+        summary:
+          $ref: "#/components/schemas/SummaryMetrics"
+        modules:
+          type: array
+          items:
+            $ref: "#/components/schemas/Module"
+        recentRequests:
+          type: array
+          items:
+            $ref: "#/components/schemas/Request"
+        pendingApprovals:
+          type: array
+          items:
+            $ref: "#/components/schemas/Approval"
+        insights:
+          type: array
+          items:
+            $ref: "#/components/schemas/Insight"
+        roadmap:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoadmapPhase"
+
+    SummaryMetrics:
+      type: object
+      required: [companyHealth, pendingApprovals, automationSuccess, resolvedToday, sla]
+      properties:
+        companyHealth:
+          type: integer
+        pendingApprovals:
+          type: integer
+        automationSuccess:
+          type: integer
+        resolvedToday:
+          type: integer
+        sla:
+          type: integer
+
+    Module:
+      type: object
+      required: [name, description, score]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        score:
+          type: integer
+
+    Request:
+      type: object
+      required: [id, userId, title, details, module, risk, status, approvalRequired, createdAt, summary]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        title:
+          type: string
+        details:
+          type: string
+        module:
+          type: string
+        risk:
+          type: string
+        status:
+          type: string
+        approvalRequired:
+          type: boolean
+        createdAt:
+          type: string
+        resolvedAt:
+          type: ["string", "null"]
+        summary:
+          type: string
+
+    RequestInput:
+      type: object
+      required: [text]
+      properties:
+        text:
+          type: string
+
+    RequestResult:
+      type: object
+      required: [ok, module, approval]
+      properties:
+        ok:
+          type: boolean
+        module:
+          type: string
+        approval:
+          type: boolean
+        requestId:
+          type: ["integer", "null"]
+
+    SimulateInput:
+      type: object
+      required: [text]
+      properties:
+        text:
+          type: string
+
+    ClassificationResult:
+      type: object
+      required: [module, risk, approvalRequired, summary]
+      properties:
+        module:
+          type: string
+        risk:
+          type: string
+        approvalRequired:
+          type: boolean
+        summary:
+          type: string
+
+    Approval:
+      type: object
+      required: [id, requestId, approverRole, status, createdAt]
+      properties:
+        id:
+          type: integer
+        requestId:
+          type: integer
+        approverRole:
+          type: string
+        status:
+          type: string
+        decisionNote:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        decidedAt:
+          type: ["string", "null"]
+        requestTitle:
+          type: ["string", "null"]
+        requestModule:
+          type: ["string", "null"]
+
+    ApprovalDecision:
+      type: object
+      required: [decision]
+      properties:
+        decision:
+          type: string
+          enum: [approve, reject]
+        note:
+          type: ["string", "null"]
+
+    KnowledgeArticle:
+      type: object
+      required: [id, title, category, summary, content]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        category:
+          type: string
+        summary:
+          type: string
+        content:
+          type: string
+
+    Report:
+      type: object
+      required: [id, title, period, summary, insight]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        period:
+          type: string
+        summary:
+          type: string
+        insight:
+          type: string
+
+    AuditEntry:
+      type: object
+      required: [id, actor, action, target, detail, createdAt]
+      properties:
+        id:
+          type: integer
+        actor:
+          type: string
+        action:
+          type: string
+        target:
+          type: string
+        detail:
+          type: string
+        createdAt:
+          type: string
+
+    Notification:
+      type: object
+      required: [id, userId, channel, severity, title, body, status, createdAt]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        channel:
+          type: string
+        severity:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+        status:
+          type: string
+        createdAt:
+          type: string
+        readAt:
+          type: ["string", "null"]
+
+    WorkflowRun:
+      type: object
+      required: [id, userId, workflowName, module, status, payload, createdAt]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        workflowName:
+          type: string
+        module:
+          type: string
+        status:
+          type: string
+        payload:
+          type: string
+        createdAt:
+          type: string
+        finishedAt:
+          type: ["string", "null"]
+
+    Agent:
+      type: object
+      required: [name, domain, role]
+      properties:
+        name:
+          type: string
+        domain:
+          type: string
+        role:
+          type: string
+
+    Insight:
+      type: object
+      required: [scope, title, summary, confidence]
+      properties:
+        id:
+          type: ["integer", "null"]
+        scope:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        confidence:
+          type: integer
+
+    RoadmapPhase:
+      type: object
+      required: [phase, name, status, items]
+      properties:
+        phase:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+        items:
+          type: array
+          items:
+            type: string
+
+    SettingsInput:
+      type: object
+      properties:
+        lang:
+          type: string
+        theme:
+          type: string
+        role:
+          type: ["string", "null"]

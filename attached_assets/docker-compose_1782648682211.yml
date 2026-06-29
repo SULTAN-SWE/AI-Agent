@@ -1,0 +1,10 @@
+services:
+  enterprise-platform:
+    build: .
+    ports:
+      - "8010:8010"
+    environment:
+      PLATFORM_HOST: 0.0.0.0
+      PLATFORM_PORT: 8010
+    volumes:
+      - ./enterprise_platform.db:/app/enterprise_platform.db

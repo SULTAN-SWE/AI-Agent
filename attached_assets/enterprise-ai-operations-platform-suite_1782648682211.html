@@ -1,0 +1,2348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise AI Operations Platform Suite</title>
+  <style>
+    :root {
+      --bg: #eef3ef;
+      --surface: rgba(248, 250, 248, 0.96);
+      --surface-2: rgba(239, 244, 240, 0.96);
+      --panel: rgba(255, 255, 255, 0.74);
+      --line: rgba(19, 33, 28, 0.10);
+      --text: #13211c;
+      --muted: #5a6a64;
+      --brand: #0f766e;
+      --brand-2: #1f5f54;
+      --accent: #d08a2d;
+      --good: #2f8f5b;
+      --warn: #c97a1f;
+      --bad: #b84f4f;
+      --shadow: 0 18px 48px rgba(11, 24, 20, 0.10);
+      --radius: 16px;
+      --radius-sm: 12px;
+      --font: "Aptos", "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+    }
+    body[data-theme="dark"] {
+      --bg: #0b1110;
+      --surface: rgba(18, 25, 23, 0.96);
+      --surface-2: rgba(24, 33, 31, 0.96);
+      --panel: rgba(20, 28, 26, 0.92);
+      --line: rgba(232, 241, 236, 0.10);
+      --text: #e8f1eb;
+      --muted: #95a79d;
+      --brand: #37a69c;
+      --brand-2: #6fd0c6;
+      --accent: #e1a34d;
+      --good: #5dbd82;
+      --warn: #efb05a;
+      --bad: #de7575;
+      --shadow: 0 20px 54px rgba(0, 0, 0, 0.34);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--font); }
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(15,118,110,0.12), transparent 30%),
+        radial-gradient(circle at top right, rgba(208,138,45,0.12), transparent 24%),
+        linear-gradient(180deg, var(--bg), color-mix(in srgb, var(--bg) 78%, #000 22%));
+      overflow-x: hidden;
+    }
+    body[data-theme="dark"] {
+      background:
+        radial-gradient(circle at top left, rgba(55,166,156,0.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(225,163,77,0.12), transparent 24%),
+        linear-gradient(180deg, #0b1110, #0d1312);
+    }
+    button, input, textarea, select { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr) 320px;
+      gap: 16px;
+      padding: 16px;
+    }
+    .sidebar, .workspace, .inspector {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 2px);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      min-height: calc(100vh - 32px);
+    }
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      background: linear-gradient(145deg, var(--brand), var(--brand-2));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .brand h1 { margin: 0; font-size: 15px; line-height: 1.1; }
+    .brand p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .control-group, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .control-group { padding: 12px; display: grid; gap: 10px; }
+    .label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .toggle-row, .role-row, .lang-row { display: grid; gap: 8px; }
+    .toggle-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lang-row { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .pill-btn, .nav-item, .action-btn, .inline-btn, .mode-btn {
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 75%, white 25%);
+      color: var(--text);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+    .pill-btn:hover, .nav-item:hover, .action-btn:hover, .inline-btn:hover, .mode-btn:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--brand) 35%, var(--line)); }
+    .pill-btn, .mode-btn {
+      padding: 10px 12px;
+      display: grid;
+      gap: 2px;
+      min-height: 50px;
+      text-align: left;
+    }
+    .pill-btn.active, .mode-btn.active, .nav-item.active {
+      background: color-mix(in srgb, var(--brand) 16%, var(--panel));
+      border-color: color-mix(in srgb, var(--brand) 42%, var(--line));
+    }
+    .pill-btn strong, .mode-btn strong { font-size: 13px; }
+    .pill-btn small, .mode-btn small { color: var(--muted); font-size: 11px; line-height: 1.3; }
+    .nav {
+      display: grid;
+      gap: 8px;
+      padding: 0;
+      margin: 0;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 12px;
+      text-align: left;
+    }
+    .nav-item span:first-child { display: flex; align-items: center; gap: 10px; }
+    .nav-item small { color: var(--muted); }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--brand) 10%, transparent);
+      color: var(--brand-2);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .workspace {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      overflow: hidden;
+    }
+    .topbar {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 80%, white 20%), transparent);
+    }
+    .topbar h2 {
+      margin: 0 0 6px;
+      font-size: 28px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+    .topbar p {
+      margin: 0;
+      max-width: 68ch;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .top-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(160px, 1fr));
+      gap: 10px;
+      align-content: start;
+    }
+    .action-btn, .inline-btn {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      padding: 11px 12px;
+      text-align: left;
+      width: 100%;
+    }
+    .action-btn strong, .inline-btn strong { font-size: 13px; }
+    .action-btn small, .inline-btn small { color: var(--muted); font-size: 11px; line-height: 1.35; }
+    .action-btn.primary {
+      background: linear-gradient(145deg, var(--brand), color-mix(in srgb, var(--brand-2) 88%, black 12%));
+      color: #f5fffc;
+      border-color: transparent;
+      box-shadow: 0 12px 28px rgba(15,118,110,.18);
+    }
+    .action-btn.primary small { color: rgba(245,255,252,.76); }
+    .summary-row {
+      padding: 14px 20px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .summary-chip {
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--panel) 78%, white 22%);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .summary-chip strong { color: var(--text); }
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, .95fr);
+      gap: 14px;
+      padding: 0 18px 18px;
+      min-height: 0;
+    }
+    .stack {
+      display: grid;
+      gap: 14px;
+      min-height: 0;
+    }
+    .section, .subpanel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 82%, white 18%);
+    }
+    .section-head h3 {
+      margin: 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+    }
+    .section-body { padding: 16px; }
+    .hero-panel {
+      display: grid;
+      gap: 14px;
+      background:
+        linear-gradient(180deg, color-mix(in srgb, var(--surface) 70%, white 30%), color-mix(in srgb, var(--surface) 84%, black 16%));
+    }
+    .prompt-box {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--text) 96%, transparent), color-mix(in srgb, var(--text) 90%, black 10%));
+      color: #f1faf7;
+      border-radius: var(--radius);
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+    .prompt-box label { color: rgba(241,250,247,.72); font-size: 12px; }
+    .prompt-grid { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 12px; }
+    .prompt-grid textarea {
+      width: 100%;
+      min-height: 112px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 14px 16px;
+      background: rgba(255,255,255,.06);
+      color: #f6fbf9;
+      resize: vertical;
+      outline: none;
+      line-height: 1.5;
+    }
+    .prompt-grid textarea::placeholder { color: rgba(246,251,249,.50); }
+    .quick-actions {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+    .quick-actions .action-btn {
+      background: rgba(255,255,255,.92);
+      min-height: 76px;
+    }
+    .quick-actions .icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--brand-2);
+      background: color-mix(in srgb, var(--brand) 12%, white 88%);
+    }
+    .quick-actions .warn .icon { color: #8b5609; background: color-mix(in srgb, var(--accent) 18%, white 82%); }
+    .quick-actions .good .icon { color: var(--good); background: color-mix(in srgb, var(--good) 12%, white 88%); }
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .metric {
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 78%, white 22%);
+      min-height: 98px;
+    }
+    .metric .k { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+    .metric .v { font-size: 21px; font-weight: 800; letter-spacing: -0.03em; }
+    .metric .s { margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .meter {
+      margin-top: 12px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(16, 23, 20, 0.08);
+      overflow: hidden;
+    }
+    .meter span { display: block; height: 100%; border-radius: inherit; }
+    .meter .brand { background: linear-gradient(90deg, var(--brand), color-mix(in srgb, var(--brand) 45%, white 55%)); }
+    .meter .good { background: linear-gradient(90deg, var(--good), color-mix(in srgb, var(--good) 55%, white 45%)); }
+    .meter .warn { background: linear-gradient(90deg, var(--warn), color-mix(in srgb, var(--warn) 55%, white 45%)); }
+    .response-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .response-card {
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 78%, white 22%);
+    }
+    .response-card .k { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+    .response-card .v { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
+    .response-card .s { margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .workflow {
+      display: grid;
+      gap: 10px;
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .step:last-child { border-bottom: 0; padding-bottom: 0; }
+    .dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      margin-top: 2px;
+      background: rgba(15,118,110,.16);
+      border: 2px solid rgba(15,118,110,.42);
+    }
+    .step.done .dot { background: var(--good); border-color: color-mix(in srgb, var(--good) 30%, white 70%); }
+    .step.wait .dot { background: rgba(208,138,45,.20); border-color: rgba(208,138,45,.55); }
+    .step h4 { margin: 0 0 4px; font-size: 14px; }
+    .step p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .status {
+      align-self: center;
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: color-mix(in srgb, var(--brand) 10%, transparent);
+      color: var(--brand-2);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .status.wait { background: rgba(208,138,45,.14); color: #8b5609; }
+    .status.bad { background: rgba(184,79,79,.14); color: var(--bad); }
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .module {
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 82%, white 18%);
+      display: grid;
+      gap: 10px;
+    }
+    .module-top { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+    .module-top strong { font-size: 14px; }
+    .module p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .module-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .tiny-bar { height: 8px; border-radius: 999px; background: rgba(16,23,20,.08); overflow: hidden; }
+    .tiny-bar span { display: block; height: 100%; border-radius: inherit; }
+    .tiny-bar .brand { background: linear-gradient(90deg, var(--brand), color-mix(in srgb, var(--brand) 35%, white 65%)); }
+    .tiny-bar .good { background: linear-gradient(90deg, var(--good), color-mix(in srgb, var(--good) 35%, white 65%)); }
+    .tiny-bar .warn { background: linear-gradient(90deg, var(--warn), color-mix(in srgb, var(--warn) 35%, white 65%)); }
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+    .list-item {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 82%, white 18%);
+    }
+    .list-item strong { display: block; font-size: 13px; margin-bottom: 4px; }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .audit {
+      display: grid;
+      gap: 10px;
+      max-height: 340px;
+      overflow: auto;
+      padding-right: 2px;
+    }
+    .audit-item {
+      display: grid;
+      grid-template-columns: 12px minmax(0, 1fr);
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .audit-item:last-child { border-bottom: 0; padding-bottom: 0; }
+    .audit-item .g {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-top: 4px;
+      background: var(--good);
+    }
+    .audit-item.warn .g { background: var(--warn); }
+    .audit-item.bad .g { background: var(--bad); }
+    .audit-item p, .audit-item small { margin: 0; }
+    .audit-item p { font-size: 13px; }
+    .audit-item small { color: var(--muted); font-size: 12px; line-height: 1.4; display: block; }
+    .inspector {
+      display: grid;
+      gap: 14px;
+      padding: 16px;
+      align-content: start;
+    }
+    .stacked {
+      display: grid;
+      gap: 10px;
+    }
+    .section-title {
+      margin: 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+    }
+    .architecture {
+      display: grid;
+      gap: 10px;
+    }
+    .layer {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 82%, white 18%);
+    }
+    .layer strong { display: block; margin-bottom: 4px; font-size: 13px; }
+    .layer small { color: var(--muted); line-height: 1.45; }
+    .footer-note { color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .fade-in { animation: rise .42s ease both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    [dir="rtl"] .topbar, [dir="rtl"] .module-top, [dir="rtl"] .label-row, [dir="rtl"] .module-meta { direction: rtl; }
+    @media (max-width: 1260px) {
+      .app { grid-template-columns: 240px minmax(0, 1fr); }
+      .inspector { grid-column: 1 / -1; min-height: auto; }
+      .content { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 900px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar, .workspace, .inspector { min-height: auto; }
+      .metric-row, .module-grid, .response-row, .toggle-row, .top-actions, .lang-row { grid-template-columns: 1fr 1fr; }
+      .prompt-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .app { padding: 10px; gap: 10px; }
+      .topbar { padding: 14px; flex-direction: column; }
+      .summary-row, .content { padding-left: 12px; padding-right: 12px; }
+      .topbar h2 { font-size: 23px; }
+      .metric-row, .module-grid, .response-row, .top-actions, .toggle-row, .lang-row { grid-template-columns: 1fr; }
+      .lang-row { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    }
+  </style>
+  <style>
+    :root {
+      --bg: #f1ede5;
+      --surface: rgba(250, 247, 240, 0.92);
+      --panel: rgba(255, 255, 255, 0.72);
+      --line: rgba(15, 24, 20, 0.14);
+      --text: #111915;
+      --muted: #5b6962;
+      --brand: #0f766e;
+      --brand-2: #8a4f2b;
+      --accent: #c88e2f;
+      --good: #2f8f5b;
+      --warn: #ad6a12;
+      --bad: #a04f4f;
+      --shadow: 0 22px 60px rgba(21, 24, 22, 0.12);
+      --radius: 14px;
+    }
+    body {
+      background:
+        linear-gradient(90deg, rgba(17, 25, 21, 0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+        linear-gradient(180deg, rgba(17, 25, 21, 0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+        linear-gradient(145deg, #f3efe7, #ece4d6 55%, #f7f4ef);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(115deg, rgba(15, 118, 110, 0.08), transparent 34%),
+        linear-gradient(25deg, rgba(200, 142, 47, 0.07), transparent 28%);
+      mix-blend-mode: multiply;
+    }
+    body[data-theme="dark"] {
+      --bg: #090d0c;
+      --surface: rgba(15, 21, 19, 0.94);
+      --panel: rgba(19, 26, 24, 0.88);
+      --line: rgba(232, 241, 236, 0.10);
+      --text: #edf4ef;
+      --muted: #9bad9f;
+      --brand: #4bc3ba;
+      --brand-2: #d39a5a;
+      --accent: #e0b15e;
+      --shadow: 0 26px 70px rgba(0, 0, 0, 0.38);
+    }
+    body[data-theme="dark"] {
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px) 0 0 / 40px 40px,
+        linear-gradient(180deg, rgba(255,255,255,0.03) 1px, transparent 1px) 0 0 / 40px 40px,
+        linear-gradient(145deg, #090d0c, #0d1311 55%, #101715);
+    }
+    body[data-theme="dark"]::before {
+      background:
+        linear-gradient(115deg, rgba(75, 195, 186, 0.08), transparent 34%),
+        linear-gradient(25deg, rgba(224, 177, 94, 0.07), transparent 28%);
+    }
+    .app {
+      grid-template-columns: 250px minmax(0, 1fr) 290px;
+    }
+    .sidebar, .workspace, .inspector {
+      border-radius: 18px;
+    }
+    .sidebar {
+      position: sticky;
+      top: 16px;
+      align-self: start;
+      border-left: 4px solid var(--brand);
+      background:
+        linear-gradient(180deg, rgba(15,118,110,0.06), rgba(200,142,47,0.03) 42%, rgba(255,255,255,0.24)),
+        var(--surface);
+    }
+    .brand {
+      border-bottom: 0;
+      padding-bottom: 0;
+      margin-bottom: 2px;
+    }
+    .mark {
+      border-radius: 10px;
+      width: 44px;
+      height: 52px;
+      font-size: 14px;
+      background: linear-gradient(180deg, var(--brand), color-mix(in srgb, var(--brand-2) 68%, black 32%));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .group, .panel {
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0.12));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.20);
+    }
+    .control-group {
+      border: 1px solid rgba(15,118,110,0.10);
+      background: linear-gradient(180deg, rgba(15,118,110,0.04), rgba(255,255,255,0.10));
+    }
+    .label-row .badge {
+      background: rgba(15,118,110,0.12);
+      color: var(--brand-2);
+    }
+    .lang-row, .toggle-row, .role-row {
+      gap: 7px;
+    }
+    .role-row {
+      grid-template-columns: 1fr;
+    }
+    .pill-btn, .mode-btn {
+      min-height: 56px;
+      padding: 10px 11px;
+      border-radius: 13px;
+      background: linear-gradient(180deg, rgba(16,30,26,0.05), rgba(16,30,26,0.02));
+      border-color: rgba(15,118,110,0.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.22);
+    }
+    .pill-btn strong, .mode-btn strong {
+      font-size: 12px;
+      line-height: 1.15;
+    }
+    .pill-btn small, .mode-btn small {
+      font-size: 10px;
+      line-height: 1.25;
+      color: var(--muted);
+    }
+    .pill-btn:hover, .mode-btn:hover, .nav-item:hover, .action-btn:hover, .inline-btn:hover {
+      background: linear-gradient(180deg, rgba(15,118,110,0.09), rgba(15,118,110,0.03));
+    }
+    .pill-btn.active, .mode-btn.active {
+      background: linear-gradient(180deg, rgba(15,118,110,0.18), rgba(15,118,110,0.09));
+      border-color: rgba(15,118,110,0.42);
+      box-shadow: 0 10px 20px rgba(15,118,110,0.12);
+    }
+    .workspace {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.48), rgba(255,255,255,0.16)),
+        var(--surface);
+      border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+    }
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px 16px;
+      align-items: end;
+      padding: 22px 22px 18px;
+      position: relative;
+      background:
+        linear-gradient(135deg, rgba(15,118,110,0.08), transparent 38%),
+        linear-gradient(220deg, rgba(200,142,47,0.10), transparent 40%);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar::after {
+      content: "";
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--brand) 60%, transparent), transparent);
+      opacity: .55;
+    }
+    .topbar h2 {
+      font-size: clamp(28px, 4vw, 54px);
+      max-width: 12ch;
+      line-height: .96;
+      letter-spacing: -0.05em;
+      margin-bottom: 12px;
+    }
+    .topbar p {
+      max-width: 62ch;
+      font-size: 15px;
+    }
+    .top-actions {
+      min-width: 330px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .hero-band {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 2px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.46), rgba(255,255,255,.20));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.24);
+    }
+    .signal {
+      padding: 12px 14px;
+      border-left: 3px solid var(--brand);
+      background: rgba(255,255,255,0.34);
+      border-radius: 10px;
+      min-height: 72px;
+      display: grid;
+      align-content: space-between;
+      gap: 4px;
+    }
+    .signal strong {
+      font-size: 22px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .signal span {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .10em;
+    }
+    .signal small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .summary {
+      padding: 12px 22px 14px;
+      gap: 8px;
+    }
+    .chip {
+      border-radius: 999px;
+      background: rgba(255,255,255,.48);
+      color: var(--muted);
+    }
+    .chip strong {
+      color: var(--text);
+    }
+    .content {
+      gap: 16px;
+      padding: 0 18px 18px;
+    }
+    .stack {
+      gap: 16px;
+    }
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,.18));
+      box-shadow: none;
+    }
+    .section-head {
+      background: transparent;
+      padding: 14px 16px 12px;
+    }
+    .section-head h3 {
+      color: var(--text);
+      font-size: 12px;
+    }
+    .section-body {
+      padding: 0 16px 16px;
+    }
+    .prompt-box {
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(15,118,110,.93), rgba(14,36,31,.92)),
+        var(--brand);
+      box-shadow: 0 22px 50px rgba(15, 118, 110, 0.18);
+    }
+    .prompt-grid textarea {
+      min-height: 122px;
+    }
+    .response-card, .list-item, .metric, .layer, .audit-item, .module {
+      border-radius: 12px;
+      background: rgba(255,255,255,0.28);
+    }
+    .module {
+      border-left: 3px solid color-mix(in srgb, var(--brand) 48%, transparent);
+    }
+    .module-top strong, .list-item strong, .audit-item p, .metric .v {
+      letter-spacing: -0.02em;
+    }
+    .audit-item .g {
+      background: var(--brand);
+    }
+    .inspector {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.54), rgba(255,255,255,.22)),
+        var(--surface);
+    }
+    .layer {
+      border-left: 3px solid var(--accent);
+    }
+    .login-card {
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(15,118,110,.94), rgba(13,22,19,.96)),
+        #0f1815;
+    }
+    .login-copy {
+      background: transparent;
+      color: #f4fbf9;
+    }
+    .login-copy p, .login-copy .meta, .login-copy .list-item {
+      color: rgba(245,251,248,.75);
+    }
+    .login-copy .list-item {
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.14);
+    }
+    .login-panel {
+      background: rgba(250,247,240,.96);
+    }
+    .btn, .nav-btn, .action-btn {
+      border-radius: 12px;
+    }
+    .nav-item {
+      background: linear-gradient(180deg, rgba(15,118,110,0.04), rgba(15,118,110,0.01));
+    }
+    .nav-item.active {
+      background: linear-gradient(180deg, rgba(15,118,110,0.12), rgba(15,118,110,0.06));
+      border-color: rgba(15,118,110,0.30);
+    }
+    .inline-btn {
+      background: linear-gradient(180deg, rgba(200,142,47,0.10), rgba(200,142,47,0.04));
+      border-color: rgba(200,142,47,0.18);
+    }
+    .nav-btn.active, .btn.active {
+      box-shadow: inset 0 0 0 1px rgba(15,118,110,.14);
+    }
+    @media (max-width: 1260px) {
+      .app { grid-template-columns: 220px minmax(0, 1fr); }
+      .inspector { grid-column: 1 / -1; }
+      .hero-band { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .lang-row { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    }
+    @media (max-width: 900px) {
+      .topbar { grid-template-columns: 1fr; }
+      .top-actions { min-width: 0; width: 100%; }
+      .hero-band { grid-template-columns: 1fr 1fr; }
+      .toggle-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .hero-band { grid-template-columns: 1fr; }
+      .topbar h2 { max-width: 100%; }
+      .lang-row, .toggle-row { grid-template-columns: 1fr 1fr; }
+      .role-row { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .sidebar, .workspace, .inspector, .section, .login-card {
+        animation: rise .7s ease both;
+      }
+      .section:nth-child(2) { animation-delay: .04s; }
+      .section:nth-child(3) { animation-delay: .08s; }
+      .section:nth-child(4) { animation-delay: .12s; }
+      .section:nth-child(5) { animation-delay: .16s; }
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="mark">EA</div>
+        <div>
+          <h1 id="brandTitle">Enterprise AI Operations Platform</h1>
+          <p id="brandSubtitle">Intelligent operations layer</p>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="label-row"><span id="languageLabel">Language</span><span class="badge" id="langBadge">EN</span></div>
+        <div class="lang-row" id="langRow"></div>
+      </div>
+
+      <div class="control-group">
+        <div class="label-row"><span id="themeLabel">Theme</span><span class="badge" id="themeBadge">Light</span></div>
+        <div class="toggle-row" id="themeRow"></div>
+      </div>
+
+      <div class="control-group">
+        <div class="label-row"><span id="roleLabel">Role</span><span class="badge" id="roleBadge">Employee</span></div>
+        <div class="role-row" id="roleRow"></div>
+      </div>
+
+      <nav class="nav" id="nav"></nav>
+
+      <div class="sidebar-footer">
+        <div class="badge" id="securityBadge">JWT secured</div>
+        <div id="sidebarNote">RBAC, approvals, audit logging, and workflow orchestration are active.</div>
+        <button class="inline-btn" id="refreshBtn"><strong id="refreshTitle">Refresh intelligence</strong><small id="refreshNote">Re-run routing and scoring</small></button>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <section class="topbar">
+        <div>
+          <h2 id="pageTitle">Enterprise operating console</h2>
+          <p id="pageSummary">One governed workspace for HR, IT, Finance, Procurement, Knowledge, reporting, approvals, and security.</p>
+        </div>
+        <div class="top-actions">
+          <button class="action-btn" id="simulateBtn"><strong id="simulateTitle">Simulate request</strong><small id="simulateNote">Try a guided workflow</small></button>
+          <button class="action-btn primary" id="approveBtn"><strong id="approveTitle">Approve pending</strong><small id="approveNote">Manager-controlled actions</small></button>
+        </div>
+        <div class="hero-band" id="heroBand"></div>
+      </section>
+
+      <section class="summary-row" id="summaryRow"></section>
+
+      <section class="content">
+        <div class="stack">
+          <article class="section hero-panel fade-in" id="workspaceSection">
+            <div class="section-head">
+              <h3 id="workspaceTitle">AI Workspace</h3>
+              <span class="badge" id="workspaceBadge">Decision pipeline</span>
+            </div>
+            <div class="section-body stack">
+              <div class="prompt-box">
+                <label id="promptLabel" for="prompt">Enter a request the way a real employee would say it.</label>
+                <div class="prompt-grid">
+                  <textarea id="prompt" placeholder="I need Power BI access for next week, or I want to submit a 450 SAR expense reimbursement."></textarea>
+                  <div class="quick-actions" id="quickActions"></div>
+                </div>
+              </div>
+
+              <div class="response-row" id="responseRow"></div>
+
+              <div class="subpanel">
+                <div class="section-head">
+                  <h3 id="workflowTitle">Workflow status</h3>
+                  <span class="badge" id="workflowBadge">Ready</span>
+                </div>
+                <div class="section-body">
+                  <div class="workflow" id="workflow"></div>
+                </div>
+              </div>
+
+              <div class="metric-row" id="kpis"></div>
+            </div>
+          </article>
+
+          <article class="section fade-in">
+            <div class="section-head">
+              <h3 id="modulesTitle">Departments</h3>
+              <span class="badge" id="modulesBadge">Shared service layer</span>
+            </div>
+            <div class="section-body">
+              <div class="module-grid" id="modules"></div>
+            </div>
+          </article>
+
+          <article class="section fade-in">
+            <div class="section-head">
+              <h3 id="architectureTitle">Enterprise architecture</h3>
+              <span class="badge" id="architectureBadge">Frontend to data</span>
+            </div>
+            <div class="section-body architecture" id="architecture"></div>
+          </article>
+        </div>
+
+        <div class="stack">
+          <article class="section fade-in">
+            <div class="section-head">
+              <h3 id="requestsTitle">Requests</h3>
+              <span class="badge" id="requestsBadge">Open queue</span>
+            </div>
+            <div class="section-body">
+              <div class="list" id="requests"></div>
+            </div>
+          </article>
+
+          <article class="section fade-in">
+            <div class="section-head">
+              <h3 id="approvalsTitle">Approvals</h3>
+              <span class="badge" id="approvalsBadge">Manager view</span>
+            </div>
+            <div class="section-body">
+              <div class="list" id="approvals"></div>
+            </div>
+          </article>
+
+          <article class="section fade-in">
+            <div class="section-head">
+              <h3 id="knowledgeTitle">Knowledge and reports</h3>
+              <span class="badge" id="knowledgeBadge">Operational insight</span>
+            </div>
+            <div class="section-body stacked">
+              <div class="list" id="knowledge"></div>
+              <div class="list" id="reports"></div>
+            </div>
+          </article>
+
+          <article class="section fade-in">
+            <div class="section-head">
+              <h3 id="securityTitle">Security and audit</h3>
+              <span class="badge" id="securityPanelBadge">Governed</span>
+            </div>
+            <div class="section-body stacked">
+              <div class="list" id="security"></div>
+              <div class="audit" id="audit"></div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <aside class="inspector">
+      <div class="section fade-in">
+        <div class="section-head">
+          <h3 id="inspectorTitle">Executive snapshot</h3>
+          <span class="badge" id="snapshotBadge">One minute read</span>
+        </div>
+        <div class="section-body stacked" id="snapshot"></div>
+      </div>
+
+      <div class="section fade-in">
+        <div class="section-head">
+          <h3 id="preferencesTitle">Preferences</h3>
+          <span class="badge" id="preferencesBadge">Saved locally</span>
+        </div>
+        <div class="section-body stacked">
+          <div class="list-item">
+            <strong id="dirTitle">Reading direction</strong>
+            <div class="meta" id="dirValue">LTR</div>
+          </div>
+          <div class="list-item">
+            <strong id="providerTitle">AI provider</strong>
+            <div class="meta" id="providerValue">Local model ready, cloud optional</div>
+          </div>
+          <div class="list-item">
+            <strong id="integrationTitle">Integrations</strong>
+            <div class="meta" id="integrationValue">FastAPI, n8n, SQL Server, Microsoft 365, SharePoint</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section fade-in">
+        <div class="section-head">
+          <h3 id="statusTitle">System status</h3>
+          <span class="badge" id="statusBadge">Healthy</span>
+        </div>
+        <div class="section-body stacked">
+          <div class="list-item">
+            <strong id="statusLineTitle">Automation success</strong>
+            <div class="tiny-bar"><span class="good" id="automationBar" style="width: 87%"></span></div>
+            <div class="meta" id="statusLineValue">87% of requests resolved through automation or guided workflows.</div>
+          </div>
+          <div class="list-item">
+            <strong id="healthLineTitle">Company health</strong>
+            <div class="tiny-bar"><span class="brand" id="healthBar" style="width: 96%"></span></div>
+            <div class="meta" id="healthLineValue">96% operational health across HR, IT, Finance, Procurement, and Security.</div>
+          </div>
+          <div class="list-item">
+            <strong id="approvalLineTitle">Pending approvals</strong>
+            <div class="tiny-bar"><span class="warn" id="approvalBar" style="width: 40%"></span></div>
+            <div class="meta" id="approvalLineValue">12 items require manager or executive attention.</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const packs = {
+      en: {
+        appName: "Enterprise AI Operations Platform",
+        appSubtitle: "Intelligent operations layer",
+        languageLabel: "Language",
+        themeLabel: "Theme",
+        roleLabel: "Role",
+        light: "Light",
+        dark: "Dark",
+        topTitle: "Enterprise operating console",
+        topSummary: "One governed workspace for HR, IT, Finance, Procurement, Knowledge, reporting, approvals, and security.",
+        simulate: "Simulate request",
+        simulateNote: "Try a guided workflow",
+        approve: "Approve pending",
+        approveNote: "Manager-controlled actions",
+        refresh: "Refresh intelligence",
+        refreshNote: "Re-run routing and scoring",
+        sidebarNote: "RBAC, approvals, audit logging, and workflow orchestration are active.",
+        securityBadge: "JWT secured",
+        themeHelp: { light: "Default bright workspace", dark: "Low-light operational mode" },
+        roleHelp: {
+          employee: "Self-service and requests",
+          manager: "Approvals and team view",
+          executive: "KPIs and risk",
+          admin: "Governance and access"
+        },
+        snapshotNote: "One minute read",
+        providerText: "Local model ready, cloud optional",
+        integrationText: "FastAPI, n8n, SQL Server, Microsoft 365, SharePoint",
+        preferenceDir: "LTR",
+        roleNames: { employee: "Employee", manager: "Manager", executive: "Executive", admin: "Administrator" },
+        nav: ["Overview", "AI Workspace", "Departments", "Architecture", "Requests", "Approvals", "Knowledge", "Reports", "Security"],
+        summary: [
+          ["Company health", "96%", "Operational score"],
+          ["Pending approvals", "12", "Manager actions"],
+          ["Automation success", "87%", "Resolved or guided"],
+          ["Daily resolution", "146", "Requests closed"],
+          ["SLA compliance", "98%", "On-time delivery"]
+        ],
+        workspaceTitle: "AI Workspace",
+        workspaceBadge: "Decision pipeline",
+        promptLabel: "Enter a request the way a real employee would say it.",
+        placeholder: "I need Power BI access for next week, or I want to submit a 450 SAR expense reimbursement.",
+        quickActions: [
+          { key: "access", title: "Access request", subtitle: "IT provisioning", prompt: "I need Power BI access for next week." },
+          { key: "leave", title: "Leave request", subtitle: "HR approval flow", prompt: "I want vacation next month and need manager approval." },
+          { key: "expense", title: "Expense claim", subtitle: "Finance review", prompt: "Please reimburse my training expense of 450 SAR." },
+          { key: "procure", title: "Procurement", subtitle: "Vendor and threshold routing", prompt: "I need a vendor quote for 12 laptops." }
+        ],
+        metrics: [
+          ["Health", "96%", "All core services are within target."],
+          ["Tickets", "58", "Open across IT and HR."],
+          ["Approvals", "12", "Awaiting manager or executive action."],
+          ["Resolved today", "146", "Automation and service desk output."]
+        ],
+        workflowTitle: "Workflow status",
+        workflowBadge: "Ready",
+        workflowSteps: ["Intent detected", "Permission check", "Route workflow", "Decision and response"],
+        workflowText: {
+          intent: "The request is normalized into a structured task.",
+          permission: "RBAC, policy, and approval boundaries are evaluated.",
+          routing: "The correct business workflow is selected.",
+          decision: "The final response is prepared or held for approval."
+        },
+        responseLabels: { module: "Module", risk: "Risk", approval: "Approval", confidence: "Confidence" },
+        statusWords: { ready: "Ready", processing: "Processing", awaiting: "Awaiting approval", approved: "Approved" },
+        approvalWords: { required: "Required", notRequired: "Not required" },
+        actionWords: { route: "Route", review: "Review", approve: "Approve", hold: "Hold", search: "Search" },
+        recommendations: {
+          access: "Attempt automatic provisioning and verify permissions.",
+          leave: "Check balance, schedule, and manager approval.",
+          expense: "Validate policy and budget before finance approval.",
+          procure: "Compare vendors and route for review."
+        },
+        modulesTitle: "Departments",
+        modulesBadge: "Shared service layer",
+        modules: [
+          ["HR", "Leave, onboarding, employee records, and policy support.", "97%", "good"],
+          ["IT", "Password reset, access, devices, software, and ticketing.", "90%", "brand"],
+          ["Finance", "Expenses, budgets, invoices, and payment approvals.", "94%", "good"],
+          ["Procurement", "Purchase requests, vendors, and purchase orders.", "88%", "warn"],
+          ["Knowledge", "Policies, SOPs, internal documentation, and FAQs.", "98%", "good"],
+          ["Reports", "Operational summaries, KPIs, and executive briefs.", "96%", "brand"],
+          ["Notifications", "Email, Teams, reminders, and escalations.", "95%", "brand"],
+          ["Security", "Audit logs, risk scoring, and access monitoring.", "99%", "good"]
+        ],
+        architectureTitle: "Enterprise architecture",
+        architectureBadge: "Frontend to data",
+        layers: [
+          ["React frontend", "Unified interface for employees, managers, executives, and administrators."],
+          ["FastAPI API layer", "Central business APIs, auth checks, and service orchestration."],
+          ["AI Core", "Intent detection, context, routing, memory, and response synthesis."],
+          ["n8n workflow layer", "Approvals, reminders, integrations, and long-running automation."],
+          ["Business services", "HR, IT, Finance, Procurement, Knowledge, Reports, Notifications, Security."],
+          ["SQL Server data layer", "Operational data, AI memory, approvals, audit logs, and knowledge metadata."],
+          ["Monitoring and audit", "Security logging, observability, compliance, and governance controls."]
+        ],
+        requestsTitle: "Requests",
+        requestsBadge: "Open queue",
+        approvalsTitle: "Approvals",
+        approvalsBadge: "Manager view",
+        knowledgeTitle: "Knowledge and reports",
+        knowledgeBadge: "Operational insight",
+        securityTitle: "Security and audit",
+        securityPanelBadge: "Governed",
+        inspectorTitle: "Executive snapshot",
+        snapshotBadge: "One minute read",
+        preferencesTitle: "Preferences",
+        preferencesBadge: "Saved locally",
+        dirTitle: "Reading direction",
+        providerTitle: "AI provider",
+        integrationTitle: "Integrations",
+        statusTitle: "System status",
+        statusBadge: "Healthy",
+        statusLineTitle: "Automation success",
+        healthLineTitle: "Company health",
+        approvalLineTitle: "Pending approvals",
+        requests: [
+          ["Power BI access", "IT", "Processing", "Automatic checks completed."],
+          ["Vacation next month", "HR", "Awaiting approval", "Leave balance is sufficient."],
+          ["Training reimbursement", "Finance", "Awaiting approval", "Amount falls within policy."],
+          ["12 laptop quotes", "Procurement", "Queued", "Vendor comparison in progress."]
+        ],
+        approvals: [
+          ["Expense claim - Ahmed", "450 SAR", "Low risk", "Manager review"],
+          ["Procurement request - IT devices", "12 units", "Medium risk", "Director review"],
+          ["Budget change - Finance", "50,000 SAR", "High risk", "Executive approval"]
+        ],
+        knowledge: [
+          ["How to request access", "Use the AI workspace or submit a structured access request."],
+          ["Vacation policy", "Leave approvals depend on balance and department coverage."],
+          ["Expense policy", "Reimbursement requires policy and budget validation."],
+          ["Procurement policy", "High value requests require manager review and vendor comparison."]
+        ],
+        reports: [
+          ["Daily executive briefing", "8 HR requests, 15 IT tickets resolved, 3 approvals pending."],
+          ["Weekly review", "Ticket trends, SLA performance, department workload, and risk hotspots."],
+          ["Monthly operational report", "Automation rate, cost saving estimates, and bottleneck analysis."]
+        ],
+        security: [
+          ["RBAC", "Every action is filtered by role, department, and scope."],
+          ["Audit logging", "Sensitive operations write immutable records."],
+          ["Local AI option", "Cloud models are optional; company data stays controlled."]
+        ],
+        snapshot: [
+          ["Today", "8 HR requests, 15 IT tickets resolved, 3 finance approvals pending."],
+          ["Risk", "Budget usage above 80%, procurement delay watch, no security incidents."],
+          ["Recommendation", "Reduce onboarding friction and publish a troubleshooting guide."]
+        ],
+        statusText: {
+          automation: "87% of requests resolved through automation or guided workflows.",
+          health: "96% operational health across HR, IT, Finance, Procurement, and Security.",
+          approvals: "12 items require manager or executive attention."
+        }
+      },
+      ar: {
+        appName: "منصة عمليات الذكاء الاصطناعي للمؤسسة",
+        appSubtitle: "طبقة تشغيل ذكية",
+        languageLabel: "اللغة",
+        themeLabel: "المظهر",
+        roleLabel: "الدور",
+        light: "فاتح",
+        dark: "داكن",
+        topTitle: "لوحة التشغيل المؤسسية",
+        topSummary: "مساحة واحدة محكومة لـ HR وIT والمالية والمشتريات والمعرفة والتقارير والموافقات والأمن.",
+        simulate: "محاكاة طلب",
+        simulateNote: "جرّب سير عمل إرشادي",
+        approve: "اعتماد المعلّق",
+        approveNote: "إجراءات تحت إدارة المدير",
+        refresh: "تحديث الذكاء",
+        refreshNote: "إعادة تشغيل التوجيه والتقييم",
+        sidebarNote: "RBAC، والموافقات، وتسجيل التدقيق، وأتمتة سير العمل نشطة.",
+        securityBadge: "JWT محمي",
+        themeHelp: { light: "مساحة عمل مضيئة", dark: "وضع تشغيل منخفض الإضاءة" },
+        roleHelp: {
+          employee: "خدمة ذاتية وطلبات",
+          manager: "الموافقات وعرض الفريق",
+          executive: "KPIs والمخاطر",
+          admin: "الحوكمة والوصول"
+        },
+        snapshotNote: "قراءة في دقيقة",
+        providerText: "نموذج محلي جاهز، والسحابة اختيارية",
+        integrationText: "FastAPI وn8n وSQL Server وMicrosoft 365 وSharePoint",
+        preferenceDir: "RTL",
+        roleNames: { employee: "موظف", manager: "مدير", executive: "تنفيذي", admin: "مسؤول" },
+        nav: ["نظرة عامة", "مساحة الذكاء", "الأقسام", "المعمارية", "الطلبات", "الموافقات", "المعرفة", "التقارير", "الأمن"],
+        summary: [
+          ["صحة الشركة", "96%", "درجة التشغيل"],
+          ["الموافقات المعلّقة", "12", "إجراءات المدير"],
+          ["نجاح الأتمتة", "87%", "تم الحل أو التوجيه"],
+          ["الحل اليومي", "146", "طلبات مغلقة"],
+          ["الالتزام بـ SLA", "98%", "في الوقت المحدد"]
+        ],
+        workspaceTitle: "مساحة الذكاء",
+        workspaceBadge: "خط أنابيب القرار",
+        promptLabel: "أدخل الطلب كما سيقوله الموظف فعليًا.",
+        placeholder: "أحتاج إلى صلاحية Power BI للأسبوع القادم، أو أريد تقديم تعويض مصروف 450 ريال.",
+        quickActions: [
+          { key: "access", title: "طلب وصول", subtitle: "تجهيز IT", prompt: "أحتاج إلى صلاحية Power BI للأسبوع القادم." },
+          { key: "leave", title: "طلب إجازة", subtitle: "مسار موافقة HR", prompt: "أريد إجازة الشهر القادم وأحتاج موافقة المدير." },
+          { key: "expense", title: "مطالبة مصروف", subtitle: "مراجعة مالية", prompt: "يرجى تعويضي عن مصروف تدريب بقيمة 450 ريال." },
+          { key: "procure", title: "مشتريات", subtitle: "توجيه المورد والحدود", prompt: "أحتاج إلى عرض سعر من مورد لـ 12 جهاز لابتوب." }
+        ],
+        metrics: [
+          ["الصحة", "96%", "كل الخدمات الأساسية ضمن الهدف."],
+          ["التذاكر", "58", "مفتوحة عبر IT وHR."],
+          ["الموافقات", "12", "بانتظار المدير أو التنفيذي."],
+          ["تم الحل اليوم", "146", "خروج الأتمتة والخدمة."]
+        ],
+        workflowTitle: "حالة سير العمل",
+        workflowBadge: "جاهز",
+        workflowSteps: ["تم تحديد القصد", "فحص الصلاحيات", "توجيه سير العمل", "القرار والرد"],
+        workflowText: {
+          intent: "يتم تحويل الطلب إلى مهمة منظمة.",
+          permission: "يتم تقييم RBAC والسياسات وحدود الموافقة.",
+          routing: "يتم اختيار سير العمل الصحيح.",
+          decision: "يتم إعداد الرد النهائي أو إيقافه للموافقة."
+        },
+        responseLabels: { module: "الوحدة", risk: "المخاطر", approval: "الموافقة", confidence: "الثقة" },
+        statusWords: { ready: "جاهز", processing: "قيد المعالجة", awaiting: "بانتظار الموافقة", approved: "تم الاعتماد" },
+        approvalWords: { required: "مطلوبة", notRequired: "غير مطلوبة" },
+        actionWords: { route: "توجيه", review: "مراجعة", approve: "اعتماد", hold: "إيقاف", search: "بحث" },
+        recommendations: {
+          access: "محاولة التجهيز التلقائي والتحقق من الصلاحيات.",
+          leave: "التحقق من الرصيد والجدول وموافقة المدير.",
+          expense: "التحقق من السياسة والميزانية قبل الاعتماد المالي.",
+          procure: "مقارنة الموردين ثم التوجيه للمراجعة."
+        },
+        modulesTitle: "الأقسام",
+        modulesBadge: "طبقة خدمة مشتركة",
+        modules: [
+          ["HR", "الإجازات، التهيئة، سجلات الموظفين، ودعم السياسات.", "97%", "good"],
+          ["IT", "إعادة تعيين كلمة المرور، الوصول، الأجهزة، والبرمجيات.", "90%", "brand"],
+          ["Finance", "المصروفات، الميزانيات، الفواتير، واعتمادات الدفع.", "94%", "good"],
+          ["Procurement", "طلبات الشراء، الموردون، وأوامر الشراء.", "88%", "warn"],
+          ["Knowledge", "السياسات وSOP والوثائق والأسئلة الشائعة.", "98%", "good"],
+          ["Reports", "ملخصات تشغيلية وKPIs ورسائل تنفيذية.", "96%", "brand"],
+          ["Notifications", "البريد وTeams والتذكيرات والتنبيهات.", "95%", "brand"],
+          ["Security", "سجلات التدقيق وتقييم المخاطر ومراقبة الوصول.", "99%", "good"]
+        ],
+        architectureTitle: "المعمارية المؤسسية",
+        architectureBadge: "من الواجهة إلى البيانات",
+        layers: [
+          ["واجهة React", "واجهة موحّدة للموظفين والمديرين والتنفيذيين والمسؤولين."],
+          ["طبقة FastAPI", "واجهات الأعمال والتحقق من الهوية وتنسيق الخدمات."],
+          ["نواة الذكاء", "تحديد القصد والسياق والتوجيه والذاكرة وصياغة الرد."],
+          ["طبقة n8n", "الموافقات والتذكيرات والتكاملات والأتمتة الطويلة."],
+          ["الخدمات التجارية", "HR وIT والمالية والمشتريات والمعرفة والتقارير والأمن."],
+          ["طبقة SQL Server", "البيانات التشغيلية وذاكرة الذكاء وسجلات التدقيق والميتاداتا."],
+          ["المراقبة والتدقيق", "السجل الأمني والملاحظة والامتثال والحوكمة."]
+        ],
+        requestsTitle: "الطلبات",
+        requestsBadge: "الطابور المفتوح",
+        approvalsTitle: "الموافقات",
+        approvalsBadge: "عرض المدير",
+        knowledgeTitle: "المعرفة والتقارير",
+        knowledgeBadge: "رؤية تشغيلية",
+        securityTitle: "الأمن والتدقيق",
+        securityPanelBadge: "محكوم",
+        inspectorTitle: "لقطة تنفيذية",
+        snapshotBadge: "قراءة في دقيقة",
+        preferencesTitle: "التفضيلات",
+        preferencesBadge: "محفوظ محليًا",
+        dirTitle: "اتجاه القراءة",
+        providerTitle: "مزود الذكاء",
+        integrationTitle: "التكاملات",
+        statusTitle: "حالة النظام",
+        statusBadge: "سليم",
+        statusLineTitle: "نجاح الأتمتة",
+        healthLineTitle: "صحة الشركة",
+        approvalLineTitle: "الموافقات المعلّقة",
+        requests: [
+          ["صلاحية Power BI", "IT", "قيد المعالجة", "تمت الفحوصات التلقائية."],
+          ["إجازة الشهر القادم", "HR", "بانتظار الموافقة", "الرصيد كافٍ."],
+          ["تعويض تدريب", "Finance", "بانتظار الموافقة", "المبلغ ضمن السياسة."],
+          ["عرض أسعار 12 لابتوب", "Procurement", "في الطابور", "جاري مقارنة الموردين."]
+        ],
+        approvals: [
+          ["مطالبة مصروف - أحمد", "450 ريال", "مخاطر منخفضة", "مراجعة المدير"],
+          ["طلب مشتريات - أجهزة IT", "12 وحدة", "مخاطر متوسطة", "مراجعة المدير"],
+          ["تغيير الميزانية - المالية", "50,000 ريال", "مخاطر عالية", "موافقة تنفيذية"]
+        ],
+        knowledge: [
+          ["كيفية طلب الوصول", "استخدم مساحة الذكاء أو أرسل طلب وصول منظم."],
+          ["سياسة الإجازات", "تعتمد الموافقات على الرصيد وتغطية الفريق."],
+          ["سياسة المصروفات", "يلزم التحقق من السياسة والميزانية."],
+          ["سياسة المشتريات", "الطلبات ذات القيمة العالية تحتاج مراجعة المدير."]
+        ],
+        reports: [
+          ["الإحاطة التنفيذية اليومية", "8 طلبات HR، و15 تذكرة IT، و3 موافقات معلّقة."],
+          ["المراجعة الأسبوعية", "اتجاهات التذاكر، أداء SLA، عبء العمل، ومناطق المخاطر."],
+          ["التقرير التشغيلي الشهري", "معدل الأتمتة، وفر التكلفة، وتحليل الاختناقات."]
+        ],
+        security: [
+          ["RBAC", "كل إجراء يمر عبر الدور والقسم والنطاق."],
+          ["تسجيل التدقيق", "العمليات الحساسة تكتب سجلات غير قابلة للتغيير."],
+          ["خيار ذكاء محلي", "النماذج السحابية اختيارية والبيانات تبقى تحت السيطرة."]
+        ],
+        snapshot: [
+          ["اليوم", "8 طلبات HR، و15 تذكرة IT، و3 موافقات مالية معلّقة."],
+          ["المخاطر", "استخدام الميزانية فوق 80%، مراقبة تأخر المشتريات، ولا حوادث أمنية."],
+          ["التوصية", "تقليل احتكاك التهيئة ونشر دليل استكشاف الأخطاء."]
+        ],
+        statusText: {
+          automation: "87% من الطلبات تم حلها بالأتمتة أو المسارات الإرشادية.",
+          health: "96% صحة تشغيلية عبر HR وIT والمالية والمشتريات والأمن.",
+          approvals: "12 عنصرًا تحتاج اهتمام المدير أو التنفيذي."
+        }
+      },
+      es: {
+        appName: "Plataforma de Operaciones de IA Empresarial",
+        appSubtitle: "Capa operativa inteligente",
+        languageLabel: "Idioma",
+        themeLabel: "Tema",
+        roleLabel: "Rol",
+        light: "Claro",
+        dark: "Oscuro",
+        topTitle: "Consola operativa empresarial",
+        topSummary: "Un espacio gobernado para RRHH, TI, Finanzas, Compras, Conocimiento, informes, aprobaciones y seguridad.",
+        simulate: "Simular solicitud",
+        simulateNote: "Probar un flujo guiado",
+        approve: "Aprobar pendiente",
+        approveNote: "Acciones controladas por el gerente",
+        refresh: "Actualizar inteligencia",
+        refreshNote: "Reejecutar enrutamiento y puntuación",
+        sidebarNote: "RBAC, aprobaciones, auditoría y orquestación de flujos están activos.",
+        securityBadge: "JWT protegido",
+        themeHelp: { light: "Espacio de trabajo claro", dark: "Modo operativo de baja luz" },
+        roleHelp: {
+          employee: "Autoservicio y solicitudes",
+          manager: "Aprobaciones y vista del equipo",
+          executive: "KPIs y riesgo",
+          admin: "Gobernanza y acceso"
+        },
+        snapshotNote: "Lectura de un minuto",
+        providerText: "Modelo local listo, nube opcional",
+        integrationText: "FastAPI, n8n, SQL Server, Microsoft 365, SharePoint",
+        preferenceDir: "LTR",
+        roleNames: { employee: "Empleado", manager: "Gerente", executive: "Ejecutivo", admin: "Administrador" },
+        nav: ["Resumen", "Espacio IA", "Departamentos", "Arquitectura", "Solicitudes", "Aprobaciones", "Conocimiento", "Informes", "Seguridad"],
+        summary: [
+          ["Salud", "96%", "Puntuación operativa"],
+          ["Aprobaciones", "12", "Acciones del gerente"],
+          ["Automatización", "87%", "Resueltas o guiadas"],
+          ["Resueltas hoy", "146", "Solicitudes cerradas"],
+          ["SLA", "98%", "Entrega a tiempo"]
+        ],
+        workspaceTitle: "Espacio IA",
+        workspaceBadge: "Canal de decisión",
+        promptLabel: "Escribe la solicitud como lo haría un empleado.",
+        placeholder: "Necesito acceso a Power BI para la próxima semana, o quiero presentar un reembolso de 450 SAR.",
+        quickActions: [
+          { key: "access", title: "Solicitud de acceso", subtitle: "Provisionamiento TI", prompt: "Necesito acceso a Power BI para la próxima semana." },
+          { key: "leave", title: "Solicitud de permiso", subtitle: "Flujo de RRHH", prompt: "Quiero vacaciones el próximo mes y necesito aprobación del gerente." },
+          { key: "expense", title: "Reembolso", subtitle: "Revisión financiera", prompt: "Por favor reembolsen mi gasto de formación por 450 SAR." },
+          { key: "procure", title: "Compras", subtitle: "Ruta de proveedor y umbral", prompt: "Necesito una cotización de un proveedor para 12 portátiles." }
+        ],
+        metrics: [
+          ["Salud", "96%", "Todos los servicios críticos están dentro del objetivo."],
+          ["Tickets", "58", "Abiertos en TI y RRHH."],
+          ["Aprobaciones", "12", "En espera de acción."],
+          ["Resueltas hoy", "146", "Automatización y mesa de ayuda."]
+        ],
+        workflowTitle: "Estado del flujo",
+        workflowBadge: "Listo",
+        workflowSteps: ["Intención detectada", "Verificación de permisos", "Enrutamiento", "Decisión y respuesta"],
+        workflowText: {
+          intent: "La solicitud se normaliza en una tarea estructurada.",
+          permission: "Se evalúan RBAC, políticas y umbrales de aprobación.",
+          routing: "Se selecciona el flujo correcto.",
+          decision: "La respuesta final se prepara o se retiene para aprobación."
+        },
+        responseLabels: { module: "Módulo", risk: "Riesgo", approval: "Aprobación", confidence: "Confianza" },
+        statusWords: { ready: "Listo", processing: "Procesando", awaiting: "Esperando aprobación", approved: "Aprobado" },
+        approvalWords: { required: "Requerida", notRequired: "No requerida" },
+        actionWords: { route: "Enrutar", review: "Revisar", approve: "Aprobar", hold: "Retener", search: "Buscar" },
+        recommendations: {
+          access: "Intentar el aprovisionamiento automático y verificar permisos.",
+          leave: "Comprobar saldo, calendario y aprobación del gerente.",
+          expense: "Validar política y presupuesto antes de Finanzas.",
+          procure: "Comparar proveedores y enviar a revisión."
+        },
+        modulesTitle: "Departamentos",
+        modulesBadge: "Capa de servicio compartida",
+        modules: [
+          ["RRHH", "Permisos, onboarding, registros y políticas.", "97%", "good"],
+          ["TI", "Contraseñas, acceso, dispositivos, software y tickets.", "90%", "brand"],
+          ["Finanzas", "Gastos, presupuestos, facturas y aprobaciones.", "94%", "good"],
+          ["Compras", "Solicitudes, proveedores y órdenes de compra.", "88%", "warn"],
+          ["Conocimiento", "Políticas, SOP, documentación y FAQ.", "98%", "good"],
+          ["Informes", "KPIs, resúmenes y reportes ejecutivos.", "96%", "brand"],
+          ["Notificaciones", "Email, Teams, recordatorios y escaladas.", "95%", "brand"],
+          ["Seguridad", "Auditoría, riesgo y monitoreo de acceso.", "99%", "good"]
+        ],
+        architectureTitle: "Arquitectura empresarial",
+        architectureBadge: "De la interfaz a los datos",
+        layers: [
+          ["Frontend React", "Interfaz unificada para empleados, gerentes, ejecutivos y administradores."],
+          ["Capa API FastAPI", "APIs de negocio, autenticación y orquestación."],
+          ["Núcleo IA", "Intención, contexto, rutas, memoria y síntesis de respuestas."],
+          ["Capa n8n", "Aprobaciones, recordatorios, integraciones y automatización larga."],
+          ["Servicios de negocio", "RRHH, TI, Finanzas, Compras, Conocimiento, Informes, Notificaciones, Seguridad."],
+          ["Capa SQL Server", "Datos operativos, memoria IA, auditoría y metadatos."],
+          ["Monitoreo y auditoría", "Observabilidad, cumplimiento y gobernanza."]
+        ],
+        requestsTitle: "Solicitudes",
+        requestsBadge: "Cola abierta",
+        approvalsTitle: "Aprobaciones",
+        approvalsBadge: "Vista gerente",
+        knowledgeTitle: "Conocimiento e informes",
+        knowledgeBadge: "Información operativa",
+        securityTitle: "Seguridad y auditoría",
+        securityPanelBadge: "Gobernado",
+        inspectorTitle: "Resumen ejecutivo",
+        snapshotBadge: "Lectura de un minuto",
+        preferencesTitle: "Preferencias",
+        preferencesBadge: "Guardado localmente",
+        dirTitle: "Dirección de lectura",
+        providerTitle: "Proveedor de IA",
+        integrationTitle: "Integraciones",
+        statusTitle: "Estado del sistema",
+        statusBadge: "Saludable",
+        statusLineTitle: "Éxito de automatización",
+        healthLineTitle: "Salud de la empresa",
+        approvalLineTitle: "Aprobaciones pendientes",
+        requests: [
+          ["Acceso a Power BI", "TI", "Procesando", "Se completaron las comprobaciones automáticas."],
+          ["Vacaciones el próximo mes", "RRHH", "Esperando aprobación", "El saldo es suficiente."],
+          ["Reembolso de formación", "Finanzas", "Esperando aprobación", "El importe está dentro de la política."],
+          ["12 cotizaciones de portátiles", "Compras", "En cola", "Comparación de proveedores en curso."]
+        ],
+        approvals: [
+          ["Gasto - Ahmed", "450 SAR", "Bajo riesgo", "Revisión del gerente"],
+          ["Compra de TI", "12 unidades", "Riesgo medio", "Revisión de director"],
+          ["Cambio de presupuesto", "50,000 SAR", "Alto riesgo", "Aprobación ejecutiva"]
+        ],
+        knowledge: [
+          ["Cómo pedir acceso", "Usa el espacio IA o una solicitud estructurada de acceso."],
+          ["Política de vacaciones", "Las aprobaciones dependen del saldo y la cobertura."],
+          ["Política de gastos", "El reembolso requiere validación de política y presupuesto."],
+          ["Política de compras", "Las solicitudes de alto valor requieren revisión."]
+        ],
+        reports: [
+          ["Resumen ejecutivo diario", "8 solicitudes RRHH, 15 tickets TI resueltos, 3 aprobaciones pendientes."],
+          ["Revisión semanal", "Tendencias, SLA, carga de trabajo y puntos de riesgo."],
+          ["Informe operativo mensual", "Tasa de automatización, ahorro y cuellos de botella."]
+        ],
+        security: [
+          ["RBAC", "Cada acción pasa por rol, departamento y alcance."],
+          ["Registro de auditoría", "Las operaciones sensibles generan registros inmutables."],
+          ["IA local", "Los modelos en la nube son opcionales; los datos permanecen controlados."]
+        ],
+        snapshot: [
+          ["Hoy", "8 solicitudes RRHH, 15 tickets TI resueltos, 3 aprobaciones financieras."],
+          ["Riesgo", "Uso del presupuesto sobre 80%, seguimiento de retrasos y sin incidentes de seguridad."],
+          ["Recomendación", "Reducir fricción de onboarding y publicar una guía de solución."]
+        ],
+        statusText: {
+          automation: "El 87% de las solicitudes se resuelve con automatización o flujos guiados.",
+          health: "96% de salud operativa en RRHH, TI, Finanzas, Compras y Seguridad.",
+          approvals: "12 elementos requieren atención del gerente o ejecutivo."
+        }
+      },
+      nl: {
+        appName: "Enterprise AI Operations Platform",
+        appSubtitle: "Intelligente operationele laag",
+        languageLabel: "Taal",
+        themeLabel: "Thema",
+        roleLabel: "Rol",
+        light: "Licht",
+        dark: "Donker",
+        topTitle: "Enterprise bedieningsconsole",
+        topSummary: "Eén beheerde werkruimte voor HR, IT, Finance, Inkoop, Kennis, rapportage, goedkeuringen en beveiliging.",
+        simulate: "Verzoek simuleren",
+        simulateNote: "Probeer een begeleide workflow",
+        approve: "Openstaand goedkeuren",
+        approveNote: "Door manager beheerde acties",
+        refresh: "Intelligentie verversen",
+        refreshNote: "Routing en scoring opnieuw uitvoeren",
+        sidebarNote: "RBAC, goedkeuringen, auditlogging en workfloworkestratie zijn actief.",
+        securityBadge: "JWT beveiligd",
+        themeHelp: { light: "Lichte werkruimte", dark: "Laaglicht-modus" },
+        roleHelp: {
+          employee: "Zelfservice en verzoeken",
+          manager: "Goedkeuringen en teamweergave",
+          executive: "KPI's en risico",
+          admin: "Governance en toegang"
+        },
+        snapshotNote: "Een minuut lezen",
+        providerText: "Lokaal model klaar, cloud optioneel",
+        integrationText: "FastAPI, n8n, SQL Server, Microsoft 365, SharePoint",
+        preferenceDir: "LTR",
+        roleNames: { employee: "Medewerker", manager: "Manager", executive: "Directie", admin: "Beheerder" },
+        nav: ["Overzicht", "AI-werkruimte", "Afdelingen", "Architectuur", "Verzoeken", "Goedkeuringen", "Kennis", "Rapporten", "Beveiliging"],
+        summary: [
+          ["Gezondheid", "96%", "Operationele score"],
+          ["Goedkeuringen", "12", "Manageracties"],
+          ["Automatisering", "87%", "Opgelost of begeleid"],
+          ["Vandaag opgelost", "146", "Afgehandelde verzoeken"],
+          ["SLA", "98%", "Op tijd geleverd"]
+        ],
+        workspaceTitle: "AI-werkruimte",
+        workspaceBadge: "Beslissingspipeline",
+        promptLabel: "Voer een verzoek in zoals een medewerker het echt zou zeggen.",
+        placeholder: "Ik heb volgende week toegang tot Power BI nodig, of ik wil een vergoeding van 450 SAR indienen.",
+        quickActions: [
+          { key: "access", title: "Toegangsverzoek", subtitle: "IT-provisioning", prompt: "Ik heb volgende week toegang tot Power BI nodig." },
+          { key: "leave", title: "Verlofverzoek", subtitle: "HR-goedkeuring", prompt: "Ik wil volgende maand vakantie en heb goedkeuring van mijn manager nodig." },
+          { key: "expense", title: "Declaratie", subtitle: "Financiële review", prompt: "Vergoed alstublieft mijn trainingskosten van 450 SAR." },
+          { key: "procure", title: "Inkoop", subtitle: "Leverancier en drempel", prompt: "Ik heb een offerte nodig voor 12 laptops." }
+        ],
+        metrics: [
+          ["Gezondheid", "96%", "Alle kernservices zijn binnen target."],
+          ["Tickets", "58", "Open bij IT en HR."],
+          ["Goedkeuringen", "12", "Wachten op actie."],
+          ["Vandaag opgelost", "146", "Automatisering en servicedesk."]
+        ],
+        workflowTitle: "Workflowstatus",
+        workflowBadge: "Klaar",
+        workflowSteps: ["Intent gedetecteerd", "Rechtencontrole", "Workflow routeren", "Beslissing en reactie"],
+        workflowText: {
+          intent: "Het verzoek wordt genormaliseerd tot een gestructureerde taak.",
+          permission: "RBAC, beleid en goedkeuringsgrenzen worden geëvalueerd.",
+          routing: "De juiste workflow wordt geselecteerd.",
+          decision: "De eindreactie wordt voorbereid of vastgehouden voor goedkeuring."
+        },
+        responseLabels: { module: "Module", risk: "Risico", approval: "Goedkeuring", confidence: "Vertrouwen" },
+        statusWords: { ready: "Klaar", processing: "Bezig", awaiting: "Wacht op goedkeuring", approved: "Goedgekeurd" },
+        approvalWords: { required: "Vereist", notRequired: "Niet vereist" },
+        actionWords: { route: "Routeren", review: "Beoordelen", approve: "Goedkeuren", hold: "Vasthouden", search: "Zoeken" },
+        recommendations: {
+          access: "Automatische provisioning proberen en rechten verifiëren.",
+          leave: "Saldo, planning en managergoedkeuring controleren.",
+          expense: "Beleid en budget valideren vóór Finance.",
+          procure: "Leveranciers vergelijken en ter review sturen."
+        },
+        modulesTitle: "Afdelingen",
+        modulesBadge: "Gedeelde servicelaag",
+        modules: [
+          ["HR", "Verlof, onboarding, dossiers en beleidsondersteuning.", "97%", "good"],
+          ["IT", "Wachtwoord, toegang, apparaten, software en tickets.", "90%", "brand"],
+          ["Finance", "Declaraties, budgetten, facturen en betalingen.", "94%", "good"],
+          ["Inkoop", "Inkoopverzoeken, leveranciers en orders.", "88%", "warn"],
+          ["Kennis", "Beleid, SOP's, documentatie en FAQ.", "98%", "good"],
+          ["Rapporten", "KPI's, samenvattingen en directieverslagen.", "96%", "brand"],
+          ["Meldingen", "E-mail, Teams, herinneringen en escalaties.", "95%", "brand"],
+          ["Beveiliging", "Auditlogs, risico en toegangsmonitoring.", "99%", "good"]
+        ],
+        architectureTitle: "Enterprise-architectuur",
+        architectureBadge: "Van frontend tot data",
+        layers: [
+          ["React frontend", "Uniforme interface voor medewerkers, managers, directie en beheerders."],
+          ["FastAPI API-laag", "Business-API's, authenticatie en orkestratie."],
+          ["AI Core", "Intentie, context, routing, geheugen en antwoordsyntese."],
+          ["n8n workflowlaag", "Goedkeuringen, herinneringen, integraties en langlopende automatisering."],
+          ["Business services", "HR, IT, Finance, Inkoop, Kennis, Rapporten, Meldingen, Beveiliging."],
+          ["SQL Server datalaag", "Operationele data, AI-geheugen, auditlogs en metadata."],
+          ["Monitoring en audit", "Observability, compliance en governance."]
+        ],
+        requestsTitle: "Verzoeken",
+        requestsBadge: "Open wachtrij",
+        approvalsTitle: "Goedkeuringen",
+        approvalsBadge: "Managerweergave",
+        knowledgeTitle: "Kennis en rapporten",
+        knowledgeBadge: "Operationeel inzicht",
+        securityTitle: "Beveiliging en audit",
+        securityPanelBadge: "Beheerd",
+        inspectorTitle: "Executive samenvatting",
+        snapshotBadge: "Een minuut lezen",
+        preferencesTitle: "Voorkeuren",
+        preferencesBadge: "Lokaal opgeslagen",
+        dirTitle: "Leesrichting",
+        providerTitle: "AI-provider",
+        integrationTitle: "Integraties",
+        statusTitle: "Systeemstatus",
+        statusBadge: "Gezond",
+        statusLineTitle: "Automatiseringssucces",
+        healthLineTitle: "Bedrijfsg gezondheid",
+        approvalLineTitle: "Openstaande goedkeuringen",
+        requests: [
+          ["Power BI-toegang", "IT", "Bezig", "Automatische controles zijn voltooid."],
+          ["Verlof volgende maand", "HR", "Wacht op goedkeuring", "Het saldo is voldoende."],
+          ["Trainingsdeclaratie", "Finance", "Wacht op goedkeuring", "Het bedrag valt binnen beleid."],
+          ["12 laptopoffertes", "Inkoop", "In wachtrij", "Leveranciersvergelijking loopt."]
+        ],
+        approvals: [
+          ["Declaratie - Ahmed", "450 SAR", "Laag risico", "Managerreview"],
+          ["IT-inkoop", "12 eenheden", "Gemiddeld risico", "Directiereview"],
+          ["Budgetwijziging", "50.000 SAR", "Hoog risico", "Executive goedkeuring"]
+        ],
+        knowledge: [
+          ["Hoe toegang aanvragen", "Gebruik de AI-werkruimte of een gestructureerd toegangsverzoek."],
+          ["Vakantiebeleid", "Goedkeuring hangt af van saldo en teamdekking."],
+          ["Declaratiebeleid", "Vergoeding vereist beleid- en budgetvalidatie."],
+          ["Inkoopbeleid", "Verzoeken met hoge waarde vereisen review."]
+        ],
+        reports: [
+          ["Dagelijkse executive briefing", "8 HR-verzoeken, 15 IT-tickets opgelost, 3 goedkeuringen open."],
+          ["Wekelijkse review", "Trends, SLA's, workload en risicopunten."],
+          ["Maandelijks operationeel rapport", "Automatiseringsgraad, besparing en bottlenecks."]
+        ],
+        security: [
+          ["RBAC", "Elke actie wordt gefilterd op rol, afdeling en scope."],
+          ["Auditlogging", "Gevoelige acties schrijven onveranderbare records."],
+          ["Lokale AI", "Cloudmodellen zijn optioneel; data blijft onder controle."]
+        ],
+        snapshot: [
+          ["Vandaag", "8 HR-verzoeken, 15 IT-tickets opgelost, 3 financiële goedkeuringen."],
+          ["Risico", "Budgetgebruik boven 80%, inkoopvertraging onder observatie, geen incidenten."],
+          ["Aanbeveling", "Verminder onboarding-frictie en publiceer een troubleshooting-gids."]
+        ],
+        statusText: {
+          automation: "87% van de verzoeken is opgelost via automatisering of begeleide workflows.",
+          health: "96% operationele gezondheid over HR, IT, Finance, Inkoop en Beveiliging.",
+          approvals: "12 items vereisen aandacht van manager of directie."
+        }
+      },
+      fr: {
+        appName: "Plateforme IA d'opérations d'entreprise",
+        appSubtitle: "Couche opérationnelle intelligente",
+        languageLabel: "Langue",
+        themeLabel: "Thème",
+        roleLabel: "Rôle",
+        light: "Clair",
+        dark: "Sombre",
+        topTitle: "Console d'exploitation d'entreprise",
+        topSummary: "Un espace gouverné pour RH, IT, Finance, Achats, Connaissance, rapports, approbations et sécurité.",
+        simulate: "Simuler une demande",
+        simulateNote: "Tester un flux guidé",
+        approve: "Approuver en attente",
+        approveNote: "Actions contrôlées par le manager",
+        refresh: "Actualiser l'intelligence",
+        refreshNote: "Relancer le routage et le scoring",
+        sidebarNote: "RBAC, approbations, journal d'audit et orchestration des workflows sont actifs.",
+        securityBadge: "JWT sécurisé",
+        themeHelp: { light: "Espace de travail clair", dark: "Mode faible luminosité" },
+        roleHelp: {
+          employee: "Libre-service et demandes",
+          manager: "Approbations et vue équipe",
+          executive: "KPI et risque",
+          admin: "Gouvernance et accès"
+        },
+        snapshotNote: "Lecture d'une minute",
+        providerText: "Modèle local prêt, cloud optionnel",
+        integrationText: "FastAPI, n8n, SQL Server, Microsoft 365, SharePoint",
+        preferenceDir: "LTR",
+        roleNames: { employee: "Employé", manager: "Manager", executive: "Direction", admin: "Administrateur" },
+        nav: ["Vue d'ensemble", "Espace IA", "Départements", "Architecture", "Demandes", "Approbations", "Connaissance", "Rapports", "Sécurité"],
+        summary: [
+          ["Santé", "96%", "Score opérationnel"],
+          ["Approbations", "12", "Actions manager"],
+          ["Automatisation", "87%", "Résolues ou guidées"],
+          ["Résolues aujourd'hui", "146", "Demandes clôturées"],
+          ["SLA", "98%", "Livraison à temps"]
+        ],
+        workspaceTitle: "Espace IA",
+        workspaceBadge: "Chaîne de décision",
+        promptLabel: "Saisissez une demande comme le ferait un employé.",
+        placeholder: "J'ai besoin d'un accès Power BI pour la semaine prochaine, ou je veux soumettre un remboursement de 450 SAR.",
+        quickActions: [
+          { key: "access", title: "Demande d'accès", subtitle: "Provisionnement IT", prompt: "J'ai besoin d'un accès Power BI pour la semaine prochaine." },
+          { key: "leave", title: "Demande de congé", subtitle: "Flux RH", prompt: "Je veux des vacances le mois prochain et j'ai besoin d'une approbation." },
+          { key: "expense", title: "Note de frais", subtitle: "Revue finance", prompt: "Veuillez rembourser mes frais de formation de 450 SAR." },
+          { key: "procure", title: "Achats", subtitle: "Fournisseur et seuil", prompt: "J'ai besoin d'un devis pour 12 ordinateurs portables." }
+        ],
+        metrics: [
+          ["Santé", "96%", "Tous les services critiques sont dans la cible."],
+          ["Tickets", "58", "Ouverts côté IT et RH."],
+          ["Approbations", "12", "En attente d'action."],
+          ["Résolues aujourd'hui", "146", "Automatisation et support."]
+        ],
+        workflowTitle: "État du flux",
+        workflowBadge: "Prêt",
+        workflowSteps: ["Intention détectée", "Vérification des droits", "Routage", "Décision et réponse"],
+        workflowText: {
+          intent: "La demande est normalisée en tâche structurée.",
+          permission: "RBAC, politiques et seuils d'approbation sont évalués.",
+          routing: "Le bon flux métier est sélectionné.",
+          decision: "La réponse finale est préparée ou retenue pour approbation."
+        },
+        responseLabels: { module: "Module", risk: "Risque", approval: "Approbation", confidence: "Confiance" },
+        statusWords: { ready: "Prêt", processing: "En cours", awaiting: "En attente d'approbation", approved: "Approuvé" },
+        approvalWords: { required: "Requise", notRequired: "Non requise" },
+        actionWords: { route: "Router", review: "Examiner", approve: "Approuver", hold: "Retenir", search: "Rechercher" },
+        recommendations: {
+          access: "Essayer le provisioning automatique et vérifier les droits.",
+          leave: "Vérifier le solde, le planning et l'approbation du manager.",
+          expense: "Valider la politique et le budget avant Finance.",
+          procure: "Comparer les fournisseurs et envoyer pour revue."
+        },
+        modulesTitle: "Départements",
+        modulesBadge: "Couche de service partagée",
+        modules: [
+          ["RH", "Congés, onboarding, dossiers employés et politiques.", "97%", "good"],
+          ["IT", "Mots de passe, accès, appareils, logiciels et tickets.", "90%", "brand"],
+          ["Finance", "Frais, budgets, factures et validations.", "94%", "good"],
+          ["Achats", "Demandes d'achat, fournisseurs et bons de commande.", "88%", "warn"],
+          ["Connaissance", "Politiques, SOP, documentation et FAQ.", "98%", "good"],
+          ["Rapports", "KPI, résumés et briefings exécutifs.", "96%", "brand"],
+          ["Notifications", "E-mail, Teams, rappels et escalades.", "95%", "brand"],
+          ["Sécurité", "Audit, risque et suivi des accès.", "99%", "good"]
+        ],
+        architectureTitle: "Architecture d'entreprise",
+        architectureBadge: "Du front-end aux données",
+        layers: [
+          ["Frontend React", "Interface unifiée pour employés, managers, exécutifs et administrateurs."],
+          ["Couche API FastAPI", "API métier, authentification et orchestration."],
+          ["Noyau IA", "Intention, contexte, routage, mémoire et synthèse."],
+          ["Couche n8n", "Approbations, rappels, intégrations et automatisation longue."],
+          ["Services métier", "RH, IT, Finance, Achats, Connaissance, Rapports, Notifications, Sécurité."],
+          ["Couche SQL Server", "Données opérationnelles, mémoire IA, audit et métadonnées."],
+          ["Supervision et audit", "Observabilité, conformité et gouvernance."]
+        ],
+        requestsTitle: "Demandes",
+        requestsBadge: "File ouverte",
+        approvalsTitle: "Approbations",
+        approvalsBadge: "Vue manager",
+        knowledgeTitle: "Connaissance et rapports",
+        knowledgeBadge: "Insight opérationnel",
+        securityTitle: "Sécurité et audit",
+        securityPanelBadge: "Gouverné",
+        inspectorTitle: "Synthèse exécutive",
+        snapshotBadge: "Lecture d'une minute",
+        preferencesTitle: "Préférences",
+        preferencesBadge: "Enregistré localement",
+        dirTitle: "Sens de lecture",
+        providerTitle: "Fournisseur IA",
+        integrationTitle: "Intégrations",
+        statusTitle: "État du système",
+        statusBadge: "Sain",
+        statusLineTitle: "Succès d'automatisation",
+        healthLineTitle: "Santé de l'entreprise",
+        approvalLineTitle: "Approbations en attente",
+        requests: [
+          ["Accès Power BI", "IT", "En cours", "Les contrôles automatiques sont terminés."],
+          ["Congés le mois prochain", "RH", "En attente d'approbation", "Le solde est suffisant."],
+          ["Remboursement de formation", "Finance", "En attente d'approbation", "Le montant respecte la politique."],
+          ["12 devis de portables", "Achats", "En file", "Comparaison des fournisseurs en cours."]
+        ],
+        approvals: [
+          ["Note de frais - Ahmed", "450 SAR", "Risque faible", "Revue manager"],
+          ["Achat IT", "12 unités", "Risque moyen", "Revue direction"],
+          ["Changement de budget", "50,000 SAR", "Risque élevé", "Approbation exécutive"]
+        ],
+        knowledge: [
+          ["Comment demander un accès", "Utilisez l'espace IA ou une demande d'accès structurée."],
+          ["Politique de congés", "L'approbation dépend du solde et de la couverture."],
+          ["Politique de frais", "Le remboursement exige une validation politique et budgétaire."],
+          ["Politique d'achats", "Les demandes à forte valeur nécessitent une revue."]
+        ],
+        reports: [
+          ["Briefing exécutif quotidien", "8 demandes RH, 15 tickets IT résolus, 3 approbations en attente."],
+          ["Revue hebdomadaire", "Tendances, SLA, charge de travail et zones de risque."],
+          ["Rapport opérationnel mensuel", "Taux d'automatisation, gains et goulots d'étranglement."]
+        ],
+        security: [
+          ["RBAC", "Chaque action passe par le rôle, le département et la portée."],
+          ["Journal d'audit", "Les opérations sensibles génèrent des enregistrements immuables."],
+          ["IA locale", "Les modèles cloud sont optionnels; les données restent contrôlées."]
+        ],
+        snapshot: [
+          ["Aujourd'hui", "8 demandes RH, 15 tickets IT résolus, 3 approbations financières."],
+          ["Risque", "Budget au-dessus de 80%, retard achats surveillé, aucun incident sécurité."],
+          ["Recommandation", "Réduire la friction d'onboarding et publier un guide de dépannage."]
+        ],
+        statusText: {
+          automation: "87% des demandes sont résolues via automatisation ou flux guidés.",
+          health: "96% de santé opérationnelle sur RH, IT, Finance, Achats et Sécurité.",
+          approvals: "12 éléments nécessitent l'attention d'un manager ou exécutif."
+        }
+      }
+    };
+
+    const state = {
+      lang: "en",
+      theme: "light",
+      role: "employee",
+      prompt: "",
+      selectedTemplate: "access",
+      audit: [
+        { tone: "good", title: "RBAC check passed", text: "Access was verified against role scope.", time: "09:12" },
+        { tone: "warn", title: "Approval required", text: "The request crossed an approval threshold.", time: "09:08" },
+        { tone: "good", title: "Troubleshooting completed", text: "The IT issue was resolved without a ticket.", time: "08:56" }
+      ]
+    };
+
+    const els = {
+      brandTitle: document.getElementById("brandTitle"),
+      brandSubtitle: document.getElementById("brandSubtitle"),
+      languageLabel: document.getElementById("languageLabel"),
+      themeLabel: document.getElementById("themeLabel"),
+      roleLabel: document.getElementById("roleLabel"),
+      langBadge: document.getElementById("langBadge"),
+      themeBadge: document.getElementById("themeBadge"),
+      roleBadge: document.getElementById("roleBadge"),
+      nav: document.getElementById("nav"),
+      langRow: document.getElementById("langRow"),
+      themeRow: document.getElementById("themeRow"),
+      roleRow: document.getElementById("roleRow"),
+      summaryRow: document.getElementById("summaryRow"),
+      pageTitle: document.getElementById("pageTitle"),
+      pageSummary: document.getElementById("pageSummary"),
+      simulateTitle: document.getElementById("simulateTitle"),
+      simulateNote: document.getElementById("simulateNote"),
+      approveTitle: document.getElementById("approveTitle"),
+      approveNote: document.getElementById("approveNote"),
+      refreshTitle: document.getElementById("refreshTitle"),
+      refreshNote: document.getElementById("refreshNote"),
+      sidebarNote: document.getElementById("sidebarNote"),
+      securityBadge: document.getElementById("securityBadge"),
+      workspaceTitle: document.getElementById("workspaceTitle"),
+      workspaceBadge: document.getElementById("workspaceBadge"),
+      promptLabel: document.getElementById("promptLabel"),
+      prompt: document.getElementById("prompt"),
+      quickActions: document.getElementById("quickActions"),
+      responseRow: document.getElementById("responseRow"),
+      workflowTitle: document.getElementById("workflowTitle"),
+      workflowBadge: document.getElementById("workflowBadge"),
+      workflow: document.getElementById("workflow"),
+      kpis: document.getElementById("kpis"),
+      modulesTitle: document.getElementById("modulesTitle"),
+      modulesBadge: document.getElementById("modulesBadge"),
+      modules: document.getElementById("modules"),
+      architectureTitle: document.getElementById("architectureTitle"),
+      architectureBadge: document.getElementById("architectureBadge"),
+      architecture: document.getElementById("architecture"),
+      requestsTitle: document.getElementById("requestsTitle"),
+      requestsBadge: document.getElementById("requestsBadge"),
+      requests: document.getElementById("requests"),
+      approvalsTitle: document.getElementById("approvalsTitle"),
+      approvalsBadge: document.getElementById("approvalsBadge"),
+      approvals: document.getElementById("approvals"),
+      knowledgeTitle: document.getElementById("knowledgeTitle"),
+      knowledgeBadge: document.getElementById("knowledgeBadge"),
+      knowledge: document.getElementById("knowledge"),
+      reports: document.getElementById("reports"),
+      securityTitle: document.getElementById("securityTitle"),
+      securityPanelBadge: document.getElementById("securityPanelBadge"),
+      security: document.getElementById("security"),
+      audit: document.getElementById("audit"),
+      inspectorTitle: document.getElementById("inspectorTitle"),
+      snapshotBadge: document.getElementById("snapshotBadge"),
+      snapshot: document.getElementById("snapshot"),
+      preferencesTitle: document.getElementById("preferencesTitle"),
+      preferencesBadge: document.getElementById("preferencesBadge"),
+      dirTitle: document.getElementById("dirTitle"),
+      dirValue: document.getElementById("dirValue"),
+      providerTitle: document.getElementById("providerTitle"),
+      providerValue: document.getElementById("providerValue"),
+      integrationTitle: document.getElementById("integrationTitle"),
+      integrationValue: document.getElementById("integrationValue"),
+      statusTitle: document.getElementById("statusTitle"),
+      statusBadge: document.getElementById("statusBadge"),
+      statusLineTitle: document.getElementById("statusLineTitle"),
+      statusLineValue: document.getElementById("statusLineValue"),
+      healthLineTitle: document.getElementById("healthLineTitle"),
+      healthLineValue: document.getElementById("healthLineValue"),
+      approvalLineTitle: document.getElementById("approvalLineTitle"),
+      approvalLineValue: document.getElementById("approvalLineValue"),
+      automationBar: document.getElementById("automationBar"),
+      healthBar: document.getElementById("healthBar"),
+      approvalBar: document.getElementById("approvalBar"),
+      heroBand: document.getElementById("heroBand"),
+      langButtons: [],
+      themeButtons: [],
+      roleButtons: []
+    };
+
+    const langOrder = ["en", "ar", "es", "nl", "fr"];
+    const themeOrder = ["light", "dark"];
+    const roleOrder = ["employee", "manager", "executive", "admin"];
+
+    function t() { return packs[state.lang]; }
+    function text(value) { return value; }
+    function dir() { return state.lang === "ar" ? "rtl" : "ltr"; }
+    function moduleLabel(index) { return t().modules[index][0]; }
+
+    function renderControls() {
+      const pack = t();
+      els.brandTitle.textContent = pack.appName;
+      els.brandSubtitle.textContent = pack.appSubtitle;
+      els.languageLabel.textContent = pack.languageLabel;
+      els.themeLabel.textContent = pack.themeLabel;
+      els.roleLabel.textContent = pack.roleLabel;
+      els.langBadge.textContent = state.lang.toUpperCase();
+      els.themeBadge.textContent = state.theme === "light" ? pack.light : pack.dark;
+      els.roleBadge.textContent = pack.roleNames[state.role];
+      els.securityBadge.textContent = pack.securityBadge;
+      els.sidebarNote.textContent = pack.sidebarNote;
+      els.refreshTitle.textContent = pack.refresh;
+      els.refreshNote.textContent = pack.refreshNote;
+      els.pageTitle.textContent = pack.topTitle;
+      els.pageSummary.textContent = pack.topSummary;
+      els.simulateTitle.textContent = pack.simulate;
+      els.simulateNote.textContent = pack.simulateNote;
+      els.approveTitle.textContent = pack.approve;
+      els.approveNote.textContent = pack.approveNote;
+      els.workspaceTitle.textContent = pack.workspaceTitle;
+      els.workspaceBadge.textContent = pack.workspaceBadge;
+      els.promptLabel.textContent = pack.promptLabel;
+      els.prompt.placeholder = pack.placeholder;
+      els.workflowTitle.textContent = pack.workflowTitle;
+      els.workflowBadge.textContent = pack.workflowBadge;
+      els.modulesTitle.textContent = pack.modulesTitle;
+      els.modulesBadge.textContent = pack.modulesBadge;
+      els.architectureTitle.textContent = pack.architectureTitle;
+      els.architectureBadge.textContent = pack.architectureBadge;
+      els.requestsTitle.textContent = pack.requestsTitle;
+      els.requestsBadge.textContent = pack.requestsBadge;
+      els.approvalsTitle.textContent = pack.approvalsTitle;
+      els.approvalsBadge.textContent = pack.approvalsBadge;
+      els.knowledgeTitle.textContent = pack.knowledgeTitle;
+      els.knowledgeBadge.textContent = pack.knowledgeBadge;
+      els.securityTitle.textContent = pack.securityTitle;
+      els.securityPanelBadge.textContent = pack.securityPanelBadge;
+      els.inspectorTitle.textContent = pack.inspectorTitle;
+      els.snapshotBadge.textContent = pack.snapshotBadge;
+      els.preferencesTitle.textContent = pack.preferencesTitle;
+      els.preferencesBadge.textContent = pack.preferencesBadge;
+      els.dirTitle.textContent = pack.dirTitle;
+      els.providerTitle.textContent = pack.providerTitle;
+      els.integrationTitle.textContent = pack.integrationTitle;
+      els.statusTitle.textContent = pack.statusTitle;
+      els.statusBadge.textContent = pack.statusBadge;
+      els.statusLineTitle.textContent = pack.statusLineTitle;
+      els.healthLineTitle.textContent = pack.healthLineTitle;
+      els.approvalLineTitle.textContent = pack.approvalLineTitle;
+      document.documentElement.dir = dir();
+      document.documentElement.lang = state.lang;
+      document.body.dataset.theme = state.theme;
+      els.dirValue.textContent = pack.preferenceDir;
+      els.providerValue.textContent = pack.providerText;
+      els.integrationValue.textContent = pack.integrationText;
+      buildLanguageButtons();
+      buildThemeButtons();
+      buildRoleButtons();
+      buildNav();
+    }
+
+    function buildLanguageButtons() {
+      els.langRow.innerHTML = langOrder.map(code => {
+        const labels = { en: "EN", ar: "AR", es: "ES", nl: "NL", fr: "FR" };
+        const active = state.lang === code ? "active" : "";
+        return `<button class="pill-btn ${active}" data-lang="${code}"><strong>${labels[code]}</strong><small>${packs[code].languageLabel}</small></button>`;
+      }).join("");
+      els.langRow.querySelectorAll("[data-lang]").forEach(btn => btn.addEventListener("click", () => {
+        state.lang = btn.dataset.lang;
+        if (state.lang === "ar") {
+          state.role = "employee";
+        }
+        renderAll();
+      }));
+    }
+
+    function buildThemeButtons() {
+      const pack = t();
+      els.themeRow.innerHTML = themeOrder.map(theme => {
+        const active = state.theme === theme ? "active" : "";
+        const label = theme === "light" ? pack.light : pack.dark;
+        return `<button class="mode-btn ${active}" data-theme="${theme}"><strong>${label}</strong><small>${pack.themeHelp[theme]}</small></button>`;
+      }).join("");
+      els.themeRow.querySelectorAll("[data-theme]").forEach(btn => btn.addEventListener("click", () => {
+        state.theme = btn.dataset.theme;
+        renderAll();
+      }));
+    }
+
+    function buildRoleButtons() {
+      const pack = t();
+      els.roleRow.innerHTML = roleOrder.map(role => {
+        const active = state.role === role ? "active" : "";
+        return `<button class="pill-btn ${active}" data-role="${role}"><strong>${pack.roleNames[role]}</strong><small>${pack.roleHelp[role]}</small></button>`;
+      }).join("");
+      els.roleRow.querySelectorAll("[data-role]").forEach(btn => btn.addEventListener("click", () => {
+        state.role = btn.dataset.role;
+        renderAll();
+      }));
+    }
+
+    function buildNav() {
+      const pack = t();
+      const ids = ["overview", "workspace", "departments", "architecture", "requests", "approvals", "knowledge", "reports", "security"];
+      els.nav.innerHTML = pack.nav.map((label, i) => `
+        <a href="#${ids[i]}" class="nav-item ${i === 0 ? "active" : ""}">
+          <span><span class="badge">${label.slice(0, 2).toUpperCase()}</span><span>${label}</span></span>
+          <small>${i === 0 ? pack.topTitle : ""}</small>
+        </a>
+      `).join("");
+      els.nav.querySelectorAll("a").forEach(link => link.addEventListener("click", e => e.preventDefault()));
+    }
+
+    function buildSummary() {
+      const pack = t();
+      els.summaryRow.innerHTML = pack.summary.map(([k, v, s]) => `
+        <div class="summary-chip"><strong>${v}</strong> ${k} - ${s}</div>
+      `).join("");
+    }
+
+    function buildHeroBand() {
+      const pack = t();
+      const items = [
+        [pack.statusText.health, "System health"],
+        [pack.statusText.automation, "Automation"],
+        [pack.statusText.approvals, "Attention"],
+        [state.role === "executive" ? pack.inspectorTitle : pack.workspaceTitle, "Current lens"]
+      ];
+      els.heroBand.innerHTML = items.map(([value, label]) => `
+        <div class="signal">
+          <span>${label}</span>
+          <strong>${value}</strong>
+          <small>${state.theme === "dark" ? "Low-light command surface" : "Warm executive surface"}</small>
+        </div>
+      `).join("");
+    }
+
+    function renderQuickActions() {
+      const pack = t();
+      els.quickActions.innerHTML = pack.quickActions.map((item, index) => `
+        <button class="action-btn ${index === 0 ? "good" : index === 2 ? "warn" : ""}" data-prompt="${item.prompt}">
+          <span class="icon">${item.key.slice(0, 2).toUpperCase()}</span>
+          <strong>${item.title}</strong>
+          <small>${item.subtitle}</small>
+        </button>
+      `).join("");
+      els.quickActions.querySelectorAll("[data-prompt]").forEach(btn => btn.addEventListener("click", () => {
+        state.prompt = btn.dataset.prompt;
+        els.prompt.value = state.prompt;
+        runAI(state.prompt);
+      }));
+    }
+
+    function classify(text) {
+      const n = text.toLowerCase();
+      const has = (...terms) => terms.some(term => n.includes(term));
+      if (has("salary", "budget approval", "transfer", "راتب", "ميزانية", "sueldo", "budget", "salaire")) return { key: "finance", module: "Finance", approval: true, risk: "High", confidence: 92 };
+      if (has("vendor", "purchase", "quote", "laptop", "procure", "مورد", "مشتريات", "proveedor", "leverancier", "fournisseur")) return { key: "procure", module: "Procurement", approval: true, risk: "Medium", confidence: 88 };
+      if (has("leave", "vacation", "holiday", "vacaciones", "verlof", "congé", "إجازة", "vakantie")) return { key: "leave", module: "HR", approval: true, risk: "Medium", confidence: 95 };
+      if (has("password", "vpn", "device", "access", "ticket", "power bi", "software", "toegang", "acceso", "accès", "وصول")) return { key: "access", module: "IT", approval: false, risk: has("password", "vpn") ? "Low" : "Medium", confidence: 96 };
+      if (has("policy", "sop", "documentation", "knowledge", "faq", "beleid", "política", "politique", "سياسة")) return { key: "knowledge", module: "Knowledge", approval: false, risk: "Low", confidence: 98 };
+      if (has("audit", "security", "risk", "compliance", "beveiliging", "seguridad", "sécurité", "أمن")) return { key: "security", module: "Security", approval: false, risk: "Medium", confidence: 91 };
+      return { key: "general", module: "Operations", approval: false, risk: "Low", confidence: 84 };
+    }
+
+    function renderMetrics() {
+      const pack = t();
+      els.kpis.innerHTML = pack.metrics.map(([k, v, s], i) => `
+        <div class="metric">
+          <div class="k">${k}</div>
+          <div class="v">${v}</div>
+          <div class="s">${s}</div>
+          <div class="meter"><span class="${i === 1 ? "good" : i === 2 ? "warn" : "brand"}" style="width:${i === 0 ? 96 : i === 1 ? 58 : i === 2 ? 40 : 74}%"></span></div>
+        </div>
+      `).join("");
+    }
+
+    function renderWorkflow(result) {
+      const pack = t();
+      const steps = [
+        [pack.workflowSteps[0], pack.workflowText.intent, "done", pack.statusWords.ready],
+        [pack.workflowSteps[1], pack.workflowText.permission, "done", pack.statusWords.ready],
+        [pack.workflowSteps[2], `${pack[ result.key === "security" ? "modulesTitle" : "workspaceTitle" ]} - ${result.module}.`, result.approval ? "wait" : "done", result.approval ? pack.statusWords.awaiting : pack.statusWords.processing],
+        [pack.workflowSteps[3], result.approval ? "Manager approval is required before execution." : "The response is ready to return to the user.", result.approval ? "wait" : "done", result.approval ? pack.statusWords.awaiting : pack.statusWords.approved]
+      ];
+      els.workflow.innerHTML = steps.map(([title, desc, tone, label]) => `
+        <div class="step ${tone}">
+          <div class="dot"></div>
+          <div>
+            <h4>${title}</h4>
+            <p>${desc}</p>
+          </div>
+          <div class="status ${tone === "wait" ? "wait" : ""}">${label}</div>
+        </div>
+      `).join("");
+      els.workflowBadge.textContent = result.approval ? pack.statusWords.awaiting : pack.statusWords.processing;
+    }
+
+    function renderResponses(result) {
+      const pack = t();
+      const approval = result.approval ? pack.approvalWords.required : pack.approvalWords.notRequired;
+      const action = result.approval ? pack.actionWords.review : pack.actionWords.route;
+      const recommendation = pack.recommendations[result.key] || "Proceed with standard operational handling.";
+      els.responseRow.innerHTML = `
+        <div class="response-card">
+          <div class="k">${pack.responseLabels.module}</div>
+          <div class="v">${result.module}</div>
+          <div class="s">${action} via the governed workflow.</div>
+        </div>
+        <div class="response-card">
+          <div class="k">${pack.responseLabels.risk}</div>
+          <div class="v">${result.risk}</div>
+          <div class="s">Operational risk scored from request intent and context.</div>
+        </div>
+        <div class="response-card">
+          <div class="k">${pack.responseLabels.approval}</div>
+          <div class="v">${approval}</div>
+          <div class="s">${result.approval ? "Human-in-the-loop stays in control." : "The action can continue automatically."}</div>
+        </div>
+      `;
+      document.getElementById("workspaceBadge").textContent = result.approval ? pack.statusWords.awaiting : pack.statusWords.ready;
+      state.lastAction = recommendation;
+      return recommendation;
+    }
+
+    function renderModules() {
+      const pack = t();
+      els.modules.innerHTML = pack.modules.map(([title, desc, score, tone]) => `
+        <article class="module">
+          <div class="module-top">
+            <strong>${title}</strong>
+            <span class="badge">${score}</span>
+          </div>
+          <p>${desc}</p>
+          <div class="module-meta">
+            <span>${tone === "good" ? "Healthy" : tone === "warn" ? "Watch" : "Stable"}</span>
+            <span>RBAC</span>
+            <span>Audit</span>
+          </div>
+          <div class="tiny-bar"><span class="${tone}" style="width:${score}%"></span></div>
+        </article>
+      `).join("");
+    }
+
+    function renderArchitecture() {
+      const pack = t();
+      els.architecture.innerHTML = pack.layers.map(([title, desc]) => `
+        <div class="layer">
+          <strong>${title}</strong>
+          <small>${desc}</small>
+        </div>
+      `).join("");
+    }
+
+    function renderRequests() {
+      const pack = t();
+      els.requests.innerHTML = pack.requests.map(([title, dept, status, desc]) => `
+        <div class="list-item">
+          <strong>${title}</strong>
+          <div class="meta"><span>${dept}</span><span>${status}</span></div>
+          <div class="meta">${desc}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderApprovals() {
+      const pack = t();
+      els.approvals.innerHTML = pack.approvals.map(([title, amount, risk, state]) => `
+        <div class="list-item">
+          <strong>${title}</strong>
+          <div class="meta"><span>${amount}</span><span>${risk}</span><span>${state}</span></div>
+        </div>
+      `).join("");
+    }
+
+    function renderKnowledgeAndReports() {
+      const pack = t();
+      els.knowledge.innerHTML = pack.knowledge.map(([title, desc]) => `
+        <div class="list-item"><strong>${title}</strong><div class="meta">${desc}</div></div>
+      `).join("");
+      els.reports.innerHTML = pack.reports.map(([title, desc]) => `
+        <div class="list-item"><strong>${title}</strong><div class="meta">${desc}</div></div>
+      `).join("");
+    }
+
+    function renderSecurityAndAudit() {
+      const pack = t();
+      els.security.innerHTML = pack.security.map(([title, desc]) => `
+        <div class="list-item"><strong>${title}</strong><div class="meta">${desc}</div></div>
+      `).join("");
+      els.audit.innerHTML = state.audit.map(item => `
+        <div class="audit-item ${item.tone}">
+          <div class="g"></div>
+          <div>
+            <p>${item.title}</p>
+            <small>${item.text}</small>
+            <small>${item.time}</small>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderSnapshot() {
+      const pack = t();
+      els.snapshot.innerHTML = pack.snapshot.map(([title, desc]) => `
+        <div class="list-item">
+          <strong>${title}</strong>
+          <div class="meta">${desc}</div>
+        </div>
+      `).join("");
+      els.statusLineValue.textContent = pack.statusText.automation;
+      els.healthLineValue.textContent = pack.statusText.health;
+      els.approvalLineValue.textContent = pack.statusText.approvals;
+      els.automationBar.style.width = "87%";
+      els.healthBar.style.width = "96%";
+      els.approvalBar.style.width = "40%";
+    }
+
+    function applyPrompt(text) {
+      state.prompt = text;
+      els.prompt.value = text;
+      runAI(text);
+    }
+
+    function runAI(text) {
+      const pack = t();
+      const result = classify(text || state.prompt || pack.quickActions[0].prompt);
+      const recommendation = renderResponses(result);
+      renderWorkflow(result);
+      state.audit.unshift({
+        tone: result.approval ? "warn" : "good",
+        title: `${result.module} ${result.approval ? pack.actionWords.review : pack.actionWords.route}`,
+        text: `${recommendation} ${result.approval ? "Approval checkpoint created." : "Automation continues."}`,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      });
+      state.audit = state.audit.slice(0, 6);
+      renderSecurityAndAudit();
+    }
+
+    function renderAll() {
+      renderControls();
+      buildSummary();
+      buildHeroBand();
+      renderQuickActions();
+      renderMetrics();
+      renderModules();
+      renderArchitecture();
+      renderRequests();
+      renderApprovals();
+      renderKnowledgeAndReports();
+      renderSecurityAndAudit();
+      renderSnapshot();
+      const pack = t();
+      els.statusLineValue.textContent = pack.statusText.automation;
+      els.healthLineValue.textContent = pack.statusText.health;
+      els.approvalLineValue.textContent = pack.statusText.approvals;
+      applyPrompt(state.prompt || pack.quickActions[0].prompt);
+    }
+
+    document.getElementById("simulateBtn").addEventListener("click", () => {
+      const pack = t();
+      const examples = pack.quickActions.map(item => item.prompt);
+      applyPrompt(examples[Math.floor(Math.random() * examples.length)]);
+    });
+
+    document.getElementById("approveBtn").addEventListener("click", () => {
+      const pack = t();
+      state.audit.unshift({
+        tone: "good",
+        title: pack.approvalWords.required,
+        text: "A pending action was approved and written to audit.",
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      });
+      state.audit = state.audit.slice(0, 6);
+      renderSecurityAndAudit();
+    });
+
+    document.getElementById("refreshBtn").addEventListener("click", () => runAI(els.prompt.value || state.prompt));
+    els.prompt.addEventListener("input", () => runAI(els.prompt.value));
+
+    renderAll();
+  </script>
+</body>
+</html>
