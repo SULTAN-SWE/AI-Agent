@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Bot, Cpu, Radio, ShieldCheck, Zap } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
 
 const domainColor: Record<string, string> = {
   Orchestration: "border-primary/40 bg-primary/10 text-primary",
@@ -19,6 +20,7 @@ const domainColor: Record<string, string> = {
 export default function Agents() {
   const { data: agents, isLoading } = useListAgents();
   const { data: dashboard } = useGetDashboard();
+  const { t } = useLanguage();
 
   if (isLoading) return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -34,13 +36,13 @@ export default function Agents() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
             <Cpu className="w-6 h-6 text-primary" />
-            AI Agent Network
+            {t.AIAgentNetwork}
           </h2>
-          <p className="text-muted-foreground">Phase 8 — Extensible autonomous agents handling cross-department operations</p>
+          <p className="text-muted-foreground">{t.AIAgentNetworkDescription}</p>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
           <Radio className="w-3 h-3 text-emerald-500 animate-pulse" />
-          <span className="text-xs font-medium text-emerald-400">All agents online</span>
+          <span className="text-xs font-medium text-emerald-400">{t.AllAgentsOnline}</span>
         </div>
       </div>
 
@@ -48,25 +50,25 @@ export default function Agents() {
         <Card className="border-border/50 bg-card/50 backdrop-blur text-center">
           <CardContent className="pt-5">
             <div className="text-2xl font-bold text-primary">{agents?.length ?? 9}</div>
-            <p className="text-xs text-muted-foreground mt-1">Active Agents</p>
+            <p className="text-xs text-muted-foreground mt-1">{t.ActiveAgents}</p>
           </CardContent>
         </Card>
         <Card className="border-border/50 bg-card/50 backdrop-blur text-center">
           <CardContent className="pt-5">
             <div className="text-2xl font-bold text-emerald-400">{totalRequests}</div>
-            <p className="text-xs text-muted-foreground mt-1">Total Requests</p>
+            <p className="text-xs text-muted-foreground mt-1">{t.TotalRequests}</p>
           </CardContent>
         </Card>
         <Card className="border-border/50 bg-card/50 backdrop-blur text-center">
           <CardContent className="pt-5">
             <div className="text-2xl font-bold text-accent">{dashboard?.summary.automationSuccess ?? 87}%</div>
-            <p className="text-xs text-muted-foreground mt-1">Automation Rate</p>
+            <p className="text-xs text-muted-foreground mt-1">{t.AutomationRate}</p>
           </CardContent>
         </Card>
         <Card className="border-border/50 bg-card/50 backdrop-blur text-center">
           <CardContent className="pt-5">
             <div className="text-2xl font-bold text-blue-400">{dashboard?.summary.sla ?? 98}%</div>
-            <p className="text-xs text-muted-foreground mt-1">SLA Compliance</p>
+            <p className="text-xs text-muted-foreground mt-1">{t.SLACompliance}</p>
           </CardContent>
         </Card>
       </div>
@@ -89,7 +91,7 @@ export default function Agents() {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[10px] text-emerald-400">Live</span>
+                  <span className="text-[10px] text-emerald-400">{t.Live}</span>
                 </div>
               </div>
             </CardHeader>
@@ -100,11 +102,11 @@ export default function Agents() {
                   {agent.domain}
                 </Badge>
                 <Badge variant="outline" className="text-[10px]">
-                  <Zap className="w-2.5 h-2.5 mr-1" /> Autonomous
+                  <Zap className="w-2.5 h-2.5 mr-1" /> {t.Autonomous}
                 </Badge>
                 {agent.domain === "Orchestration" && (
                   <Badge variant="outline" className="text-[10px] border-primary/30">
-                    <ShieldCheck className="w-2.5 h-2.5 mr-1" /> Master
+                    <ShieldCheck className="w-2.5 h-2.5 mr-1" /> {t.Master}
                   </Badge>
                 )}
               </div>
@@ -117,15 +119,15 @@ export default function Agents() {
         <CardHeader>
           <CardTitle className="text-sm flex items-center gap-2">
             <Zap className="w-4 h-4 text-primary" />
-            Phase 8 — Enterprise Operating System
+            {t.EnterpriseOperatingSystem}
           </CardTitle>
           <CardDescription>
-            Cross-department orchestration, predictive intelligence, and extensible production integrations
+            {t.EnterpriseOperatingSystemDescription}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {["Cross-dept orchestration", "Predictive intelligence", "Extensible agents", "Production integrations"].map((item) => (
+            {[t.CrossDepartmentOrchestration,  t.PredictiveIntelligence, t.ExtensibleAgents, t.ProductionIntegrations].map((item) => (
               <div key={item} className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
                 <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
                 <span className="text-xs font-medium">{item}</span>

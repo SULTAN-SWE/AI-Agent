@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Bell, BellOff, CheckCheck, AlertTriangle, Info, Zap } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
 
 const severityIcon = (s: string) => {
   if (s === "critical") return <AlertTriangle className="w-4 h-4 text-destructive" />;
@@ -21,7 +22,7 @@ const severityClass = (s: string) => {
 export default function Notifications() {
   const { data: notifications, isLoading, refetch } = useListNotifications();
   const markRead = useMarkNotificationRead();
-
+  const { t } = useLanguage();
   const unread = notifications?.filter(n => n.status === "unread") ?? [];
   const read = notifications?.filter(n => n.status !== "unread") ?? [];
 
@@ -46,14 +47,14 @@ export default function Notifications() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
             <Bell className="w-6 h-6 text-primary" />
-            Notification Center
+            {t.NotificationCenter}
           </h2>
-          <p className="text-muted-foreground">Reminders, escalations, and system alerts</p>
+          <p className="text-muted-foreground">{t.NotificationCenterDescription}</p>
         </div>
         {unread.length > 0 && (
           <Button variant="outline" size="sm" onClick={handleMarkAll} className="gap-2">
             <CheckCheck className="w-4 h-4" />
-            Mark all read
+            {t.MarkAllRead}
           </Button>
         )}
       </div>
@@ -63,7 +64,7 @@ export default function Notifications() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Zap className="w-4 h-4 text-accent" />
-              Unread <Badge className="ml-1 bg-accent text-accent-foreground">{unread.length}</Badge>
+              {t.Unread} <Badge className="ml-1 bg-accent text-accent-foreground">{unread.length}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -72,19 +73,19 @@ export default function Notifications() {
                 {severityIcon(n.severity ?? "info")}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <p className="font-semibold text-sm">{n.title}</p>
+                    <p className="font-semibold text-sm">{t[n.title as keyof typeof t] ?? n.title}</p>
                     <span className="text-xs text-muted-foreground whitespace-nowrap">
                       {new Date(n.createdAt).toLocaleString()}
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">{n.body}</p>
+                  <p className="text-sm text-muted-foreground">{t[n.body as keyof typeof t] ?? n.body}</p>
                   <div className="flex items-center gap-3 mt-2">
-                    <Badge variant="outline" className="text-[10px] capitalize">{n.channel}</Badge>
+                    <Badge variant="outline" className="text-[10px] capitalize">{t[n.channel as keyof typeof t] ?? n.channel}</Badge>
                     <button
                       onClick={() => handleMarkRead(n.id)}
                       className="text-xs text-primary hover:underline"
                     >
-                      Mark as read
+                      {t.MarkAsRead}
                     </button>
                   </div>
                 </div>
@@ -97,13 +98,13 @@ export default function Notifications() {
       <Card className="border-border/50 bg-card/50 backdrop-blur">
         <CardHeader className="pb-3">
           <CardTitle className="text-base text-muted-foreground flex items-center gap-2">
-            <BellOff className="w-4 h-4" /> Read
+            <BellOff className="w-4 h-4" /> {t.Read}
           </CardTitle>
-          <CardDescription>Previously acknowledged notifications</CardDescription>
+          <CardDescription>{t.PreviouslyAcknowledgedNotifications}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {read.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-6">No read notifications yet.</p>
+            <p className="text-sm text-muted-foreground text-center py-6">{t.NoReadNotifications}</p>
           ) : (
             read.map(n => (
               <div key={n.id} className="flex items-start gap-4 p-4 rounded-lg border border-border/30 bg-muted/20 opacity-60">

@@ -5,9 +5,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ShieldAlert } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
 
 export default function Security() {
   const { data: logs, isLoading } = useListAuditLog({ limit: 100 });
+  const { t } = useLanguage();
 
   if (isLoading) {
     return (
@@ -35,25 +37,25 @@ export default function Security() {
       <div>
         <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-destructive">
           <ShieldAlert className="w-6 h-6" />
-          Security & Audit
+          {t.SecurityAudit}
         </h2>
-        <p className="text-muted-foreground mt-1">Immutable audit trail of all platform activities and access events.</p>
+        <p className="text-muted-foreground mt-1">{t.SecurityAuditDescription}</p>
       </div>
 
       <Card className="border-border/50 bg-card/30 backdrop-blur overflow-hidden">
         <CardHeader className="border-b border-border/50 bg-card/50 pb-4">
-          <CardTitle className="text-lg">Event Log</CardTitle>
+          <CardTitle className="text-lg">{t.EventLog}</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-card/50">
                 <TableRow className="border-border/50 hover:bg-transparent">
-                  <TableHead className="w-[180px] font-semibold">Timestamp</TableHead>
-                  <TableHead className="font-semibold">Actor</TableHead>
-                  <TableHead className="font-semibold">Action</TableHead>
-                  <TableHead className="font-semibold">Target</TableHead>
-                  <TableHead className="font-semibold">Details</TableHead>
+                  <TableHead className="w-[180px] font-semibold">{t.Timestamp}</TableHead>
+                  <TableHead className="font-semibold">{t.Actor}</TableHead>
+                  <TableHead className="font-semibold">{t.Action}</TableHead>
+                  <TableHead className="font-semibold">{t.Target}</TableHead>
+                  <TableHead className="font-semibold">{t.Details}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

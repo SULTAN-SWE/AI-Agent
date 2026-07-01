@@ -87,10 +87,25 @@ router.get("/dashboard", async (req, res): Promise<void> => {
       requestModule: a.requestModule ?? null,
     })),
     insights: [
-      { scope: "executive", title: "Operational backlog", summary: `${pendingCount} requests are still active across the platform.`, confidence: 91 },
-      { scope: "manager", title: "Automation rate", summary: "87% of requests are fully automated without human intervention.", confidence: 88 },
-      { scope: "workflow", title: "SLA compliance", summary: "98% of requests are resolved within the defined SLA window.", confidence: 95 },
-    ],
+  {
+    scope: "executive",
+    title: "OPERATIONAL_BACKLOG",
+    summary: "OPERATIONAL_BACKLOG_SUMMARY",
+    confidence: 91,
+  },
+  {
+    scope: "manager",
+    title: "AUTOMATION_RATE",
+    summary: "AUTOMATION_RATE_SUMMARY",
+    confidence: 88,
+  },
+  {
+    scope: "workflow",
+    title: "SLA_COMPLIANCE",
+    summary: "SLA_COMPLIANCE_SUMMARY",
+    confidence: 95,
+  },
+],
     roadmap: ROADMAP,
   });
 });

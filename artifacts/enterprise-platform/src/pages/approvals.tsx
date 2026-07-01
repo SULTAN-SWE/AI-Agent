@@ -17,6 +17,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Check, X, Clock } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
 
 export default function Approvals() {
   const queryClient = useQueryClient();
@@ -25,6 +26,7 @@ export default function Approvals() {
   
   const decideMutation = useDecideApproval();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [selectedApprovalId, setSelectedApprovalId] = React.useState<number | null>(null);
@@ -47,36 +49,36 @@ export default function Approvals() {
         data: { decision: decisionType, note }
       });
       
-      toast({ 
-        title: `Approval ${decisionType === 'approve' ? 'Granted' : 'Rejected'}`,
-      });
+      toast({
+      title: decisionType === "approve"  ? t.ApprovalGranted: t.Rejected,
+});
       
       queryClient.invalidateQueries({ queryKey: getListApprovalsQueryKey() });
       setDialogOpen(false);
     } catch (err) {
-      toast({ title: "Action Failed", variant: "destructive" });
+      toast({ title: t.ActionFailed, variant: "destructive" });
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'approved': return <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20">Approved</Badge>;
-      case 'rejected': return <Badge className="bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20">Rejected</Badge>;
-      default: return <Badge className="bg-accent/10 text-accent border-accent/20 hover:bg-accent/20">Pending</Badge>;
+      case 'approved': return <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20">{t.Approved}</Badge>;
+      case 'rejected': return <Badge className="bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20">{t.Rejected}</Badge>;
+      default: return <Badge className="bg-accent/10 text-accent border-accent/20 hover:bg-accent/20">{t.Pending}</Badge>;
     }
   };
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Approval Center</h2>
-        <p className="text-muted-foreground mt-1">Review and manage cross-departmental requests requiring authorization.</p>
+        <h2 className="text-2xl font-bold tracking-tight">{t.ApprovalCenter}</h2>
+        <p className="text-muted-foreground mt-1">{t.ApprovalCenterDescription}</p>
       </div>
 
       <Tabs defaultValue="pending" className="w-full">
         <TabsList className="grid w-[400px] grid-cols-2 bg-card border border-border/50">
-          <TabsTrigger value="pending">Pending Action</TabsTrigger>
-          <TabsTrigger value="decided">Decided</TabsTrigger>
+          <TabsTrigger value="pending">{t.PendingAction}</TabsTrigger>
+          <TabsTrigger value="decided">{t.Decided}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="pending" className="mt-6">
@@ -85,8 +87,8 @@ export default function Approvals() {
           ) : pending?.length === 0 ? (
             <div className="text-center py-12 bg-card/30 rounded-xl border border-border/50 border-dashed">
               <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-medium">All caught up</h3>
-              <p className="text-muted-foreground">No pending approvals require your attention.</p>
+              <h3 className="text-lg font-medium">{t.AllCaughtUp}</h3>
+              <p className="text-muted-foreground">{t.NoPendingApprovalsAttention}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -99,7 +101,7 @@ export default function Approvals() {
                         <span className="text-xs text-muted-foreground">{new Date(approval.createdAt).toLocaleString()}</span>
                       </div>
                       <h4 className="font-semibold">{approval.requestTitle}</h4>
-                      <p className="text-sm text-muted-foreground">Role required: <span className="capitalize">{approval.approverRole}</span></p>
+                      <p className="text-sm text-muted-foreground">{t.RoleRequired}: <span className="capitalize">{approval.approverRole}</span></p>
                     </div>
                     <div className="flex items-center gap-2 w-full md:w-auto shrink-0 mt-2 md:mt-0">
                       <Button 
@@ -107,13 +109,13 @@ export default function Approvals() {
                         className="w-full md:w-auto text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20"
                         onClick={() => handleOpenDialog(approval.id, 'reject')}
                       >
-                        <X className="w-4 h-4 mr-1.5" /> Reject
+                        <X className="w-4 h-4 mr-1.5" /> {t.Reject}
                       </Button>
                       <Button 
                         className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white"
                         onClick={() => handleOpenDialog(approval.id, 'approve')}
                       >
-                        <Check className="w-4 h-4 mr-1.5" /> Approve
+                        <Check className="w-4 h-4 mr-1.5" /> {t.Approve}
                       </Button>
                     </div>
                   </CardContent>
@@ -128,7 +130,7 @@ export default function Approvals() {
             <div className="space-y-4">{[1,2].map(i => <Skeleton key={i} className="h-24 w-full rounded-xl" />)}</div>
           ) : decided?.length === 0 ? (
             <div className="text-center py-12 bg-card/30 rounded-xl border border-border/50 border-dashed">
-              <p className="text-muted-foreground">No decided approvals found.</p>
+              <p className="text-muted-foreground">{t.NoDecidedApprovals}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -146,7 +148,7 @@ export default function Approvals() {
                       )}
                     </div>
                     <div className="text-xs text-muted-foreground shrink-0 text-right">
-                      Decided: {approval.decidedAt ? new Date(approval.decidedAt).toLocaleString() : 'N/A'}
+                      {t.Decided}: {approval.decidedAt ? new Date(approval.decidedAt).toLocaleString() : 'N/A'}
                     </div>
                   </CardContent>
                 </Card>
@@ -159,27 +161,27 @@ export default function Approvals() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-[425px] bg-card border-border/50">
           <DialogHeader>
-            <DialogTitle>{decisionType === 'approve' ? 'Approve Request' : 'Reject Request'}</DialogTitle>
+            <DialogTitle>{decisionType === 'approve' ? t.ApproveRequest : t.RejectRequest}</DialogTitle>
             <DialogDescription>
-              You can optionally provide a note explaining your decision.
+              {t.DecisionNoteDescription}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <Textarea 
-              placeholder="Add a note (optional)..." 
+              placeholder={t.AddNotePlaceholder} 
               value={note}
               onChange={(e) => setNote(e.target.value)}
               className="bg-background/50 border-border/50"
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={decideMutation.isPending}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={decideMutation.isPending}>{t.Cancel}</Button>
             <Button 
               onClick={submitDecision} 
               disabled={decideMutation.isPending}
               className={decisionType === 'approve' ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-destructive hover:bg-destructive/90 text-white'}
             >
-              {decideMutation.isPending ? "Saving..." : "Confirm Decision"}
+              {decideMutation.isPending ? t.Saving : t.ConfirmDecision}
             </Button>
           </DialogFooter>
         </DialogContent>

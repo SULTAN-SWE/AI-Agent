@@ -30,22 +30,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useLanguage } from "@/lib/language-context";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
   const { data: user, isLoading } = useGetMe();
   const logout = useLogout();
   const { data: notifications } = useListNotifications();
-  
-  const [lang, setLang] = React.useState<Language>("EN");
+  const { lang, setLang, t } = useLanguage();
   const [theme, setTheme] = React.useState<"light" | "dark">("dark");
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const unreadCount = notifications?.filter(n => n.status === "unread").length ?? 0;
 
-  React.useEffect(() => {
-    document.documentElement.dir = lang === "AR" ? "rtl" : "ltr";
-  }, [lang]);
+
 
   React.useEffect(() => {
     if (theme === "dark") {
@@ -75,7 +73,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (!user && location !== "/login") return null;
 
-  const t = translations[lang];
+  
   const role = user?.role || "employee";
 
   const navItems = [
@@ -93,8 +91,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const visibleNavItems = navItems.filter(item => item.roles.includes(role));
 
   const handleLogout = () => {
-    logout.mutate(undefined, { onSuccess: () => setLocation("/login") });
-  };
+  logout.mutate(undefined, {
+    onSuccess: () => {
+      window.location.href = "/login";
+    },
+  });
+};
 
   if (location === "/login") return <>{children}</>;
 
@@ -143,22 +145,30 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-              {theme === "dark" ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4 mr-2" />
+              ) : (
+                <Moon className="w-4 h-4 mr-2" />
+              )}
               Toggle Theme
             </DropdownMenuItem>
-            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-              <Globe className="w-4 h-4 mr-2" />
-              <select
-                className="bg-transparent border-none outline-none focus:ring-0 w-full cursor-pointer"
+
+            <div className="px-2 py-1">
+              <div className="flex items-center gap-2">
+                <Globe className="w-4 h-4" />
+                <select
+                className="w-full rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 value={lang}
                 onChange={(e) => setLang(e.target.value as Language)}
-                onClick={(e) => e.stopPropagation()}
               >
-                {Object.keys(translations).map((l) => (
-                  <option key={l} value={l}>{l}</option>
-                ))}
-              </select>
-            </DropdownMenuItem>
+                <option value="EN">English</option>
+                <option value="AR">Arabic</option>
+                <option value="ES">Spanish</option>
+                <option value="NL">Dutch</option>
+                <option value="FR">French</option>
+                </select>
+              </div>
+            </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:bg-destructive/10">
               <LogOut className="w-4 h-4 mr-2" />
@@ -213,7 +223,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </header>
 
         <div className="flex-1 overflow-auto p-4 md:p-6 bg-background relative">
-          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-background to-background opacity-50 mix-blend-screen" />
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-background to-background opacity-20" />
           <div className="max-w-6xl mx-auto relative z-10">
             {children}
           </div>

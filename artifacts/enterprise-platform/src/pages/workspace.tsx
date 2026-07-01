@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { TerminalSquare, Zap, Search, Key, Plane, Receipt, Box } from "lucide-react";
+import { useLanguage } from "@/lib/language-context";
 
 export default function Workspace() {
   const [prompt, setPrompt] = React.useState("");
@@ -14,6 +15,7 @@ export default function Workspace() {
   const createRequest = useCreateRequest();
   const simulateRequest = useSimulateRequest();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleSimulate = async () => {
     if (!prompt.trim()) return;
@@ -21,7 +23,7 @@ export default function Workspace() {
       const res = await simulateRequest.mutateAsync({ data: { text: prompt } });
       setSimulation(res);
     } catch (err) {
-      toast({ title: "Simulation Failed", variant: "destructive" });
+      toast({ title: t.SimulationFailed, variant: "destructive" });
     }
   };
 
@@ -29,19 +31,19 @@ export default function Workspace() {
     if (!prompt.trim()) return;
     try {
       await createRequest.mutateAsync({ data: { text: prompt } });
-      toast({ title: "Request Submitted", description: "Your request has been routed successfully." });
+      toast({ title: t.RequestSubmitted, description: t.RequestSubmittedDescription });
       setPrompt("");
       setSimulation(null);
     } catch (err) {
-      toast({ title: "Submission Failed", variant: "destructive" });
+      toast({ title: t.SubmissionFailed , variant: "destructive" });
     }
   };
 
   const templates = [
-    { title: "Access Request", icon: Key, text: "I need access to the production database for the Q3 deployment." },
-    { title: "Leave Request", icon: Plane, text: "I would like to take PTO from next Monday to Wednesday." },
-    { title: "Expense Claim", icon: Receipt, text: "Submitting a $450 expense for the client dinner last night." },
-    { title: "Procurement", icon: Box, text: "We need 5 new developer laptops for the incoming team members." }
+    { title: t.AccessRequest, icon: Key, text: t.AccessRequestExample },
+    { title: t.LeaveRequest, icon: Plane, text: t.LeaveRequestExample },
+    { title: t.ExpenseClaim, icon: Receipt, text: t.ExpenseClaimExample },
+    { title: t.Procurement, icon: Box, text: t.ProcurementExample }
   ];
 
   const getRiskColor = (risk: string) => {
@@ -57,9 +59,9 @@ export default function Workspace() {
       <div>
         <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
           <TerminalSquare className="w-6 h-6 text-primary" />
-          AI Workspace
+          {t.Workspace}
         </h2>
-        <p className="text-muted-foreground mt-1">Natural language command interface for all operations.</p>
+        <p className="text-muted-foreground mt-1">{t.WorkspaceDescription}</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -77,14 +79,14 @@ export default function Workspace() {
 
       <Card className="border-border/50 bg-card/80 backdrop-blur shadow-lg">
         <CardHeader>
-          <CardTitle>Command Input</CardTitle>
-          <CardDescription>Describe your request, issue, or query.</CardDescription>
+          <CardTitle>{t.CommandInput}</CardTitle>
+          <CardDescription>{t.CommandDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <Textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Type your request here... (e.g. 'I need to approve the Q4 budget')"
+            placeholder={t.CommandPlaceholder}
             className="min-h-[150px] bg-background/50 border-border resize-none text-lg p-4 focus-visible:ring-primary"
           />
           
@@ -93,15 +95,15 @@ export default function Workspace() {
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-sm font-semibold text-primary flex items-center gap-2">
                   <Search className="w-4 h-4" />
-                  Routing Analysis
+                  {t.RoutingAnalysis}
                 </h4>
                 <div className="flex gap-2">
-                  <Badge variant="outline" className="bg-background/50 capitalize">{simulation.module}</Badge>
-                  <Badge variant="outline" className={getRiskColor(simulation.risk)}>Risk: {simulation.risk}</Badge>
-                  {simulation.approvalRequired && <Badge variant="outline" className="text-accent border-accent/50 bg-accent/10">Approval Req</Badge>}
+                  <Badge variant="outline" className="bg-background/50 capitalize">{t[simulation.module as keyof typeof t] ?? simulation.module}</Badge>
+                  <Badge variant="outline" className={getRiskColor(simulation.risk)}>{t.Risk}: {t[simulation.risk as keyof typeof t] ?? simulation.risk}</Badge>
+                  {simulation.approvalRequired && <Badge variant="outline" className="text-accent border-accent/50 bg-accent/10">{t.ApprovalRequired}</Badge>}
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">{simulation.summary}</p>
+              <p className="text-sm text-muted-foreground">{t[simulation.summary as keyof typeof t] ?? simulation.summary}</p>
             </div>
           )}
         </CardContent>
@@ -113,7 +115,7 @@ export default function Workspace() {
             className="gap-2"
           >
             <Search className="w-4 h-4" />
-            {simulateRequest.isPending ? "Analyzing..." : "Simulate Routing"}
+            {simulateRequest.isPending ? t.Analyzing : t.SimulateRouting}
           </Button>
           <Button 
             onClick={handleSubmit}
@@ -121,7 +123,7 @@ export default function Workspace() {
             className="gap-2"
           >
             <Zap className="w-4 h-4" />
-            {createRequest.isPending ? "Executing..." : "Execute Command"}
+            {createRequest.isPending ? t.Executing : t.ExecuteCommand}
           </Button>
         </CardFooter>
       </Card>

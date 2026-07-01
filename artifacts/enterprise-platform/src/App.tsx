@@ -16,6 +16,7 @@ import Security from "@/pages/security";
 import Notifications from "@/pages/notifications";
 import Workflows from "@/pages/workflows";
 import Agents from "@/pages/agents";
+import { LanguageProvider } from "@/lib/language-context";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -60,13 +61,15 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL?.replace(/\/$/, "") || ""}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <LanguageProvider>
+    <TooltipProvider>
+      <WouterRouter base={import.meta.env.BASE_URL?.replace(/\/$/, "") || ""}>
+        <Router />
+      </WouterRouter>
+      <Toaster />
+    </TooltipProvider>
+  </LanguageProvider>
+</QueryClientProvider>
   );
 }
 

@@ -79,24 +79,24 @@ router.post("/requests", async (req, res): Promise<void> => {
   if (result.approval && req_) {
     await db.insert(approvalsTable).values({
       requestId: req_.id,
-      approverRole: "manager",
+      approverRole: "MANAGER",
       status: "pending",
-      decisionNote: "Human review required.",
+      decisionNote: "HUMAN_REVIEW_REQUIRED",
     });
     await db.insert(notificationsTable).values({
       userId: user.id,
-      channel: "email",
+      channel: "EMAIL",
       severity: "warning",
-      title: `${result.module} approval pending`,
+      title: `${result.module}_APPROVAL_PENDING`,
       body: result.summary,
       status: "unread",
     });
   } else {
     await db.insert(notificationsTable).values({
       userId: user.id,
-      channel: "in-app",
+      channel: "IN_APP",
       severity: "info",
-      title: `${result.module} completed`,
+      title: `${result.module}_COMPLETED`,
       body: result.summary,
       status: "unread",
     });
@@ -104,7 +104,7 @@ router.post("/requests", async (req, res): Promise<void> => {
 
   await db.insert(workflowRunsTable).values({
     userId: user.id,
-    workflowName: "Department workflow",
+    workflowName: "DEPARTMENT_WORKFLOW",
     module: result.module,
     status: result.approval ? "waiting" : "completed",
     payload: JSON.stringify({ requestId: req_?.id, title }),
@@ -113,9 +113,9 @@ router.post("/requests", async (req, res): Promise<void> => {
 
   await db.insert(auditLogTable).values({
     actor: user.username,
-    action: "Request routed",
+    action: "REQUEST_ROUTED",
     target: result.module,
-    detail: `${title} -> ${result.summary}`,
+    detail: result.summary,
   });
 
   res.status(201).json({ ok: true, module: result.module, approval: result.approval, requestId: req_?.id ?? null });

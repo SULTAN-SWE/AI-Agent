@@ -6,10 +6,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Activity, CheckSquare, Zap, Clock, ShieldAlert, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
+import { useLanguage } from "@/lib/language-context";
 
 export default function Dashboard() {
   const { data: user } = useGetMe();
   const { data: dashboard, isLoading } = useGetDashboard();
+  const { t } = useLanguage();
 
   if (isLoading || !dashboard) {
     return (
@@ -31,15 +33,20 @@ export default function Dashboard() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Executive Dashboard</h2>
-          <p className="text-muted-foreground">Welcome back, {user?.displayName}. Here is your operations overview.</p>
+          <h2 className="text-2xl font-bold tracking-tight">
+           {t.ExecutiveDashboard} </h2>
+          <p className="text-muted-foreground">
+          {t.WelcomeBack}, {user?.displayName}. {t.OperationsOverview}
+          </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-border/50 bg-card/50 backdrop-blur">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Company Health</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+            {t.CompanyHealth}
+            </CardTitle>
             <Activity className="w-4 h-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
@@ -50,18 +57,24 @@ export default function Dashboard() {
         
         <Card className="border-border/50 bg-card/50 backdrop-blur">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Pending Approvals</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+            {t.PendingApprovals}
+            </CardTitle>
             <CheckSquare className="w-4 h-4 text-accent" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{summary.pendingApprovals}</div>
-            <p className="text-xs text-muted-foreground mt-2">Requires attention</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              {t.RequiresAttention}
+            </p>
           </CardContent>
         </Card>
 
         <Card className="border-border/50 bg-card/50 backdrop-blur">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Automation Success</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {t.AutomationSuccess}
+            </CardTitle>
             <Zap className="w-4 h-4 text-primary" />
           </CardHeader>
           <CardContent>
@@ -72,12 +85,14 @@ export default function Dashboard() {
 
         <Card className="border-border/50 bg-card/50 backdrop-blur">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Resolved Today</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {t.ResolvedToday}
+            </CardTitle>
             <Clock className="w-4 h-4 text-blue-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{summary.resolvedToday}</div>
-            <p className="text-xs text-muted-foreground mt-2">SLA Adherence: {summary.sla}%</p>
+            <p className="text-xs text-muted-foreground mt-2">{t.SLAAdherence}: {summary.sla}%</p>
           </CardContent>
         </Card>
       </div>
@@ -86,8 +101,12 @@ export default function Dashboard() {
         <div className="lg:col-span-2 space-y-6">
           <Card className="border-border/50 bg-card/50 backdrop-blur">
             <CardHeader>
-              <CardTitle>Recent Requests</CardTitle>
-              <CardDescription>Latest automated routings across departments</CardDescription>
+              <CardTitle>
+                {t.RecentRequests}
+              </CardTitle>
+              <CardDescription>
+                {t.LatestAutomatedRoutings}
+            </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -97,7 +116,7 @@ export default function Dashboard() {
                       <div className={`w-2 h-2 rounded-full ${req.status === 'resolved' ? 'bg-emerald-500' : req.status === 'pending' ? 'bg-accent' : 'bg-primary'}`} />
                       <div>
                         <p className="font-medium text-sm">{req.title}</p>
-                        <p className="text-xs text-muted-foreground">{req.module} • {new Date(req.createdAt).toLocaleTimeString()}</p>
+                        <p className="text-xs text-muted-foreground">{t[req.module as keyof typeof t] ?? req.module} • {new Date(req.createdAt).toLocaleTimeString()}</p>
                       </div>
                     </div>
                     <Badge variant="outline" className="capitalize">{req.status}</Badge>
@@ -110,7 +129,9 @@ export default function Dashboard() {
           {insights && insights.length > 0 && (
             <Card className="border-border/50 bg-card/50 backdrop-blur">
               <CardHeader>
-                <CardTitle>AI Insights</CardTitle>
+                <CardTitle>
+                  {t.AIInsights}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4">
@@ -118,11 +139,11 @@ export default function Dashboard() {
                     <div key={idx} className="flex gap-4 p-4 rounded-lg bg-primary/5 border border-primary/20">
                       <Zap className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="font-semibold text-sm text-primary mb-1">{insight.title}</h4>
-                        <p className="text-sm text-muted-foreground">{insight.summary}</p>
+                        <h4 className="font-semibold text-sm text-primary mb-1">{t[insight.title as keyof typeof t] ?? insight.title}</h4>
+                        <p className="text-sm text-muted-foreground">{t[insight.summary as keyof typeof t] ?? insight.summary}</p>
                         <div className="flex items-center gap-2 mt-2">
                           <Badge variant="outline" className="text-[10px] bg-background/50">{insight.scope}</Badge>
-                          <span className="text-xs text-muted-foreground">Confidence: {insight.confidence}%</span>
+                          <span className="text-xs text-muted-foreground">{t.Confidence}: {insight.confidence}%</span>
                         </div>
                       </div>
                     </div>
@@ -137,22 +158,26 @@ export default function Dashboard() {
           <Card className="border-border/50 bg-card/50 backdrop-blur">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle>Action Required</CardTitle>
-                <CardDescription>Pending Approvals</CardDescription>
+                <CardTitle>
+                  {t.ActionRequired}
+                </CardTitle>
+                <CardDescription>
+                  {t.PendingApprovals}
+                </CardDescription>
               </div>
               <Link href="/approvals" className="text-xs text-primary hover:underline flex items-center">
-                View all <ArrowRight className="w-3 h-3 ml-1" />
+                {t.ViewAll} <ArrowRight className="w-3 h-3 ml-1" />
               </Link>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {pendingApprovals.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">No pending approvals.</p>
+                  <p className="text-sm text-muted-foreground text-center py-4">{t.NoPendingApprovals}</p>
                 ) : (
                   pendingApprovals.slice(0, 3).map(app => (
                     <div key={app.id} className="p-3 rounded-lg border border-accent/20 bg-accent/5">
                       <div className="flex justify-between items-start mb-2">
-                        <Badge variant="outline" className="text-[10px] text-accent border-accent/30 bg-accent/10">{app.requestModule}</Badge>
+                        <Badge variant="outline" className="text-[10px] text-accent border-accent/30 bg-accent/10">{t[app.requestModule as keyof typeof t] ?? app.requestModule}</Badge>
                         <span className="text-xs text-muted-foreground">{new Date(app.createdAt).toLocaleDateString()}</span>
                       </div>
                       <p className="text-sm font-medium">{app.requestTitle}</p>
@@ -166,7 +191,7 @@ export default function Dashboard() {
           {roadmap && roadmap.length > 0 && (
             <Card className="border-border/50 bg-card/50 backdrop-blur">
               <CardHeader>
-                <CardTitle>System Roadmap</CardTitle>
+                <CardTitle>{t.SystemRoadmap}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -177,9 +202,9 @@ export default function Dashboard() {
                         <div className="absolute left-[4px] top-3.5 bottom-0 w-0.5 bg-border" />
                       )}
                       <div>
-                        <p className="text-xs font-semibold text-primary uppercase tracking-wider">{phase.phase}</p>
-                        <p className="text-sm font-medium mb-1">{phase.name}</p>
-                        <p className="text-xs text-muted-foreground">{phase.items.join(" • ")}</p>
+                        <p className="text-xs font-semibold text-primary uppercase tracking-wider">{t[phase.phase as keyof typeof t] ?? phase.phase}</p>
+                        <p className="text-sm font-medium mb-1">{t[phase.name as keyof typeof t] ?? phase.name}</p>
+                        <p className="text-xs text-muted-foreground">{phase.items.map(item => t[item as keyof typeof t] ?? item).join(" • ")}</p>
                       </div>
                     </div>
                   ))}

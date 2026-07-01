@@ -6,17 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { GitBranch, UserPlus, UserMinus, Key, Plane, Receipt, Box, RefreshCw, CheckCircle, Clock, XCircle, Zap } from "lucide-react";
-
+import { useLanguage } from "@/lib/language-context";
 const TEMPLATES = [
   {
     id: "onboarding",
-    name: "Employee Onboarding",
+    name: "EMPLOYEE_ONBOARDING",
     description: "Provision accounts, assign devices, schedule orientation, and send welcome notifications.",
     icon: UserPlus,
     module: "HR",
-    risk: "Low",
+    risk: "LOW",
     prompt: "Initiate full employee onboarding workflow: create accounts, provision devices, assign buddy, schedule orientation.",
-    phase: "Phase 2",
+    phase: "PHASE_2",
   },
   {
     id: "offboarding",
@@ -83,10 +83,12 @@ const riskBadge = (r: string) => {
 };
 
 export default function Workflows() {
+  const { t } = useLanguage();
   const { data: runs, isLoading: runsLoading, refetch } = useListWorkflowRuns();
   const createRequest = useCreateRequest();
   const { toast } = useToast();
   const [launching, setLaunching] = React.useState<string | null>(null);
+
 
   const handleLaunch = async (template: typeof TEMPLATES[0]) => {
     setLaunching(template.id);
@@ -112,34 +114,34 @@ export default function Workflows() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {TEMPLATES.map((t) => (
-          <Card key={t.id} className="border-border/50 bg-card/50 backdrop-blur hover:border-primary/40 transition-colors group flex flex-col">
+        {TEMPLATES.map((template) => (
+          <Card key={template.id} className="border-border/50 bg-card/50 backdrop-blur hover:border-primary/40 transition-colors group flex flex-col">
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                    <t.icon className="w-5 h-5 text-primary" />
+                    <template.icon className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <CardTitle className="text-sm font-semibold group-hover:text-primary transition-colors">{t.name}</CardTitle>
+                    <CardTitle className="text-sm font-semibold group-hover:text-primary transition-colors">{t[template.name as keyof typeof t] ?? template.name}</CardTitle>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <Badge variant="outline" className="text-[10px] px-1.5">{t.module}</Badge>
-                      <Badge variant="outline" className={`text-[10px] px-1.5 ${riskBadge(t.risk)}`}>{t.risk}</Badge>
+                      <Badge variant="outline" className="text-[10px] px-1.5">{t[template.module as keyof typeof t] ?? template.module}</Badge>
+                      <Badge variant="outline" className={`text-[10px] px-1.5 ${riskBadge(template.risk)}`}>{t[template.risk as keyof typeof t] ?? template.risk}</Badge>
                     </div>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-[10px] border-primary/20 text-primary whitespace-nowrap">{t.phase}</Badge>
+                <Badge variant="outline" className="text-[10px] border-primary/20 text-primary whitespace-nowrap">{t[template.phase as keyof typeof t] ?? template.phase}</Badge>
               </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between gap-4 pt-0">
-              <CardDescription className="text-sm leading-relaxed">{t.description}</CardDescription>
+              <CardDescription className="text-sm leading-relaxed">{t[template.description as keyof typeof t] ?? template.description}</CardDescription>
               <Button
                 size="sm"
                 className="w-full gap-2"
-                disabled={launching === t.id}
-                onClick={() => handleLaunch(t)}
+                disabled={launching === template.id}
+                onClick={() => handleLaunch(template)}
               >
-                {launching === t.id ? (
+                {launching === template.id ? (
                   <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Launching…</>
                 ) : (
                   <><Zap className="w-3.5 h-3.5" /> Launch Workflow</>
@@ -172,11 +174,11 @@ export default function Workflows() {
                   <div className="flex items-center gap-3">
                     {statusIcon(run.status)}
                     <div>
-                      <p className="text-sm font-medium">{run.workflowName}</p>
-                      <p className="text-xs text-muted-foreground">{run.module} • {new Date(run.createdAt).toLocaleString()}</p>
+                      <p className="text-sm font-medium">{t[run.workflowName as keyof typeof t] ?? run.workflowName}</p>
+                      <p className="text-xs text-muted-foreground">{t[run.module as keyof typeof t] ?? run.module} • {new Date(run.createdAt).toLocaleString()}</p>
                     </div>
                   </div>
-                  <Badge variant="outline" className="capitalize text-xs">{run.status}</Badge>
+                  <Badge variant="outline" className="capitalize text-xs">{t[run.status as keyof typeof t] ?? run.status}</Badge>
                 </div>
               ))}
             </div>
