@@ -10,11 +10,11 @@ import { useLanguage } from "@/lib/language-context";
 const TEMPLATES = [
   {
     id: "onboarding",
-    name: "EMPLOYEE_ONBOARDING",
+    name: "Employee Onboarding",
     description: "Provision accounts, assign devices, schedule orientation, and send welcome notifications.",
     icon: UserPlus,
     module: "HR",
-    risk: "LOW",
+    risk: "Low",
     prompt: "Initiate full employee onboarding workflow: create accounts, provision devices, assign buddy, schedule orientation.",
     phase: "PHASE_2",
   },
@@ -108,9 +108,9 @@ export default function Workflows() {
       <div>
         <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
           <GitBranch className="w-6 h-6 text-primary" />
-          Workflow Templates
+          {t["Workflow Templates"]}
         </h2>
-        <p className="text-muted-foreground">Phase 2 & 5 — Reusable enterprise automation workflows</p>
+        <p className="text-muted-foreground">{t["Phase 2 & 5 — Reusable enterprise automation workflows"]}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -142,9 +142,9 @@ export default function Workflows() {
                 onClick={() => handleLaunch(template)}
               >
                 {launching === template.id ? (
-                  <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Launching…</>
+                  <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> {t["Launching..."]}</>
                 ) : (
-                  <><Zap className="w-3.5 h-3.5" /> Launch Workflow</>
+                  <><Zap className="w-3.5 h-3.5" /> {t["Launch Workflow"]}</>
                 )}
               </Button>
             </CardContent>
@@ -155,8 +155,8 @@ export default function Workflows() {
       <Card className="border-border/50 bg-card/50 backdrop-blur">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Recent Workflow Runs</CardTitle>
-            <CardDescription>Your previously executed workflows</CardDescription>
+            <CardTitle>{t["Recent Workflow Runs"]}</CardTitle>
+            <CardDescription>{t["Your previously executed workflows"]}</CardDescription>
           </div>
         </CardHeader>
         <CardContent>
@@ -165,7 +165,7 @@ export default function Workflows() {
           ) : !runs || runs.length === 0 ? (
             <div className="text-center py-10 text-muted-foreground">
               <GitBranch className="w-10 h-10 mx-auto mb-3 opacity-30" />
-              <p className="text-sm">No workflow runs yet. Launch one above.</p>
+              <p className="text-sm">{t["No workflow runs yet. Launch one above."]}</p>
             </div>
           ) : (
             <div className="space-y-3">

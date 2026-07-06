@@ -250,6 +250,36 @@ export const translations = {
 
     HUMAN_REVIEW_REQUIRED: "Human review required.",
 
+    "Workflow Templates": "Workflow Templates",
+    "Phase 2 & 5 — Reusable enterprise automation workflows": "Phase 2 & 5 — Reusable enterprise automation workflows",
+    "Launch Workflow": "Launch Workflow",
+    "Launching...": "Launching...",
+    "Recent Workflow Runs": "Recent Workflow Runs",
+    "Your previously executed workflows": "Your previously executed workflows",
+    "No workflow runs yet. Launch one above.": "No workflow runs yet. Launch one above.",
+
+    "Employee Offboarding": "Employee Offboarding",
+    "Revoke access, collect equipment, process final pay, and archive records.": "Revoke access, collect equipment, process final pay, and archive records.",
+
+    "Password Reset": "Password Reset",
+    "Self-service password reset with identity verification. Fully automated, low-risk.": "Self-service password reset with identity verification. Fully automated, low-risk.",
+
+    "Leave Request": "Leave Request",
+    "Submit annual or sick leave with balance check and manager routing.": "Submit annual or sick leave with balance check and manager routing.",
+
+    "Expense Reimbursement": "Expense Reimbursement",
+    "Submit expenses with receipt validation and automatic threshold routing.": "Submit expenses with receipt validation and automatic threshold routing.",
+
+    "Procurement Request": "Procurement Request",
+    "Raise a purchase request with vendor validation and budget approval routing.": "Raise a purchase request with vendor validation and budget approval routing.",
+
+    "Employee Onboarding": "Employee Onboarding",
+    "Provision accounts, assign devices, schedule orientation, and send welcome notifications.": "Provision accounts, assign devices, schedule orientation, and send welcome notifications.",
+    
+    "High": "High",
+    "Medium": "Medium",
+    "Low": "Low",
+
   },
   AR: {
     Overview: "نظرة عامة",
@@ -501,6 +531,35 @@ export const translations = {
     HR_APPROVAL_PENDING: "بانتظار موافقة الموارد البشرية",
 
     HUMAN_REVIEW_REQUIRED: "مطلوب مراجعة بشرية.",
+
+    "Workflow Templates": "قوالب سير العمل",
+    "Phase 2 & 5 — Reusable enterprise automation workflows": "المرحلتان الثانية والخامسة — قوالب سير عمل مؤسسية قابلة لإعادة الاستخدام",
+    "Launch Workflow": "تشغيل سير العمل",
+    "Launching...": "جارٍ تشغيل سير العمل...",
+    "Recent Workflow Runs": "آخر عمليات سير العمل",
+    "Your previously executed workflows": "عمليات سير العمل التي تم تنفيذها سابقًا",
+    "No workflow runs yet. Launch one above.": "لا توجد عمليات سير عمل حتى الآن. قم بتشغيل واحدة من الأعلى.",
+
+    "Employee Offboarding": "إنهاء خدمة الموظف",
+    "Revoke access, collect equipment, process final pay, and archive records.": "إلغاء جميع الصلاحيات، واسترجاع الأجهزة، وإنهاء إجراءات الرواتب، وأرشفة السجلات.",
+
+    "Password Reset": "إعادة تعيين كلمة المرور",
+    "Self-service password reset with identity verification. Fully automated, low-risk.": "إعادة تعيين كلمة المرور ذاتيًا بعد التحقق من الهوية وبشكل آلي بالكامل.",
+
+    "Leave Request": "طلب إجازة",
+    "Submit annual or sick leave with balance check and manager routing.": "تقديم طلب إجازة سنوية أو مرضية مع التحقق من الرصيد وإرساله للمدير.",
+
+    "Expense Reimbursement": "طلب تعويض المصروفات",
+    "Submit expenses with receipt validation and automatic threshold routing.": "إرسال طلب تعويض المصروفات مع التحقق من الإيصالات وتوجيهه تلقائيًا.",
+
+    "Procurement Request": "طلب مشتريات",
+    "Raise a purchase request with vendor validation and budget approval routing.": "إنشاء طلب شراء مع التحقق من المورد واعتماد الميزانية.",
+    "Employee Onboarding": "تهيئة الموظف",
+    "Provision accounts, assign devices, schedule orientation, and send welcome notifications.": "إنشاء الحسابات، وتخصيص الأجهزة، وجدولة التعريف الوظيفي، وإرسال إشعارات الترحيب.",
+
+    "High": "مرتفع",
+    "Medium": "متوسط",
+    "Low": "منخفض",
 
 
   },
@@ -754,6 +813,34 @@ export const translations = {
     HR_APPROVAL_PENDING: "Aprobación de RR. HH. pendiente",
 
     HUMAN_REVIEW_REQUIRED: "Se requiere revisión humana.",
+    "Workflow Templates": "Plantillas de flujo de trabajo",
+    "Phase 2 & 5 — Reusable enterprise automation workflows": "Fases 2 y 5 — Flujos de trabajo empresariales reutilizables",
+    "Launch Workflow": "Iniciar flujo de trabajo",
+    "Launching...": "Iniciando...",
+    "Recent Workflow Runs": "Ejecuciones recientes",
+    "Your previously executed workflows": "Sus flujos de trabajo ejecutados anteriormente",
+    "No workflow runs yet. Launch one above.": "Todavía no hay ejecuciones. Inicie una arriba.",
+
+    "Employee Offboarding": "Desvinculación del empleado",
+    "Revoke access, collect equipment, process final pay, and archive records.": "Revocar accesos, recoger equipos, procesar el pago final y archivar registros.",
+
+    "Password Reset": "Restablecimiento de contraseña",
+    "Self-service password reset with identity verification. Fully automated, low-risk.": "Restablecimiento de contraseña con verificación de identidad. Totalmente automatizado y de bajo riesgo.",
+
+    "Leave Request": "Solicitud de permiso",
+    "Submit annual or sick leave with balance check and manager routing.": "Enviar una solicitud de vacaciones o baja médica con verificación del saldo y aprobación del gerente.",
+
+    "Expense Reimbursement": "Reembolso de gastos",
+    "Submit expenses with receipt validation and automatic threshold routing.": "Enviar gastos con validación de recibos y enrutamiento automático.",
+
+    "Procurement Request": "Solicitud de compras",
+    "Raise a purchase request with vendor validation and budget approval routing.": "Crear una solicitud de compra con validación del proveedor y aprobación del presupuesto.",
+    "Employee Onboarding": "Incorporación de empleados",
+    "Provision accounts, assign devices, schedule orientation, and send welcome notifications.": "Crear cuentas, asignar dispositivos, programar la orientación y enviar notificaciones de bienvenida.",
+
+    "High": "Alto",
+    "Medium": "Medio",
+    "Low": "Bajo",
 
 
   },
@@ -1008,6 +1095,35 @@ export const translations = {
 
     HUMAN_REVIEW_REQUIRED: "Menselijke beoordeling vereist.",
 
+    "Workflow Templates": "Workflowsjablonen",
+    "Phase 2 & 5 — Reusable enterprise automation workflows": "Fase 2 en 5 — Herbruikbare bedrijfsworkflows",
+    "Launch Workflow": "Workflow starten",
+    "Launching...": "Starten...",
+    "Recent Workflow Runs": "Recente workflowuitvoeringen",
+    "Your previously executed workflows": "Uw eerder uitgevoerde workflows",
+    "No workflow runs yet. Launch one above.": "Nog geen workflows uitgevoerd. Start er hierboven een.",
+
+    "Employee Offboarding": "Uitdiensttreding medewerker",
+    "Revoke access, collect equipment, process final pay, and archive records.": "Toegang intrekken, apparatuur innemen, eindafrekening verwerken en dossiers archiveren.",
+
+    "Password Reset": "Wachtwoord opnieuw instellen",
+    "Self-service password reset with identity verification. Fully automated, low-risk.": "Zelfservice wachtwoordreset met identiteitscontrole. Volledig geautomatiseerd en laag risico.",
+
+    "Leave Request": "Verlofaanvraag",
+    "Submit annual or sick leave with balance check and manager routing.": "Dien een verlofaanvraag in met saldocontrole en goedkeuring door de manager.",
+
+    "Expense Reimbursement": "Onkostenvergoeding",
+    "Submit expenses with receipt validation and automatic threshold routing.": "Dien onkosten in met validatie van bonnetjes en automatische verwerking.",
+
+    "Procurement Request": "Inkoopaanvraag",
+    "Raise a purchase request with vendor validation and budget approval routing.": "Maak een inkoopaanvraag met leverancierscontrole en budgetgoedkeuring.",
+    "Employee Onboarding": "Medewerker onboarding",
+    "Provision accounts, assign devices, schedule orientation, and send welcome notifications.": "Accounts aanmaken, apparaten toewijzen, de introductie plannen en welkomstmeldingen verzenden.",
+
+    "High": "Hoog",
+    "Medium": "Gemiddeld",
+    "Low": "Laag",
+
 
   },
   FR: {
@@ -1260,6 +1376,35 @@ export const translations = {
     HR_APPROVAL_PENDING: "Approbation RH en attente",
 
     HUMAN_REVIEW_REQUIRED: "Révision humaine requise.",
+
+    "Workflow Templates": "Modèles de workflow",
+    "Phase 2 & 5 — Reusable enterprise automation workflows": "Phases 2 et 5 — Workflows d'entreprise réutilisables",
+    "Launch Workflow": "Lancer le workflow",
+    "Launching...": "Lancement...",
+    "Recent Workflow Runs": "Exécutions récentes",
+    "Your previously executed workflows": "Vos workflows exécutés précédemment",
+    "No workflow runs yet. Launch one above.": "Aucun workflow exécuté pour le moment. Lancez-en un ci-dessus.",
+
+    "Employee Offboarding": "Départ d'un employé",
+    "Revoke access, collect equipment, process final pay, and archive records.": "Révoquer les accès, récupérer le matériel, traiter le solde de tout compte et archiver les dossiers.",
+
+    "Password Reset": "Réinitialisation du mot de passe",
+    "Self-service password reset with identity verification. Fully automated, low-risk.": "Réinitialisation du mot de passe avec vérification d'identité. Entièrement automatisée et à faible risque.",
+
+    "Leave Request": "Demande de congé",
+    "Submit annual or sick leave with balance check and manager routing.": "Soumettre une demande de congé avec vérification du solde et validation du responsable.",
+
+    "Expense Reimbursement": "Remboursement des frais",
+    "Submit expenses with receipt validation and automatic threshold routing.": "Soumettre des frais avec validation des justificatifs et routage automatique.",
+
+    "Procurement Request": "Demande d'achat",
+    "Raise a purchase request with vendor validation and budget approval routing.": "Créer une demande d'achat avec validation du fournisseur et approbation du budget.",
+    "Employee Onboarding": "Intégration des employés",
+    "Provision accounts, assign devices, schedule orientation, and send welcome notifications.": "Créer les comptes, attribuer les équipements, planifier l'intégration et envoyer les notifications de bienvenue.",
+
+    "High": "Élevé",
+    "Medium": "Moyen",
+    "Low": "Faible",
               }
 } as const;
 
