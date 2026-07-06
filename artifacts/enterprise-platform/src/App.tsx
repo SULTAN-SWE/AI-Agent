@@ -6,6 +6,7 @@ import { AppLayout } from "@/components/layout/app-layout";
 import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
 
+
 import Dashboard from "@/pages/dashboard";
 import Workspace from "@/pages/workspace";
 import Departments from "@/pages/departments";
@@ -16,7 +17,9 @@ import Security from "@/pages/security";
 import Notifications from "@/pages/notifications";
 import Workflows from "@/pages/workflows";
 import Agents from "@/pages/agents";
+import AIAssistant from "@/pages/ai-assistant";
 import { LanguageProvider } from "@/lib/language-context";
+import Settings from "@/pages/settings";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,7 +55,17 @@ function Router() {
       <Route path="/security"><AppLayout><Security /></AppLayout></Route>
       <Route path="/notifications"><AppLayout><Notifications /></AppLayout></Route>
       <Route path="/workflows"><AppLayout><Workflows /></AppLayout></Route>
+      <Route path="/ai-assistant">
+        <AppLayout>
+          <AIAssistant />
+        </AppLayout>
+      </Route>
       <Route path="/agents"><AppLayout><Agents /></AppLayout></Route>
+      <Route path="/settings">
+      <AppLayout>
+        <Settings />
+      </AppLayout>
+    </Route>
       <Route><AppLayout><NotFound /></AppLayout></Route>
     </Switch>
   );

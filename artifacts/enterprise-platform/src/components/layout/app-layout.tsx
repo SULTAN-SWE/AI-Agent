@@ -17,6 +17,7 @@ import {
   Sun,
   GitBranch,
   Bot,
+  Settings as SettingsIcon,
   Menu,
   X
 } from "lucide-react";
@@ -79,13 +80,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { href: "/dashboard", label: t.Overview, icon: LayoutDashboard, roles: ["employee", "manager", "executive", "admin"] },
     { href: "/workspace", label: t.Workspace, icon: TerminalSquare, roles: ["employee", "manager", "executive", "admin"] },
-    { href: "/workflows", label: "Workflows", icon: GitBranch, roles: ["employee", "manager", "executive", "admin"] },
+    { href: "/ai-assistant", label: t.AIAssistant, icon: Bot,roles: ["employee", "manager", "executive", "admin"],},
+    { href: "/settings", label: t.Settings, icon: SettingsIcon, roles: ["employee", "manager", "executive", "admin"],
+},
+    { href: "/workflows", label: t.Workflows, icon: GitBranch, roles: ["employee", "manager", "executive", "admin"] },
     { href: "/departments", label: t.Departments, icon: Building2, roles: ["employee", "manager", "executive", "admin"] },
     { href: "/approvals", label: t.Approvals, icon: CheckSquare, roles: ["manager", "executive", "admin"] },
     { href: "/knowledge", label: t.Knowledge, icon: BookOpen, roles: ["employee", "manager", "executive", "admin"] },
     { href: "/reports", label: t.Reports, icon: BarChart3, roles: ["executive", "admin"] },
     { href: "/agents", label: "AI Agents", icon: Bot, roles: ["executive", "admin"] },
     { href: "/security", label: t.Security, icon: ShieldAlert, roles: ["admin"] },
+  
   ];
 
   const visibleNavItems = navItems.filter(item => item.roles.includes(role));
