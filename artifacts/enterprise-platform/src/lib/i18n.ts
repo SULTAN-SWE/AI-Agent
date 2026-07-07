@@ -376,6 +376,51 @@ export const translations = {
     Password: "Password",
     CreateUser: "Create User",
     Manager: "Manager",
+    EditUser: "Edit User",
+    ResetPassword: "Reset Password",
+    DisableUser: "Disable User",
+    DeleteUser: "Delete User",
+    DeleteUserConfirmation: "Are you sure you want to delete this user?",
+    Delete: "Delete",
+    Showing: "Showing",
+    Of: "of",
+    Users: "users",
+    Previous: "Previous",
+    Next: "Next",
+    Disabled: "Disabled",
+    LastSynchronization: "Last Synchronization",
+    MinutesAgo: "minutes ago",
+    LastUserCreated: "Last User Created",
+    LockedAccounts: "Locked Accounts",
+    EnterpriseAccount: "Enterprise Account",
+    PasswordReset: "Password Reset",
+    PasswordResetSent: "Password reset email sent successfully.",
+    NoUsersFound: "No users found",
+    TryAnotherSearch: "Try another search or filter.",
+    UserCreated: "User Created",
+    UserCreatedDescription: "User has been created successfully.",
+
+    UserUpdated: "User Updated",
+    UserUpdatedDescription: "User has been updated successfully.",
+
+    UserDeleted: "User Deleted",
+    UserDeletedDescription: "User has been deleted successfully.",
+
+    ValidationError: "Validation Error",
+    RequiredFieldsMessage: "Please fill in all required fields.",
+
+    InvalidEmail: "Invalid Email",
+    InvalidEmailDescription: "Please enter a valid email address.",
+
+    EmailAlreadyExists: "Email Already Exists",
+    EmailAlreadyExistsDescription: "A user with this email already exists.",
+
+    UserDisabled: "User Disabled",
+    UserDisabledDescription: "The user has been disabled successfully.",
+
+    UserEnabled: "User Enabled",
+    UserEnabledDescription: "The user has been enabled successfully.",
+    ViewUser: "View User",
 
   },
   AR: {
@@ -755,6 +800,51 @@ export const translations = {
     Password: "كلمة المرور",
     CreateUser: "إنشاء مستخدم",
     Manager: "مدير",
+    EditUser: "تعديل المستخدم",
+    ResetPassword: "إعادة تعيين كلمة المرور",
+    DisableUser: "تعطيل المستخدم",
+    DeleteUser: "حذف المستخدم",
+    DeleteUserConfirmation: "هل أنت متأكد من حذف هذا المستخدم؟",
+    Delete: "حذف",
+    Showing: "عرض",
+    Of: "من",
+    Users: "مستخدم",
+    Previous: "السابق",
+    Next: "التالي",
+    Disabled: "معطل",
+    LastSynchronization: "آخر مزامنة",
+    MinutesAgo: "دقائق مضت",
+    LastUserCreated: "آخر مستخدم تم إنشاؤه",
+    LockedAccounts: "الحسابات المقفلة",
+    EnterpriseAccount: "حساب المؤسسة",
+    PasswordReset: "إعادة تعيين كلمة المرور",
+    PasswordResetSent: "تم إرسال رابط إعادة تعيين كلمة المرور بنجاح.",
+    NoUsersFound: "لم يتم العثور على مستخدمين",
+    TryAnotherSearch: "جرّب بحثًا أو فلترًا آخر.",
+    UserCreated: "تم إنشاء المستخدم",
+    UserCreatedDescription: "تم إنشاء المستخدم بنجاح.",
+
+    UserUpdated: "تم تحديث المستخدم",
+    UserUpdatedDescription: "تم تحديث المستخدم بنجاح.",
+
+    UserDeleted: "تم حذف المستخدم",
+    UserDeletedDescription: "تم حذف المستخدم بنجاح.",
+
+    ValidationError: "خطأ في التحقق",
+    RequiredFieldsMessage: "يرجى تعبئة جميع الحقول المطلوبة.",
+
+    InvalidEmail: "بريد إلكتروني غير صالح",
+    InvalidEmailDescription: "يرجى إدخال بريد إلكتروني صالح.",
+
+    EmailAlreadyExists: "البريد الإلكتروني مستخدم بالفعل",
+    EmailAlreadyExistsDescription: "يوجد مستخدم يستخدم هذا البريد الإلكتروني بالفعل.",
+
+    UserDisabled: "تم تعطيل المستخدم",
+    UserDisabledDescription: "تم تعطيل المستخدم بنجاح.",
+
+    UserEnabled: "تم تفعيل المستخدم",
+    UserEnabledDescription: "تم تفعيل المستخدم بنجاح.",
+    ViewUser: "عرض المستخدم",
 
   },
   ES: {
@@ -1132,7 +1222,51 @@ export const translations = {
     Password: "Contraseña",
     CreateUser: "Crear usuario",
     Manager: "Gerente",
-            
+    EditUser: "Editar usuario",
+    ResetPassword: "Restablecer contraseña",
+    DisableUser: "Deshabilitar usuario",
+    DeleteUser: "Eliminar usuario",
+    DeleteUserConfirmation: "¿Está seguro de que desea eliminar este usuario?",
+    Delete: "Eliminar",
+    Showing: "Mostrando",
+    Of: "de",
+    Users: "usuarios",
+    Previous: "Anterior",
+    Next: "Siguiente",
+    Disabled: "Deshabilitado",
+    LastSynchronization: "Última sincronización",
+    MinutesAgo: "minutos atrás",
+    LastUserCreated: "Último usuario creado",
+    LockedAccounts: "Cuentas bloqueadas",
+    EnterpriseAccount: "Cuenta empresarial",
+    PasswordReset: "Restablecer contraseña",
+    PasswordResetSent: "El correo para restablecer la contraseña se envió correctamente.",
+    NoUsersFound: "No se encontraron usuarios",
+    TryAnotherSearch: "Prueba otra búsqueda o filtro.",
+    UserCreated: "Usuario creado",
+    UserCreatedDescription: "El usuario se ha creado correctamente.",
+
+    UserUpdated: "Usuario actualizado",
+    UserUpdatedDescription: "El usuario se ha actualizado correctamente.",
+
+    UserDeleted: "Usuario eliminado",
+    UserDeletedDescription: "El usuario se ha eliminado correctamente.",
+
+    ValidationError: "Error de validación",
+    RequiredFieldsMessage: "Por favor, complete todos los campos obligatorios.",
+
+    InvalidEmail: "Correo electrónico no válido",
+    InvalidEmailDescription: "Por favor, introduce un correo electrónico válido.",
+
+    EmailAlreadyExists: "El correo electrónico ya existe",
+    EmailAlreadyExistsDescription: "Ya existe un usuario con este correo electrónico.",
+
+    UserDisabled: "Usuario deshabilitado",
+    UserDisabledDescription: "El usuario ha sido deshabilitado correctamente.",
+
+    UserEnabled: "Usuario habilitado",
+    UserEnabledDescription: "El usuario ha sido habilitado correctamente.",
+    ViewUser: "Ver usuario",
 
   },
   NL: {
@@ -1511,6 +1645,50 @@ export const translations = {
     Password: "Wachtwoord",
     CreateUser: "Gebruiker aanmaken",
     Manager: "Manager",
+    EditUser: "Gebruiker bewerken",
+    ResetPassword: "Wachtwoord opnieuw instellen",
+    DisableUser: "Gebruiker uitschakelen",
+    DeleteUser: "Gebruiker verwijderen",
+    DeleteUserConfirmation: "Weet u zeker dat u deze gebruiker wilt verwijderen?",
+    Delete: "Verwijderen",
+    Showing: "Weergeven",
+    Of: "van",
+    Users: "gebruikers",
+    Previous: "Vorige",
+    Next: "Volgende",
+    Disabled: "Uitgeschakeld",
+    LastSynchronization: "Laatste synchronisatie",
+    MinutesAgo: "minuten geleden",
+    LastUserCreated: "Laatst aangemaakte gebruiker",
+    LockedAccounts: "Vergrendelde accounts",
+    EnterpriseAccount: "Bedrijfsaccount",
+    PasswordReset: "Wachtwoord opnieuw instellen",
+    PasswordResetSent: "De e-mail voor het opnieuw instellen van het wachtwoord is verzonden.",
+    NoUsersFound: "Geen gebruikers gevonden",
+    TryAnotherSearch: "Probeer een andere zoekopdracht of filter.",
+    UserCreated: "Gebruiker aangemaakt",
+    UserCreatedDescription: "De gebruiker is succesvol aangemaakt.",
+
+    UserUpdated: "Gebruiker bijgewerkt",
+    UserUpdatedDescription: "De gebruiker is succesvol bijgewerkt.",
+
+    UserDeleted: "Gebruiker verwijderd",
+    UserDeletedDescription: "De gebruiker is succesvol verwijderd.",
+
+    ValidationError: "Validatiefout",
+    RequiredFieldsMessage: "Vul alle verplichte velden in.",
+
+    InvalidEmail: "Ongeldig e-mailadres",
+    InvalidEmailDescription: "Voer een geldig e-mailadres in.",
+
+    EmailAlreadyExists: "E-mailadres bestaat al",
+    EmailAlreadyExistsDescription: "Er bestaat al een gebruiker met dit e-mailadres.",
+    UserDisabled: "Gebruiker uitgeschakeld",
+    UserDisabledDescription: "De gebruiker is succesvol uitgeschakeld.",
+
+    UserEnabled: "Gebruiker ingeschakeld",
+    UserEnabledDescription: "De gebruiker is succesvol ingeschakeld.",
+    ViewUser: "Gebruiker bekijken",
 
   },
   FR: {
@@ -1889,7 +2067,53 @@ export const translations = {
     Password: "Mot de passe",
     CreateUser: "Créer un utilisateur",
     Manager: "Responsable",
-              }
+    EditUser: "Modifier l'utilisateur",
+    ResetPassword: "Réinitialiser le mot de passe",
+    DisableUser: "Désactiver l'utilisateur",
+    DeleteUser: "Supprimer l'utilisateur",
+    DeleteUserConfirmation: "Voulez-vous vraiment supprimer cet utilisateur ?",
+    Delete: "Supprimer",
+    Showing: "Affichage",
+    Of: "sur",
+    Users: "utilisateurs",
+    Previous: "Précédent",
+    Next: "Suivant",
+    Disabled: "Désactivé",
+    LastSynchronization: "Dernière synchronisation",
+    MinutesAgo: "minutes auparavant",
+    LastUserCreated: "Dernier utilisateur créé",
+    LockedAccounts: "Comptes verrouillés",
+    EnterpriseAccount: "Compte d'entreprise",
+    PasswordReset: "Réinitialisation du mot de passe",
+    PasswordResetSent: "L'e-mail de réinitialisation du mot de passe a été envoyé avec succès.",
+    NoUsersFound: "Aucun utilisateur trouvé",
+    TryAnotherSearch: "Essayez une autre recherche ou un autre filtre.",
+    UserCreated: "Utilisateur créé",
+    UserCreatedDescription: "L'utilisateur a été créé avec succès.",
+
+    UserUpdated: "Utilisateur mis à jour",
+    UserUpdatedDescription: "L'utilisateur a été mis à jour avec succès.",
+
+    UserDeleted: "Utilisateur supprimé",
+    UserDeletedDescription: "L'utilisateur a été supprimé avec succès.",
+
+    ValidationError: "Erreur de validation",
+    RequiredFieldsMessage: "Veuillez remplir tous les champs obligatoires.",
+
+    InvalidEmail: "Adresse e-mail invalide",
+    InvalidEmailDescription: "Veuillez saisir une adresse e-mail valide.",
+
+    EmailAlreadyExists: "L'adresse e-mail existe déjà",
+    EmailAlreadyExistsDescription: "Un utilisateur possède déjà cette adresse e-mail.",
+
+    UserDisabled: "Utilisateur désactivé",
+    UserDisabledDescription: "L'utilisateur a été désactivé avec succès.",
+
+    UserEnabled: "Utilisateur activé",
+    UserEnabledDescription: "L'utilisateur a été activé avec succès.",
+    ViewUser: "Voir l'utilisateur",
+
+     }
 } as const;
 
 export type Language = keyof typeof translations;
