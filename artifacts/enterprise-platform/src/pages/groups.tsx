@@ -35,21 +35,34 @@ const { t } = useLanguage();
 type Group = {
   id: string;
   name: string;
+  description: string;
   type: string;
   manager: string;
   members: number;
+  memberList: string[];
   aiAgents: string[];
   aiWorkspaceAccess: string[];
+  permissions: string[];
   status: string;
 };
-
 const [groups, setGroups] = useState<Group[]>([
   {
     id: "GRP-001",
     name: "Executive Leadership",
+    description: "Executive leadership team with strategic AI workspaces.",
     type: "Executive",
     manager: "John Doe",
     members: 8,
+    memberList: [
+  "John Doe",
+  "Sarah Ahmed",
+  "Michael Brown",
+  "Emma Wilson",
+  "David Smith",
+  "James Lee",
+  "Olivia Clark",
+  "Sophia White",
+],
     aiAgents: [
       "Executive Agent",
       "Finance Agent",
@@ -58,6 +71,12 @@ const [groups, setGroups] = useState<Group[]>([
       "Executive AI",
       "Finance AI",
     ],
+    permissions: [
+  "AI Workspace",
+  "Knowledge",
+  "Reports",
+  "Approvals",
+],
     status: t.Active,
   },
    
@@ -65,9 +84,17 @@ const [groups, setGroups] = useState<Group[]>([
   {
     id: "GRP-002",
     name: "Human Resources",
+    description: "Human resources department and employee operations.",
     type: "Department",
     manager: "Sarah Ahmed",
     members: 24,
+    memberList: [
+  "Sarah Ahmed",
+  "Nora Ali",
+  "Omar Hassan",
+  "Mona Ibrahim",
+],
+
     aiAgents: [
       "HR Agent",
     ],
@@ -75,15 +102,28 @@ const [groups, setGroups] = useState<Group[]>([
       "HR AI",
       "Knowledge AI",
     ],
+    permissions: [
+  "AI Workspace",
+  "Knowledge",
+],
+
     status: t.Active,
   },
 
   {
     id: "GRP-003",
     name: "IT Operations",
+    description: "IT infrastructure, security and enterprise systems.",
     type: "Department",
     manager: "Michael Brown",
     members: 17,
+    memberList: [
+  "Michael Brown",
+  "Adam Scott",
+  "Daniel Green",
+  "Robert Hall",
+],
+
     aiAgents: [
       "IT Agent",
       "Security Agent",
@@ -92,6 +132,11 @@ const [groups, setGroups] = useState<Group[]>([
       "IT AI",
       "Security AI",
     ],
+    permissions: [
+  "AI Workspace",
+  "Security",
+  "Workflows",
+],
     status: t.Active,
   },
 ]);
@@ -105,9 +150,141 @@ const [statusFilter, setStatusFilter] = useState("");
 const [viewOpen, setViewOpen] = useState(false);
 
 const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
-console.log("🔥🔥🔥 GROUPS PAGE RENDERED 🔥🔥🔥");
 
+const [createOpen, setCreateOpen] = useState(false);
 
+const [editOpen, setEditOpen] = useState(false);
+
+const [editGroup, setEditGroup] = useState<Group>({
+  id: "",
+  name: "",
+  description: "",
+  type: "Department",
+  manager: "",
+  members: 0,
+  memberList: [],
+  aiAgents: [],
+  aiWorkspaceAccess: [],
+  permissions: [],
+  status: t.Active,
+});
+const [newGroup, setNewGroup] = useState({
+  name: "",
+  description: "",
+  type: "Department",
+  manager: "",
+  members: 0,
+  memberList: [] as string[],
+  aiAgents: [] as string[],
+  aiWorkspaceAccess: [] as string[],
+  permissions: [] as string[],
+  status: t.Active,
+});
+
+const executiveGroups = groups.filter(
+  (group) => group.type === "Executive"
+).length;
+
+const departmentGroups = groups.filter(
+  (group) => group.type === "Department"
+).length;
+
+const totalAgents = groups.reduce(
+  (total, group) => total + group.aiAgents.length,
+  0
+);
+
+const filteredGroups = groups.filter((group) => {
+
+  const matchesSearch =
+    group.name.toLowerCase().includes(search.toLowerCase()) ||
+    group.manager.toLowerCase().includes(search.toLowerCase()) ||
+    group.description.toLowerCase().includes(search.toLowerCase());
+
+  const matchesType =
+    typeFilter === "" ||
+    group.type === typeFilter;
+
+  const matchesStatus =
+    statusFilter === "" ||
+    group.status === statusFilter;
+
+  return (
+    matchesSearch &&
+    matchesType &&
+    matchesStatus
+  );
+
+});
+
+const handleCreateGroup = () => {
+
+  if (
+    newGroup.name.trim() === "" ||
+    newGroup.manager.trim() === ""
+  ) {
+
+    return;
+
+  }
+
+  setGroups([
+    ...groups,
+    {
+  id: `GRP-${String(groups.length + 1).padStart(3, "0")}`,
+  name: newGroup.name,
+  description: newGroup.description,
+  type: newGroup.type,
+  manager: newGroup.manager,
+  members: newGroup.members,
+  memberList: newGroup.memberList,
+  aiAgents: newGroup.aiAgents,
+  aiWorkspaceAccess: newGroup.aiWorkspaceAccess,
+  permissions: newGroup.permissions,
+  status: newGroup.status,
+}
+  ]);
+
+  setNewGroup({
+  name: "",
+  description: "",
+  type: "Department",
+  manager: "",
+  members: 0,
+  memberList: [],
+  aiAgents: [],
+  aiWorkspaceAccess: [],
+  permissions: [],
+  status: t.Active,
+});
+
+  setCreateOpen(false);
+
+};
+
+const handleSaveGroup = () => {
+
+  if (selectedGroup === null) return;
+
+  const updatedGroups = [...groups];
+
+  updatedGroups[selectedGroup] = editGroup;
+
+  setGroups(updatedGroups);
+
+  setEditOpen(false);
+
+};
+
+const handleDeleteGroup = (index: number) => {
+
+  const updatedGroups = groups.filter(
+    (_, i) => i !== index
+  );
+
+  setGroups(updatedGroups);
+
+};
   return (
 
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -225,85 +402,164 @@ console.log("🔥🔥🔥 GROUPS PAGE RENDERED 🔥🔥🔥");
 
       </div>
 
-      <Card className="border-border bg-card">
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-        <CardContent className="p-5">
+  <Card>
 
-          <div className="flex flex-col xl:flex-row gap-4">
+    <CardContent className="p-6">
 
-            <input
-              className="flex-1 rounded-lg border border-border bg-background p-3"
-              placeholder={t.SearchGroups}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+      <p className="text-sm text-muted-foreground">
 
-            <select
-              className="rounded-lg border border-border bg-background px-4 py-3"
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-            >
+        {t.ExecutiveGroup}
 
-              <option value="">
-                {t.GroupType}
-              </option>
+      </p>
 
-              <option value="Executive">
-                {t.ExecutiveGroup}
-              </option>
+      <h2 className="text-2xl font-bold mt-2">
 
-              <option value="Department">
-                {t.DepartmentGroup}
-              </option>
+        {executiveGroups}
 
-              <option value="Project">
-                {t.ProjectGroup}
-              </option>
+      </h2>
 
-              <option value="AI">
-                {t.AIGroup}
-              </option>
+    </CardContent>
 
-            </select>
+  </Card>
 
-            <select
-              className="rounded-lg border border-border bg-background px-4 py-3"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
+  <Card>
 
-              <option value="">
-                {t.Status}
-              </option>
+    <CardContent className="p-6">
 
-              <option value={t.Active}>
-                {t.Active}
-              </option>
+      <p className="text-sm text-muted-foreground">
 
-              <option value={t.Disabled}>
-                {t.Disabled}
-              </option>
+        {t.DepartmentGroup}
 
-            </select>
+      </p>
 
-            <button
-              className="rounded-lg bg-primary px-6 py-3 text-primary-foreground hover:opacity-90 transition"
-            >
+      <h2 className="text-2xl font-bold mt-2">
 
-              {t.CreateGroup}
+        {departmentGroups}
 
-            </button>
+      </h2>
 
-          </div>
+    </CardContent>
 
-        </CardContent>
+  </Card>
 
-      </Card>
+  <Card>
 
-      <Card className="border-border bg-card">
+    <CardContent className="p-6">
+
+      <p className="text-sm text-muted-foreground">
+
+        {t.AssignedAIAgents}
+
+      </p>
+
+      <h2 className="text-2xl font-bold mt-2">
+
+        {totalAgents}
+
+      </h2>
+
+    </CardContent>
+
+  </Card>
+
+</div>
+
+<Card className="border-border bg-card">
+
+  <CardContent className="p-5">
+
+    <div className="flex flex-col xl:flex-row gap-4">
+
+      <input
+        className="flex-1 rounded-lg border border-border bg-background p-3"
+        placeholder={t.SearchGroups}
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <select
+        className="rounded-lg border border-border bg-background px-4 py-3"
+        value={typeFilter}
+        onChange={(e) => setTypeFilter(e.target.value)}
+      >
+
+        <option value="">
+          {t.GroupType}
+        </option>
+
+        <option value="Executive">
+          {t.ExecutiveGroup}
+        </option>
+
+        <option value="Department">
+          {t.DepartmentGroup}
+        </option>
+
+        <option value="Project">
+          {t.ProjectGroup}
+        </option>
+
+        <option value="AI">
+          {t.AIGroup}
+        </option>
+
+      </select>
+
+      <select
+        className="rounded-lg border border-border bg-background px-4 py-3"
+        value={statusFilter}
+        onChange={(e) => setStatusFilter(e.target.value)}
+      >
+
+        <option value="">
+          {t.Status}
+        </option>
+
+        <option value={t.Active}>
+          {t.Active}
+        </option>
+
+        <option value={t.Disabled}>
+          {t.Disabled}
+        </option>
+
+      </select>
+
+      <Button
+  onClick={() => {
+
+    setNewGroup({
+      name: "",
+      description: "",
+      type: "Department",
+      manager: "",
+      members: 0,
+      memberList: [],
+      aiAgents: [],
+      aiWorkspaceAccess: [],
+      permissions: [],
+      status: t.Active,
+    });
+    setCreateOpen(true);
+
+  }}
+>
+
+  {t.CreateGroup}
+
+</Button>
+
+    </div>
+
+  </CardContent>
+
+</Card>
+
+<Card className="border-border bg-card">
 
   <CardContent className="p-0 overflow-x-auto">
-
     <table className="w-full">
 
       <thead className="border-b border-border bg-muted/40">
@@ -364,7 +620,7 @@ console.log("🔥🔥🔥 GROUPS PAGE RENDERED 🔥🔥🔥");
 
       <tbody>
 
-        {groups.map((group) => (
+        {filteredGroups.map((group) =>(
 
           <tr
             key={group.id}
@@ -485,23 +741,52 @@ console.log("🔥🔥🔥 GROUPS PAGE RENDERED 🔥🔥🔥");
 
 </DropdownMenuItem>
 
-      <DropdownMenuItem>
+      <DropdownMenuItem
+  onClick={() => {
 
-        <Pencil className="w-4 h-4 mr-2" />
+    setSelectedGroup(groups.indexOf(group));
 
-        {t.EditGroup}
+   setEditGroup({
+  id: group.id,
+  name: group.name,
+  description: group.description,
+  type: group.type,
+  manager: group.manager,
+  members: group.members,
+  memberList: group.memberList,
+  aiAgents: group.aiAgents,
+  aiWorkspaceAccess: group.aiWorkspaceAccess,
+  permissions: group.permissions,
+  status: group.status,
+});
+    setEditOpen(true);
 
-      </DropdownMenuItem>
+  }}
+>
+
+  <Pencil className="w-4 h-4 mr-2" />
+
+  {t.EditGroup}
+
+</DropdownMenuItem>
 
       <DropdownMenuSeparator />
 
-      <DropdownMenuItem>
+      <DropdownMenuItem
+        onClick={() => {
+
+          setSelectedGroup(groups.indexOf(group));
+
+          setViewOpen(true);
+
+        }}
+      >
 
         <Users className="w-4 h-4 mr-2" />
 
         {t.ManageMembers}
 
-      </DropdownMenuItem>
+</DropdownMenuItem>
 
       <DropdownMenuItem>
 
@@ -521,13 +806,15 @@ console.log("🔥🔥🔥 GROUPS PAGE RENDERED 🔥🔥🔥");
 
       <DropdownMenuSeparator />
 
-      <DropdownMenuItem className="text-red-500">
+      <DropdownMenuItem
+          className="text-red-500"
+          onClick={() => handleDeleteGroup(groups.indexOf(group))}>
 
-        <Trash2 className="w-4 h-4 mr-2" />
+          <Trash2 className="w-4 h-4 mr-2" />
 
-        {t.DeleteGroup}
+          {t.DeleteGroup}
 
-      </DropdownMenuItem>
+        </DropdownMenuItem>
 
     </DropdownMenuContent>
 
@@ -679,30 +966,57 @@ console.log("🔥🔥🔥 GROUPS PAGE RENDERED 🔥🔥🔥");
 
   <div className="col-span-2">
 
-    <p className="text-sm text-muted-foreground mb-2">
+  <p className="text-sm text-muted-foreground mb-2">
 
-      {t.AIWorkspaceAccess}
+    {t.AIWorkspaceAccess}
 
-    </p>
+  </p>
 
-    <div className="flex flex-wrap gap-2">
+  <div className="flex flex-wrap gap-2">
 
-      {groups[selectedGroup].aiWorkspaceAccess.map((workspace) => (
+    {groups[selectedGroup].aiWorkspaceAccess.map((workspace) => (
 
-        <span
-          key={workspace}
-          className="rounded-full bg-indigo-500/10 text-indigo-600 px-3 py-1 text-xs"
-        >
+      <span
+        key={workspace}
+        className="rounded-full bg-indigo-500/10 text-indigo-600 px-3 py-1 text-xs"
+      >
 
-          {workspace}
+        {workspace}
 
-        </span>
+      </span>
 
-      ))}
-
-    </div>
+    ))}
 
   </div>
+
+</div>
+
+<div className="col-span-2">
+
+  <p className="text-sm text-muted-foreground mb-2">
+
+    {t.GroupMembers}
+
+  </p>
+
+  <div className="flex flex-wrap gap-2">
+
+    {groups[selectedGroup].memberList.map((member) => (
+
+      <span
+        key={member}
+        className="rounded-full bg-primary/10 text-primary px-3 py-1 text-xs"
+      >
+
+        {member}
+
+      </span>
+
+    ))}
+
+  </div>
+
+</div>
 
 </div>
 
@@ -714,8 +1028,317 @@ console.log("🔥🔥🔥 GROUPS PAGE RENDERED 🔥🔥🔥");
 
       </Dialog>
 
+<Dialog
+  open={createOpen}
+  onOpenChange={setCreateOpen}
+>
+
+  <DialogContent className="max-w-2xl">
+
+    <DialogHeader>
+
+      <DialogTitle>
+
+        {t.CreateGroup}
+
+      </DialogTitle>
+
+    </DialogHeader>
+
+    <div className="grid grid-cols-2 gap-5 mt-4">
+
+      <input
+  className="rounded-lg border border-border bg-background p-3"
+  placeholder={t.Name}
+  value={newGroup.name}
+  onChange={(e) =>
+    setNewGroup({
+      ...newGroup,
+      name: e.target.value,
+    })
+  }
+/>
+
+<textarea
+  className="col-span-2 rounded-lg border border-border bg-background p-3 min-h-[100px]"
+  placeholder={t.GroupDescription}
+  value={newGroup.description}
+  onChange={(e) =>
+    setNewGroup({
+      ...newGroup,
+      description: e.target.value,
+    })
+  }
+/>
+
+<input
+  className="rounded-lg border border-border bg-background p-3"
+  placeholder={t.Manager}
+  value={newGroup.manager}
+  onChange={(e) =>
+    setNewGroup({
+      ...newGroup,
+      manager: e.target.value,
+    })
+  }
+/>
+
+      <select
+        className="rounded-lg border border-border bg-background p-3"
+        value={newGroup.type}
+        onChange={(e) =>
+          setNewGroup({
+            ...newGroup,
+            type: e.target.value,
+          })
+        }
+      >
+
+        <option value="Department">
+          {t.DepartmentGroup}
+        </option>
+
+        <option value="Executive">
+          {t.ExecutiveGroup}
+        </option>
+
+        <option value="Project">
+          {t.ProjectGroup}
+        </option>
+
+        <option value="AI">
+          {t.AIGroup}
+        </option>
+
+      </select>
+
+  <input
+  type="number"
+  className="rounded-lg border border-border bg-background p-3"
+  placeholder={t.TotalMembers}
+  value={newGroup.members}
+  onChange={(e) =>
+    setNewGroup({
+      ...newGroup,
+      members: Number(e.target.value),
+    })
+  }
+/>
+
+<input
+  className="col-span-2 rounded-lg border border-border bg-background p-3"
+  placeholder={t.AIWorkspaceAccess}
+  value={newGroup.aiWorkspaceAccess.join(", ")}
+  onChange={(e) =>
+    setNewGroup({
+      ...newGroup,
+      aiWorkspaceAccess: e.target.value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean),
+    })
+  }
+/>
+
     </div>
 
-  );
+    <div className="flex justify-end gap-3 mt-6">
+
+      <Button
+        variant="outline"
+        onClick={() => setCreateOpen(false)}
+      >
+
+        {t.Cancel}
+
+      </Button>
+
+      <Button
+        onClick={handleCreateGroup}>
+
+        {t.CreateGroup}
+     </Button>
+
+    </div>
+
+  </DialogContent>
+
+</Dialog>
+
+<Dialog
+  open={editOpen}
+  onOpenChange={setEditOpen}
+>
+
+  <DialogContent className="max-w-2xl">
+
+    <DialogHeader>
+
+      <DialogTitle>
+
+        {t.EditGroup}
+
+      </DialogTitle>
+
+    </DialogHeader>
+
+    <div className="grid grid-cols-2 gap-5 mt-4">
+
+      <input
+        className="rounded-lg border border-border bg-background p-3"
+        placeholder={t.Name}
+        value={editGroup.name}
+        onChange={(e) =>
+          setEditGroup({
+            ...editGroup,
+            name: e.target.value,
+          })
+        }
+      />
+
+      <input
+        className="rounded-lg border border-border bg-background p-3"
+        placeholder={t.Manager}
+        value={editGroup.manager}
+        onChange={(e) =>
+          setEditGroup({
+            ...editGroup,
+            manager: e.target.value,
+          })
+        }
+      />
+
+      <select
+        className="rounded-lg border border-border bg-background p-3"
+        value={editGroup.type}
+        onChange={(e) =>
+          setEditGroup({
+            ...editGroup,
+            type: e.target.value,
+          })
+        }
+      >
+
+        <option value="Department">
+          {t.DepartmentGroup}
+        </option>
+
+        <option value="Executive">
+          {t.ExecutiveGroup}
+        </option>
+
+        <option value="Project">
+          {t.ProjectGroup}
+        </option>
+
+        <option value="AI">
+          {t.AIGroup}
+        </option>
+
+      </select>
+
+      <input
+  type="number"
+  className="rounded-lg border border-border bg-background p-3"
+  placeholder={t.TotalMembers}
+  value={editGroup.members}
+  onChange={(e) =>
+    setEditGroup({
+      ...editGroup,
+      members: Number(e.target.value),
+    })
+  }
+/>
+
+<textarea
+  className="col-span-2 rounded-lg border border-border bg-background p-3 min-h-[120px]"
+  placeholder={t.GroupMembers}
+  value={editGroup.memberList.join("\n")}
+  onChange={(e) =>
+    setEditGroup({
+      ...editGroup,
+      memberList: e.target.value
+        .split("\n")
+        .map((member) => member.trim())
+        .filter(Boolean),
+    })
+  }
+/>
+
+<textarea
+  className="col-span-2 rounded-lg border border-border bg-background p-3 min-h-[100px]"
+  placeholder={t.AssignedAIAgents}
+  value={editGroup.aiAgents.join("\n")}
+  onChange={(e) =>
+    setEditGroup({
+      ...editGroup,
+      aiAgents: e.target.value
+        .split("\n")
+        .map((agent) => agent.trim())
+        .filter(Boolean),
+    })
+  }
+/>
+
+<textarea
+  className="col-span-2 rounded-lg border border-border bg-background p-3 min-h-[100px]"
+  placeholder={t.AIWorkspaceAccess}
+  value={editGroup.aiWorkspaceAccess.join("\n")}
+  onChange={(e) =>
+    setEditGroup({
+      ...editGroup,
+      aiWorkspaceAccess: e.target.value
+        .split("\n")
+        .map((workspace) => workspace.trim())
+        .filter(Boolean),
+    })
+  }
+/>
+
+<textarea
+  className="col-span-2 rounded-lg border border-border bg-background p-3 min-h-[100px]"
+  placeholder={t.GroupPermissions}
+  value={editGroup.permissions.join("\n")}
+  onChange={(e) =>
+    setEditGroup({
+      ...editGroup,
+      permissions: e.target.value
+        .split("\n")
+        .map((permission) => permission.trim())
+        .filter(Boolean),
+    })
+  }
+/>
+
+    </div>
+
+    <div className="flex justify-end gap-3 mt-6">
+
+      <Button
+        variant="outline"
+        onClick={() => setEditOpen(false)}
+      >
+
+        {t.Cancel}
+
+      </Button>
+
+      <Button
+        onClick={handleSaveGroup}
+      >
+
+        {t.SaveChanges}
+
+      </Button>
+
+    </div>
+
+  </DialogContent>
+
+</Dialog>
+
+</div>
+
+);
 
 }

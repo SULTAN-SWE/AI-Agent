@@ -548,6 +548,9 @@ export const translations = {
     DeleteGroup: "Delete Group",
     ViewGroup: "View Group",
     EditGroup: "Edit Group",
+    GroupMembers: "Group Members",
+    GroupDescription: "Group Description",
+    GroupPermissions: "Group Permissions",
 
   },
   AR: {
@@ -1099,7 +1102,9 @@ export const translations = {
     DeleteGroup: "حذف المجموعة",
     ViewGroup: "عرض المجموعة",
     EditGroup: "تعديل المجموعة",
-                
+    GroupMembers: "أعضاء المجموعة",
+    GroupDescription: "وصف المجموعة",
+    GroupPermissions: "صلاحيات المجموعة",           
 
   },
   ES: {
@@ -1650,6 +1655,9 @@ export const translations = {
     DeleteGroup: "Eliminar grupo",
     ViewGroup: "Ver grupo",
     EditGroup: "Editar grupo",
+    GroupMembers: "Miembros del Grupo",
+    GroupDescription: "Descripción del Grupo",
+    GroupPermissions: "Permisos del Grupo",
 
   },
   NL: {
@@ -2199,6 +2207,9 @@ export const translations = {
     DeleteGroup: "Groep verwijderen",
     ViewGroup: "Groep bekijken",
     EditGroup: "Groep bewerken",
+    GroupMembers: "Groepsleden",
+    GroupDescription: "Groepsbeschrijving",
+    GroupPermissions: "Groepsmachtigingen",
 
   },
   FR: {
@@ -2749,6 +2760,9 @@ export const translations = {
     DeleteGroup: "Supprimer le groupe",
     ViewGroup: "Voir le groupe",
     EditGroup: "Modifier le groupe",
+    GroupMembers: "Membres du Groupe",
+    GroupDescription: "Description du Groupe",
+    GroupPermissions: "Autorisations du Groupe",
 
      }
 } as const;

@@ -75,11 +75,9 @@ function Router() {
       </AppLayout>
     </Route>
 
-      <Route path="/groups">
+  <Route path="/groups">
   <AppLayout>
-    <div className="p-10 text-4xl font-bold text-green-500">
-      GROUPS ROUTE MATCHED
-    </div>
+    <GroupsPage />
   </AppLayout>
 </Route>
 
