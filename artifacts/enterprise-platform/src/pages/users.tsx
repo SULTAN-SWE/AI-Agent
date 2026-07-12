@@ -126,23 +126,25 @@
   deleted?: boolean;
   groups?: string[];
 };
-  type EditUser = {
-        name: string;
-        email: string;
-        department: string;
-        role: string;
-        status: string;
-        login: string;
-      };
+ type EditUser = {
+  name: string;
+  email: string;
+  department: string;
+  role: string;
+  status: string;
+  login: string;
+  groups: string[];
+};
 
   const [editUser, setEditUser] = useState<EditUser>({
-    name: "",
-    email: "",
-    department: "",
-    role: "Employee",
-    status: t.Active,
-    login: "",
-  });
+  name: "",
+  email: "",
+  department: "",
+  role: "Employee",
+  status: t.Active,
+  login: "",
+  groups: [],
+});
 
   const [users, setUsers] = useState<User[]>([
     {
@@ -445,8 +447,14 @@ const [visibleColumns, setVisibleColumns] = useState({
     ).length;
 
     const disabledUsers = users.filter(
-      (user) => user.status === t.Disabled
-    ).length;
+  (user) => user.status === t.Disabled
+).length;
+
+const departments = Array.from(
+  new Set(
+    users.map((user) => user.department)
+  )
+).sort();
 
     const filteredUsers = users
   .filter((user) => {
@@ -649,15 +657,15 @@ setNewUser({
     const updatedUsers = [...users];
 
     updatedUsers[selectedUser] = {
-      ...updatedUsers[selectedUser],
-      name: editUser.name,
-      email: editUser.email,
-      department: editUser.department,
-      role: editUser.role,
-      status: editUser.status,
-      login: editUser.login,
-    };
-
+  ...updatedUsers[selectedUser],
+  name: editUser.name,
+  email: editUser.email,
+  department: editUser.department,
+  role: editUser.role,
+  status: editUser.status,
+  login: editUser.login,
+  groups: editUser.groups,
+};
     setUsers(updatedUsers);
 
   toast({
@@ -969,27 +977,24 @@ setNewUser({
 
               <SelectContent>
 
-                <SelectItem value="all">
-                  {t.Department}
-                </SelectItem>
+            <SelectItem value="all">
+              {t.Department}
+            </SelectItem>
 
-                <SelectItem value="Operations">
-                  Operations
-                </SelectItem>
+            {departments.map((department) => (
 
-                <SelectItem value="HR">
-                  HR
-                </SelectItem>
+              <SelectItem
+                key={department}
+                value={department}
+              >
 
-                <SelectItem value="Finance">
-                  Finance
-                </SelectItem>
+                {department}
 
-                <SelectItem value="IT">
-                  IT
-                </SelectItem>
+              </SelectItem>
 
-              </SelectContent>
+            ))}
+
+          </SelectContent>
 
             </Select>
 
@@ -1026,6 +1031,17 @@ setNewUser({
             </select>
     <div className="flex gap-2">
 
+  <Button
+    onClick={() => setOpen(true)}
+    className="flex items-center gap-2"
+  >
+
+    <UserPlus className="w-4 h-4" />
+
+    {t.AddUser}
+
+  </Button>
+
   <DropdownMenu>
 
     <DropdownMenuTrigger asChild>
@@ -1037,6 +1053,8 @@ setNewUser({
       </Button>
 
     </DropdownMenuTrigger>
+
+    ...
 
     <DropdownMenuContent align="end">
 
@@ -1856,14 +1874,15 @@ event.target.value = "";
 
               setSelectedUser(index);
 
-              setEditUser({
-                name: user.name,
-                email: user.email,
-                department: user.department,
-                role: user.role,
-                status: user.status,
-                login: user.login,
-              });
+  setEditUser({
+  name: user.name,
+  email: user.email,
+  department: user.department,
+  role: user.role,
+  status: user.status,
+  login: user.login,
+  groups: user.groups ?? [],
+});
 
               setEditOpen(true);
 
@@ -2263,14 +2282,15 @@ event.target.value = "";
 
             if (selectedUser !== null) {
 
-              setEditUser({
-                name: users[selectedUser].name,
-                email: users[selectedUser].email,
-                department: users[selectedUser].department,
-                role: users[selectedUser].role,
-                status: users[selectedUser].status,
-                login: users[selectedUser].login,
-              });
+             setEditUser({
+              name: users[selectedUser].name,
+              email: users[selectedUser].email,
+              department: users[selectedUser].department,
+              role: users[selectedUser].role,
+              status: users[selectedUser].status,
+              login: users[selectedUser].login,
+              groups: users[selectedUser].groups ?? [],
+            });
 
             }
 
@@ -3657,14 +3677,14 @@ event.target.value = "";
         if (selectedUser !== null) {
 
           setEditUser({
-            name: users[selectedUser].name,
-            email: users[selectedUser].email,
-            department: users[selectedUser].department,
-            role: users[selectedUser].role,
-            status: users[selectedUser].status,
-            login: users[selectedUser].login,
-          });
-
+          name: users[selectedUser].name,
+          email: users[selectedUser].email,
+          department: users[selectedUser].department,
+          role: users[selectedUser].role,
+          status: users[selectedUser].status,
+          login: users[selectedUser].login,
+          groups: users[selectedUser].groups ?? [],
+        });
         }
 
         setViewOpen(false);
