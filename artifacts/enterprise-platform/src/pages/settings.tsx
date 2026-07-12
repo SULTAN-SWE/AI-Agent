@@ -15,7 +15,32 @@ import type { Language } from "@/lib/i18n";
 
 export default function Settings() {
   const [tab, setTab] = React.useState("profile");
-  const { t, lang, setLang } = useLanguage();
+  const [profilePhoto, setProfilePhoto] =
+  React.useState<string | null>(null);
+
+const [profile, setProfile] = React.useState({
+
+  fullName: "John Doe",
+
+  email: "john.doe@nexus-ai.com",
+
+  department: "Operations",
+
+  jobTitle: "Operations Manager",
+
+  phone: "+966 50 123 4567",
+
+  timeZone: "Asia/Riyadh",
+
+});
+
+const [savingProfile, setSavingProfile] =
+  React.useState(false);
+
+const [profileSaved, setProfileSaved] =
+  React.useState(false);
+
+const { t, lang, setLang } = useLanguage();
   const tabs = [
   { id: "profile", label: t.Profile, icon: User },
   { id: "company", label: t.Company, icon: Building2 },
@@ -25,6 +50,27 @@ export default function Settings() {
   { id: "security", label: t.SecuritySettings, icon: Shield },
   { id: "integrations", label: t.Integrations, icon: PlugZap },
 ];
+const handleSaveProfile = () => {
+
+  setSavingProfile(true);
+
+  setProfileSaved(false);
+
+  setTimeout(() => {
+
+    setSavingProfile(false);
+
+    setProfileSaved(true);
+
+    setTimeout(() => {
+
+      setProfileSaved(false);
+
+    }, 3000);
+
+  }, 1500);
+
+};
 
   return (
     <div className="grid grid-cols-12 gap-6 animate-in fade-in duration-500">
@@ -84,21 +130,72 @@ export default function Settings() {
 
       <div className="rounded-xl border border-border bg-card p-6 flex flex-col items-center">
 
-        <div className="w-32 h-32 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-5xl font-bold text-primary">
-          JD
-        </div>
+        <div className="w-32 h-32 overflow-hidden rounded-full border-2 border-primary/20 bg-primary/10 flex items-center justify-center">
 
-        <h3 className="mt-5 text-xl font-semibold">
-          John Doe
-        </h3>
+  {profilePhoto ? (
 
-        <p className="text-muted-foreground">
-          Operations Manager
-        </p>
+    <img
+      src={profilePhoto}
+      alt="Profile"
+      className="h-full w-full object-cover"
+    />
 
-        <button className="mt-6 w-full rounded-lg bg-primary px-5 py-2 text-primary-foreground hover:opacity-90 transition">
-          {t.UploadPhoto}
-        </button>
+  ) : (
+
+    <span className="text-5xl font-bold text-primary">
+
+      JD
+
+    </span>
+
+  )}
+
+</div>
+
+<h3 className="mt-5 text-xl font-semibold">
+
+  John Doe
+
+</h3>
+
+<p className="text-muted-foreground">
+
+  Operations Manager
+
+</p>
+
+<input
+  id="profile-photo-upload"
+  type="file"
+  accept="image/*"
+  className="hidden"
+  onChange={(e) => {
+
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+
+      setProfilePhoto(reader.result as string);
+
+    };
+
+    reader.readAsDataURL(file);
+
+  }}
+/>
+
+<label
+  htmlFor="profile-photo-upload"
+  className="mt-6 w-full cursor-pointer rounded-lg bg-primary px-5 py-2 text-center text-primary-foreground hover:opacity-90 transition"
+>
+
+  {t.UploadPhoto}
+
+</label>
 
       </div>
 
@@ -114,9 +211,15 @@ export default function Settings() {
             </label>
 
             <input
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.FullName}
-            />
+            className="w-full rounded-lg border border-border bg-background p-3"
+            value={profile.fullName}
+            onChange={(e) =>
+              setProfile({
+                ...profile,
+                fullName: e.target.value,
+              })
+            }
+          />
           </div>
 
           <div>
@@ -126,7 +229,13 @@ export default function Settings() {
 
             <input
               className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.Email}
+              value={profile.email}
+              onChange={(e) =>
+                setProfile({
+                  ...profile,
+                  email: e.target.value,
+                })
+              }
             />
           </div>
 
@@ -137,7 +246,13 @@ export default function Settings() {
 
             <input
               className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.Department}
+              value={profile.department}
+              onChange={(e) =>
+                setProfile({
+                  ...profile,
+                  department: e.target.value,
+                })
+              }
             />
           </div>
 
@@ -148,7 +263,13 @@ export default function Settings() {
 
             <input
               className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.JobTitle}
+              value={profile.jobTitle}
+              onChange={(e) =>
+                setProfile({
+                  ...profile,
+                  jobTitle: e.target.value,
+                })
+              }
             />
           </div>
 
@@ -159,7 +280,13 @@ export default function Settings() {
 
             <input
               className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.PhoneNumber}
+              value={profile.phone}
+              onChange={(e) =>
+                setProfile({
+                  ...profile,
+                  phone: e.target.value,
+                })
+              }
             />
           </div>
 
@@ -170,7 +297,13 @@ export default function Settings() {
 
             <input
               className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.TimeZone}
+              value={profile.timeZone}
+              onChange={(e) =>
+                setProfile({
+                  ...profile,
+                  timeZone: e.target.value,
+                })
+              }
             />
           </div>
 
@@ -182,8 +315,16 @@ export default function Settings() {
             {t.Cancel}
           </button>
 
-          <button className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90 transition">
-            {t.SaveChanges}
+          <button
+            onClick={handleSaveProfile}
+            disabled={savingProfile}
+            className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90 transition disabled:opacity-50"
+          >
+
+            {savingProfile
+              ? t.Saving
+              : t.SaveChanges}
+
           </button>
 
         </div>
@@ -302,17 +443,43 @@ export default function Settings() {
 
         </div>
 
-        <div className="flex justify-end gap-4 mt-8">
+        <div className="flex items-center justify-between mt-8">
 
-          <button className="rounded-lg border border-border px-5 py-2 hover:bg-muted transition">
-            {t.Cancel}
-          </button>
+  {profileSaved && (
 
-          <button className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90 transition">
-            {t.Save}
-          </button>
+    <span className="text-sm font-medium text-emerald-500">
 
-        </div>
+      ✓ {t.ProfileUpdated}
+
+    </span>
+
+  )}
+
+  <div className="flex gap-4">
+
+    <button
+      className="rounded-lg border border-border px-5 py-2 hover:bg-muted transition"
+    >
+
+      {t.Cancel}
+
+    </button>
+
+    <button
+      onClick={handleSaveProfile}
+      disabled={savingProfile}
+      className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90 transition disabled:opacity-50"
+    >
+
+      {savingProfile
+        ? t.Saving
+        : t.SaveChanges}
+
+    </button>
+
+  </div>
+
+</div>
 
       </div>
 
