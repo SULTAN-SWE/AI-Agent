@@ -2,13 +2,13 @@ import React from "react";
 import { Link, useLocation } from "wouter";
 import { useGetMe, useLogout, useListNotifications } from "@workspace/api-client-react";
 import { translations, Language } from "@/lib/i18n";
-import { 
-  LayoutDashboard, 
-  TerminalSquare, 
-  Building2, 
-  CheckSquare, 
-  BookOpen, 
-  BarChart3, 
+import {
+  LayoutDashboard,
+  TerminalSquare,
+  Building2,
+  CheckSquare,
+  BookOpen,
+  BarChart3,
   ShieldAlert,
   LogOut,
   Bell,
@@ -17,6 +17,7 @@ import {
   Sun,
   GitBranch,
   Bot,
+  Users,
   Settings as SettingsIcon,
   Menu,
   X
@@ -81,8 +82,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     { href: "/dashboard", label: t.Overview, icon: LayoutDashboard, roles: ["employee", "manager", "executive", "admin"] },
     { href: "/workspace", label: t.Workspace, icon: TerminalSquare, roles: ["employee", "manager", "executive", "admin"] },
     { href: "/ai-assistant", label: t.AIAssistant, icon: Bot,roles: ["employee", "manager", "executive", "admin"],},
-    { href: "/settings", label: t.Settings, icon: SettingsIcon, roles: ["employee", "manager", "executive", "admin"],
-},
+    { href: "/users", label: t.UserManagement, icon: Users, roles: ["employee", "manager", "executive", "admin"],},
+    { href: "/settings", label: t.Settings, icon: SettingsIcon, roles: ["employee", "manager", "executive", "admin"],},
+    { href: "/groups", label: t.Groups, icon: Users, roles: ["employee", "manager", "executive", "admin"] },
     { href: "/workflows", label: t.Workflows, icon: GitBranch, roles: ["employee", "manager", "executive", "admin"] },
     { href: "/departments", label: t.Departments, icon: Building2, roles: ["employee", "manager", "executive", "admin"] },
     { href: "/approvals", label: t.Approvals, icon: CheckSquare, roles: ["manager", "executive", "admin"] },

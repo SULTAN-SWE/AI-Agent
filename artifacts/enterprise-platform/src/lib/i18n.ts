@@ -522,6 +522,33 @@ export const translations = {
     AINotifications: "AI Notifications",
     AIMemorySummary: "AI Memory Summary",
 
+    GroupManagement: "Group Management",
+
+    GroupManagementDescription:
+    "Manage enterprise groups, collaboration teams and AI workspaces.",
+
+    TotalGroups: "Total Groups",
+
+    ActiveGroups: "Active Groups",
+
+    AIGroups: "AI Groups",
+
+    TotalMembers: "Total Members",
+
+    SearchGroups: "Search groups...",
+    CreateGroup: "Create Group",
+    GroupType: "Group Type",
+    DepartmentGroup: "Department",
+    ExecutiveGroup: "Executive",
+    ProjectGroup: "Project",
+    AIGroup: "AI Group",
+    ManageMembers: "Manage Members",
+    ManageAIAgents: "Manage AI Agents",
+    ManagePermissions: "Manage Permissions",
+    DeleteGroup: "Delete Group",
+    ViewGroup: "View Group",
+    EditGroup: "Edit Group",
+
   },
   AR: {
     Overview: "نظرة عامة",
@@ -1045,6 +1072,33 @@ export const translations = {
     DefaultWorkspace: "مساحة العمل الافتراضية",
     AINotifications: "إشعارات الذكاء الاصطناعي",
     AIMemorySummary: "ملخص ذاكرة الذكاء الاصطناعي",
+    GroupManagement: "إدارة المجموعات",
+
+    GroupManagementDescription:
+    "إدارة مجموعات المؤسسة وفرق التعاون ومساحات عمل الذكاء الاصطناعي.",
+
+    TotalGroups: "إجمالي المجموعات",
+
+    ActiveGroups: "المجموعات النشطة",
+
+    AIGroups: "مجموعات الذكاء الاصطناعي",
+
+    TotalMembers: "إجمالي الأعضاء",
+
+    SearchGroups: "البحث في المجموعات...",
+    CreateGroup: "إنشاء مجموعة",
+    GroupType: "نوع المجموعة",
+    DepartmentGroup: "قسم",
+    ExecutiveGroup: "تنفيذية",
+    ProjectGroup: "مشروع",
+    AIGroup: "مجموعة ذكاء اصطناعي",
+
+    ManageMembers: "إدارة الأعضاء",
+    ManageAIAgents: "إدارة وكلاء الذكاء الاصطناعي",
+    ManagePermissions: "إدارة الصلاحيات",
+    DeleteGroup: "حذف المجموعة",
+    ViewGroup: "عرض المجموعة",
+    EditGroup: "تعديل المجموعة",
                 
 
   },
@@ -1569,6 +1623,34 @@ export const translations = {
     AINotifications: "Notificaciones de IA",
     AIMemorySummary: "Resumen de memoria de IA",
 
+    GroupManagement: "Gestión de grupos",
+
+    GroupManagementDescription:
+    "Administre grupos empresariales, equipos de colaboración y espacios de trabajo de IA.",
+
+    TotalGroups: "Grupos totales",
+
+    ActiveGroups: "Grupos activos",
+
+    AIGroups: "Grupos de IA",
+
+    TotalMembers: "Total de miembros",
+
+    SearchGroups: "Buscar grupos...",
+    CreateGroup: "Crear grupo",
+    GroupType: "Tipo de grupo",
+    DepartmentGroup: "Departamento",
+    ExecutiveGroup: "Ejecutivo",
+    ProjectGroup: "Proyecto",
+    AIGroup: "Grupo de IA",
+
+    ManageMembers: "Administrar miembros",
+    ManageAIAgents: "Administrar agentes de IA",
+    ManagePermissions: "Administrar permisos",
+    DeleteGroup: "Eliminar grupo",
+    ViewGroup: "Ver grupo",
+    EditGroup: "Editar grupo",
+
   },
   NL: {
     Overview: "Overzicht",
@@ -2090,6 +2172,33 @@ export const translations = {
     DefaultWorkspace: "Standaardwerkruimte",
     AINotifications: "AI-meldingen",
     AIMemorySummary: "AI-geheugensamenvatting",
+
+    GroupManagement: "Groepsbeheer",
+
+    GroupManagementDescription:
+    "Beheer ondernemingsgroepen, samenwerkingsteams en AI-werkruimtes.",
+
+    TotalGroups: "Totaal groepen",
+
+    ActiveGroups: "Actieve groepen",
+
+    AIGroups: "AI-groepen",
+
+    TotalMembers: "Totaal leden",
+
+    SearchGroups: "Groepen zoeken...",
+    CreateGroup: "Groep maken",
+    GroupType: "Groepstype",
+    DepartmentGroup: "Afdeling",
+    ExecutiveGroup: "Directie",
+    ProjectGroup: "Project",
+    AIGroup: "AI-groep",
+    ManageMembers: "Leden beheren",
+    ManageAIAgents: "AI-agenten beheren",
+    ManagePermissions: "Machtigingen beheren",
+    DeleteGroup: "Groep verwijderen",
+    ViewGroup: "Groep bekijken",
+    EditGroup: "Groep bewerken",
 
   },
   FR: {
@@ -2613,6 +2722,33 @@ export const translations = {
     DefaultWorkspace: "Espace de travail par défaut",
     AINotifications: "Notifications IA",
     AIMemorySummary: "Résumé de la mémoire IA",
+
+    GroupManagement: "Gestion des groupes",
+
+    GroupManagementDescription:
+    "Gérez les groupes d'entreprise, les équipes de collaboration et les espaces de travail IA.",
+
+    TotalGroups: "Total des groupes",
+
+    ActiveGroups: "Groupes actifs",
+
+    AIGroups: "Groupes IA",
+
+    TotalMembers: "Nombre total de membres",
+
+    SearchGroups: "Rechercher des groupes...",
+    CreateGroup: "Créer un groupe",
+    GroupType: "Type de groupe",
+    DepartmentGroup: "Département",
+    ExecutiveGroup: "Direction",
+    ProjectGroup: "Projet",
+    AIGroup: "Groupe IA",
+    ManageMembers: "Gérer les membres",
+    ManageAIAgents: "Gérer les agents IA",
+    ManagePermissions: "Gérer les autorisations",
+    DeleteGroup: "Supprimer le groupe",
+    ViewGroup: "Voir le groupe",
+    EditGroup: "Modifier le groupe",
 
      }
 } as const;

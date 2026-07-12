@@ -20,6 +20,8 @@ import Agents from "@/pages/agents";
 import AIAssistant from "@/pages/ai-assistant";
 import { LanguageProvider } from "@/lib/language-context";
 import Settings from "@/pages/settings";
+import GroupsPage from "@/pages/groups";
+import UsersPage from "@/pages/users";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,18 +58,37 @@ function Router() {
       <Route path="/notifications"><AppLayout><Notifications /></AppLayout></Route>
       <Route path="/workflows"><AppLayout><Workflows /></AppLayout></Route>
       <Route path="/ai-assistant">
+
         <AppLayout>
           <AIAssistant />
         </AppLayout>
       </Route>
       <Route path="/agents"><AppLayout><Agents /></AppLayout></Route>
       <Route path="/settings">
+        <AppLayout>
+          <Settings />
+        </AppLayout>
+      </Route>
+      <Route path="/users">
       <AppLayout>
-        <Settings />
+        <UsersPage />
       </AppLayout>
     </Route>
-      <Route><AppLayout><NotFound /></AppLayout></Route>
-    </Switch>
+
+      <Route path="/groups">
+  <AppLayout>
+    <div className="p-10 text-4xl font-bold text-green-500">
+      GROUPS ROUTE MATCHED
+    </div>
+  </AppLayout>
+</Route>
+
+      <Route>
+        <AppLayout>
+          <NotFound />
+        </AppLayout>
+      </Route>
+          </Switch>
   );
 }
 
