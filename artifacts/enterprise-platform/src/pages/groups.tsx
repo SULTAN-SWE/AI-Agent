@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import { useRef, useState } from "react";
 import {
   MoreVertical,
   Eye,
@@ -43,6 +42,7 @@ type Group = {
   aiAgents: string[];
   aiWorkspaceAccess: string[];
   permissions: string[];
+  createdDate: string;
   status: string;
 };
 const [groups, setGroups] = useState<Group[]>([
@@ -77,6 +77,8 @@ const [groups, setGroups] = useState<Group[]>([
   "Reports",
   "Approvals",
 ],
+createdDate: "2025-01-15",
+
     status: t.Active,
   },
    
@@ -106,6 +108,8 @@ const [groups, setGroups] = useState<Group[]>([
   "AI Workspace",
   "Knowledge",
 ],
+createdDate: "2025-02-10",
+
 
     status: t.Active,
   },
@@ -137,6 +141,8 @@ const [groups, setGroups] = useState<Group[]>([
   "Security",
   "Workflows",
 ],
+createdDate: "2025-03-20",
+
     status: t.Active,
   },
 ]);
@@ -146,6 +152,7 @@ const [search, setSearch] = useState("");
 const [typeFilter, setTypeFilter] = useState("");
 
 const [statusFilter, setStatusFilter] = useState("");
+const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
 
 const [viewOpen, setViewOpen] = useState(false);
 
@@ -155,6 +162,20 @@ const [createOpen, setCreateOpen] = useState(false);
 
 const [editOpen, setEditOpen] = useState(false);
 
+const [deleteSelectedOpen, setDeleteSelectedOpen] = useState(false);
+
+const [membersOpen, setMembersOpen] = useState(false);
+
+const [agentsOpen, setAgentsOpen] = useState(false);
+
+const [permissionsOpen, setPermissionsOpen] = useState(false);
+
+const [newMember, setNewMember] = useState("");
+
+const [newAgent, setNewAgent] = useState("");
+
+const [newPermission, setNewPermission] = useState("");
+const fileInputRef = useRef<HTMLInputElement>(null);
 const [editGroup, setEditGroup] = useState<Group>({
   id: "",
   name: "",
@@ -166,6 +187,7 @@ const [editGroup, setEditGroup] = useState<Group>({
   aiAgents: [],
   aiWorkspaceAccess: [],
   permissions: [],
+  createdDate: "",
   status: t.Active,
 });
 const [newGroup, setNewGroup] = useState({
@@ -178,6 +200,7 @@ const [newGroup, setNewGroup] = useState({
   aiAgents: [] as string[],
   aiWorkspaceAccess: [] as string[],
   permissions: [] as string[],
+  createdDate: new Date().toISOString().split("T")[0],
   status: t.Active,
 });
 
@@ -241,6 +264,7 @@ const handleCreateGroup = () => {
   aiAgents: newGroup.aiAgents,
   aiWorkspaceAccess: newGroup.aiWorkspaceAccess,
   permissions: newGroup.permissions,
+  createdDate: newGroup.createdDate,
   status: newGroup.status,
 }
   ]);
@@ -255,6 +279,7 @@ const handleCreateGroup = () => {
   aiAgents: [],
   aiWorkspaceAccess: [],
   permissions: [],
+  createdDate: new Date().toISOString().split("T")[0],
   status: t.Active,
 });
 
@@ -283,6 +308,256 @@ const handleDeleteGroup = (index: number) => {
   );
 
   setGroups(updatedGroups);
+
+};
+
+const handleDeleteSelectedGroups = () => {
+
+  setGroups(
+    groups.filter(
+      (group) => !selectedGroups.includes(group.id)
+    )
+  );
+
+  setSelectedGroups([]);
+
+};
+
+const handleRemoveMember = (memberName: string) => {
+
+  if (selectedGroup === null) return;
+
+  const updatedGroups = [...groups];
+
+  updatedGroups[selectedGroup] = {
+    ...updatedGroups[selectedGroup],
+    memberList: updatedGroups[selectedGroup].memberList.filter(
+      (member) => member !== memberName
+    ),
+    members: updatedGroups[selectedGroup].members - 1,
+  };
+
+  setGroups(updatedGroups);
+
+};
+
+const handleAddMember = () => {
+
+  if (selectedGroup === null) return;
+
+  if (newMember.trim() === "") return;
+
+  const updatedGroups = [...groups];
+
+  updatedGroups[selectedGroup] = {
+    ...updatedGroups[selectedGroup],
+    memberList: [
+      ...updatedGroups[selectedGroup].memberList,
+      newMember,
+    ],
+    members: updatedGroups[selectedGroup].members + 1,
+  };
+
+  setGroups(updatedGroups);
+
+  setNewMember("");
+
+};
+
+const handleAddAgent = () => {
+
+  if (selectedGroup === null) return;
+
+  if (newAgent.trim() === "") return;
+
+  const updatedGroups = [...groups];
+
+  updatedGroups[selectedGroup] = {
+    ...updatedGroups[selectedGroup],
+    aiAgents: [
+      ...updatedGroups[selectedGroup].aiAgents,
+      newAgent,
+    ],
+  };
+
+  setGroups(updatedGroups);
+
+  setNewAgent("");
+
+};
+
+const handleRemoveAgent = (agentName: string) => {
+
+  if (selectedGroup === null) return;
+
+  const updatedGroups = [...groups];
+
+  updatedGroups[selectedGroup] = {
+    ...updatedGroups[selectedGroup],
+    aiAgents: updatedGroups[selectedGroup].aiAgents.filter(
+      (agent) => agent !== agentName
+    ),
+  };
+
+  setGroups(updatedGroups);
+
+};
+
+const handleAddPermission = () => {
+
+  if (selectedGroup === null) return;
+
+  if (newPermission.trim() === "") return;
+
+  const updatedGroups = [...groups];
+
+  updatedGroups[selectedGroup] = {
+    ...updatedGroups[selectedGroup],
+    permissions: [
+      ...updatedGroups[selectedGroup].permissions,
+      newPermission,
+    ],
+  };
+
+  setGroups(updatedGroups);
+
+  setNewPermission("");
+
+};
+
+const handleRemovePermission = (permission: string) => {
+
+  if (selectedGroup === null) return;
+
+  const updatedGroups = [...groups];
+
+  updatedGroups[selectedGroup] = {
+    ...updatedGroups[selectedGroup],
+    permissions: updatedGroups[selectedGroup].permissions.filter(
+      (item) => item !== permission
+    ),
+  };
+
+  setGroups(updatedGroups);
+
+};
+
+const handleExportCSV = () => {
+
+  const rows = groups
+    .filter((group) => selectedGroups.includes(group.id))
+    .map((group) => ({
+      ID: group.id,
+      Name: group.name,
+      Type: group.type,
+      Manager: group.manager,
+      Members: group.members,
+      Status: group.status,
+      CreatedDate: group.createdDate,
+    }));
+
+  if (rows.length === 0) return;
+
+  const csv = [
+    Object.keys(rows[0]).join(","),
+    ...rows.map((row) => Object.values(row).join(",")),
+  ].join("\n");
+
+  const blob = new Blob([csv], {
+    type: "text/csv;charset=utf-8;",
+  });
+
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+
+  link.href = url;
+
+  link.download = "groups.csv";
+
+  link.click();
+
+  URL.revokeObjectURL(url);
+
+};
+
+const handleImportCSV = (
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+
+  const file = event.target.files?.[0];
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = (e) => {
+
+  const text = e.target?.result as string;
+
+  const lines = text
+    .split("\n")
+    .filter((line) => line.trim() !== "");
+
+  if (lines.length <= 1) return;
+
+  const importedGroups: Group[] = lines
+    .slice(1)
+    .map((line, index) => {
+
+      const [
+        id,
+        name,
+        type,
+        manager,
+        members,
+        status,
+        createdDate,
+      ] = line.split(",");
+
+      return {
+
+        id: id || `GRP-${groups.length + index + 1}`,
+
+        name: name || "",
+
+        description: "",
+
+        type: type || "Department",
+
+        manager: manager || "",
+
+        members: Number(members) || 0,
+
+        memberList: [],
+
+        aiAgents: [],
+
+        aiWorkspaceAccess: [],
+
+        permissions: [],
+
+        createdDate:
+          createdDate ||
+          new Date().toISOString().split("T")[0],
+
+        status: status || t.Active,
+
+      };
+
+    });
+
+  setGroups((previous) => [
+
+    ...previous,
+
+    ...importedGroups,
+
+  ]);
+
+};
+
+  reader.readAsText(file);
 
 };
   return (
@@ -530,18 +805,19 @@ const handleDeleteGroup = (index: number) => {
       <Button
   onClick={() => {
 
-    setNewGroup({
-      name: "",
-      description: "",
-      type: "Department",
-      manager: "",
-      members: 0,
-      memberList: [],
-      aiAgents: [],
-      aiWorkspaceAccess: [],
-      permissions: [],
-      status: t.Active,
-    });
+  setNewGroup({
+  name: "",
+  description: "",
+  type: "Department",
+  manager: "",
+  members: 0,
+  memberList: [],
+  aiAgents: [],
+  aiWorkspaceAccess: [],
+  permissions: [],
+  createdDate: new Date().toISOString().split("T")[0],
+  status: t.Active,
+});
     setCreateOpen(true);
 
   }}
@@ -557,6 +833,72 @@ const handleDeleteGroup = (index: number) => {
 
 </Card>
 
+{selectedGroups.length > 0 && (
+
+  <Card className="border-primary bg-primary/5">
+
+    <CardContent className="p-4 flex flex-wrap items-center justify-between gap-4">
+
+      <div className="font-medium">
+
+        {selectedGroups.length} {t.SelectedGroups}
+
+      </div>
+
+      <div className="flex gap-3">
+
+        <Button
+          variant="outline"
+          onClick={() => setSelectedGroups([])}
+        >
+
+          {t.ClearSelection}
+
+        </Button>
+
+        <Button
+          variant="outline"
+          onClick={handleExportCSV}
+        >
+
+          {t.ExportCSV}
+
+        </Button>
+
+        <Button
+          variant="outline"
+          onClick={() => fileInputRef.current?.click()}
+        >
+
+          {t.ImportCSV}
+
+        </Button>
+
+<input
+  ref={fileInputRef}
+  type="file"
+  accept=".csv"
+  className="hidden"
+  onChange={handleImportCSV}
+/>
+
+        <Button
+        variant="destructive"
+        onClick={() => setDeleteSelectedOpen(true)}
+      >
+
+        {t.DeleteSelectedGroups}
+
+      </Button>
+
+      </div>
+
+    </CardContent>
+
+  </Card>
+
+)}
+
 <Card className="border-border bg-card">
 
   <CardContent className="p-0 overflow-x-auto">
@@ -568,7 +910,28 @@ const handleDeleteGroup = (index: number) => {
 
           <th className="p-4 w-12">
 
-            <input type="checkbox" />
+            <input
+              type="checkbox"
+              checked={
+                selectedGroups.length === filteredGroups.length &&
+                filteredGroups.length > 0
+              }
+              onChange={(e) => {
+
+                if (e.target.checked) {
+
+                  setSelectedGroups(
+                    filteredGroups.map((group) => group.id)
+                  );
+
+                } else {
+
+                  setSelectedGroups([]);
+
+                }
+
+              }}
+            />
 
           </th>
 
@@ -618,20 +981,44 @@ const handleDeleteGroup = (index: number) => {
 
       </thead>
 
-      <tbody>
+     <tbody>
 
-        {filteredGroups.map((group) =>(
+  {filteredGroups.map((group) => (
 
-          <tr
-            key={group.id}
-            className="border-b border-border hover:bg-muted/30 transition"
-          >
+    <tr
+      key={group.id}
+      className="border-b border-border hover:bg-muted/30 transition"
+    >
+        
 
-            <td className="p-4">
+          <td className="p-4">
 
-              <input type="checkbox" />
+          <input
+            type="checkbox"
+            checked={selectedGroups.includes(group.id)}
+            onChange={(e) => {
 
-            </td>
+              if (e.target.checked) {
+
+                setSelectedGroups([
+                  ...selectedGroups,
+                  group.id,
+                ]);
+
+              } else {
+
+                setSelectedGroups(
+                  selectedGroups.filter(
+                    (id) => id !== group.id
+                  )
+                );
+
+              }
+
+            }}
+          />
+
+        </td>
 
             <td className="p-4">
 
@@ -708,6 +1095,8 @@ const handleDeleteGroup = (index: number) => {
 
             <td className="p-4 text-center">
 
+              
+
   <DropdownMenu>
 
     <DropdownMenuTrigger asChild>
@@ -757,6 +1146,7 @@ const handleDeleteGroup = (index: number) => {
   aiAgents: group.aiAgents,
   aiWorkspaceAccess: group.aiWorkspaceAccess,
   permissions: group.permissions,
+  createdDate: group.createdDate,
   status: group.status,
 });
     setEditOpen(true);
@@ -773,36 +1163,52 @@ const handleDeleteGroup = (index: number) => {
       <DropdownMenuSeparator />
 
       <DropdownMenuItem
+      onClick={() => {
+
+        setSelectedGroup(groups.indexOf(group));
+
+        setMembersOpen(true);
+
+      }}
+    >
+
+      <Users className="w-4 h-4 mr-2" />
+
+      {t.ManageMembers}
+
+    </DropdownMenuItem>
+
+      <DropdownMenuItem
         onClick={() => {
 
           setSelectedGroup(groups.indexOf(group));
 
-          setViewOpen(true);
+          setAgentsOpen(true);
 
         }}
       >
 
-        <Users className="w-4 h-4 mr-2" />
+  <Bot className="w-4 h-4 mr-2" />
 
-        {t.ManageMembers}
+  {t.ManageAIAgents}
 
 </DropdownMenuItem>
 
-      <DropdownMenuItem>
+      <DropdownMenuItem
+          onClick={() => {
 
-        <Bot className="w-4 h-4 mr-2" />
+            setSelectedGroup(groups.indexOf(group));
 
-        {t.ManageAIAgents}
+            setPermissionsOpen(true);
 
-      </DropdownMenuItem>
+          }}
+        >
 
-      <DropdownMenuItem>
+  <Shield className="w-4 h-4 mr-2" />
 
-        <Shield className="w-4 h-4 mr-2" />
+  {t.ManagePermissions}
 
-        {t.ManagePermissions}
-
-      </DropdownMenuItem>
+</DropdownMenuItem>
 
       <DropdownMenuSeparator />
 
@@ -923,19 +1329,35 @@ const handleDeleteGroup = (index: number) => {
 
   <div>
 
-    <p className="text-sm text-muted-foreground">
+  <p className="text-sm text-muted-foreground">
 
-      {t.Status}
+    {t.Status}
 
-    </p>
+  </p>
 
-    <span className="rounded-full bg-emerald-500/10 text-emerald-500 px-3 py-1 text-xs">
+  <span className="rounded-full bg-emerald-500/10 text-emerald-500 px-3 py-1 text-xs">
 
-      {groups[selectedGroup].status}
+    {groups[selectedGroup].status}
 
-    </span>
+  </span>
 
-  </div>
+</div>
+
+<div>
+
+  <p className="text-sm text-muted-foreground">
+
+    {t.CreatedDate}
+
+  </p>
+
+  <span className="rounded-lg bg-muted px-3 py-1 text-xs">
+
+    {groups[selectedGroup].createdDate}
+
+  </span>
+
+</div>
 
   <div className="col-span-2">
 
@@ -1332,6 +1754,274 @@ const handleDeleteGroup = (index: number) => {
       </Button>
 
     </div>
+
+    </DialogContent>
+
+</Dialog>
+
+<Dialog
+  open={deleteSelectedOpen}
+  onOpenChange={setDeleteSelectedOpen}
+>
+
+  <DialogContent className="max-w-md">
+
+    <DialogHeader>
+
+      <DialogTitle>
+
+        {t.DeleteSelectedGroups}
+
+      </DialogTitle>
+
+    </DialogHeader>
+
+    <p className="text-muted-foreground">
+
+      {t.DeleteSelectedGroupsConfirmation}
+
+    </p>
+
+    <div className="flex justify-end gap-3 mt-6">
+
+      <Button
+        variant="outline"
+        onClick={() => setDeleteSelectedOpen(false)}
+      >
+
+        {t.Cancel}
+
+      </Button>
+
+      <Button
+        variant="destructive"
+        onClick={() => {
+
+          handleDeleteSelectedGroups();
+
+          setDeleteSelectedOpen(false);
+
+        }}
+      >
+
+        {t.Delete}
+
+      </Button>
+
+    </div>
+
+  </DialogContent>
+
+</Dialog>
+
+<Dialog
+  open={membersOpen}
+  onOpenChange={setMembersOpen}
+>
+
+  <DialogContent className="max-w-3xl">
+
+    <DialogHeader>
+
+      <DialogTitle>
+
+        {t.ManageMembers}
+
+      </DialogTitle>
+
+    </DialogHeader>
+
+    {selectedGroup !== null && (
+
+      <div className="space-y-4">
+
+          <div className="flex gap-3">
+
+            <input
+              className="flex-1 rounded-lg border border-border bg-background p-3"
+              placeholder={t.AddMember}
+              value={newMember}
+              onChange={(e) => setNewMember(e.target.value)}
+            />
+
+            <Button
+            onClick={handleAddMember}
+          >
+
+            {t.Add}
+
+          </Button>
+
+          </div>
+
+        {groups[selectedGroup].memberList.map((member) => (
+
+          <div
+          key={member}
+          className="flex items-center justify-between rounded-lg border border-border p-3"
+        >
+
+          <span>{member}</span>
+
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => handleRemoveMember(member)}
+          >
+
+            {t.Remove}
+
+          </Button>
+
+        </div>
+
+    ))}
+
+    </div>
+
+    )}
+
+  </DialogContent>
+
+</Dialog>
+
+<Dialog
+  open={agentsOpen}
+  onOpenChange={setAgentsOpen}
+>
+
+  <DialogContent className="max-w-3xl">
+
+    <DialogHeader>
+
+      <DialogTitle>
+
+        {t.ManageAIAgents}
+
+      </DialogTitle>
+
+    </DialogHeader>
+
+    {selectedGroup !== null && (
+
+      <div className="space-y-4">
+
+        <div className="flex gap-3">
+
+          <input
+            className="flex-1 rounded-lg border border-border bg-background p-3"
+            placeholder={t.AddAIAgent}
+            value={newAgent}
+            onChange={(e) => setNewAgent(e.target.value)}
+          />
+
+          <Button
+            onClick={handleAddAgent}
+          >
+
+            {t.Add}
+
+          </Button>
+
+        </div>
+
+        {groups[selectedGroup].aiAgents.map((agent) => (
+
+          <div
+            key={agent}
+            className="flex items-center justify-between rounded-lg border border-border p-3"
+          >
+
+            <span>{agent}</span>
+
+            <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => handleRemoveAgent(agent)}
+          >
+
+            {t.Remove}
+
+          </Button>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    )}
+
+  </DialogContent>
+
+</Dialog>
+
+<Dialog
+  open={permissionsOpen}
+  onOpenChange={setPermissionsOpen}
+>
+
+  <DialogContent className="max-w-3xl">
+
+    <DialogHeader>
+
+      <DialogTitle>
+
+        {t.ManagePermissions}
+
+      </DialogTitle>
+
+    </DialogHeader>
+
+    {selectedGroup !== null && (
+
+      <div className="space-y-4">
+
+        <div className="flex gap-3">
+
+          <input
+            className="flex-1 rounded-lg border border-border bg-background p-3"
+            placeholder={t.AddPermission}
+            value={newPermission}
+            onChange={(e) => setNewPermission(e.target.value)}
+          />
+
+          <Button
+            onClick={handleAddPermission}
+          >
+
+            {t.Add}
+
+          </Button>
+
+        </div>
+
+        {groups[selectedGroup].permissions.map((permission) => (
+
+          <div
+            key={permission}
+            className="flex items-center justify-between rounded-lg border border-border p-3"
+          >
+
+            <span>{permission}</span>
+
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => handleRemovePermission(permission)}
+            >
+
+              {t.Remove}
+
+            </Button>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    )}
 
   </DialogContent>
 
