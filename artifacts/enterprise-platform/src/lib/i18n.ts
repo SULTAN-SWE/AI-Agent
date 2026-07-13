@@ -617,6 +617,31 @@ export const translations = {
   IncludeRecommendations: "Include Recommendations",
   ProfileUpdated: "Profile updated successfully",
   CompanyUpdated: "Company information updated successfully",
+  AIConfigurationUpdated:
+  "AI configuration updated successfully",
+
+  TestingConnection:
+    "Testing connection...",
+
+  AIConnectionSuccessful:
+    "AI connection successful",
+    Show: "Show",
+
+  Hide: "Hide",
+  NotificationPreferencesUpdated:
+  "Notification preferences updated successfully",
+  AppearanceUpdated:
+  "Appearance updated successfully",
+  PasswordUpdated:
+  "Password updated successfully",
+  ConnectionUpdated:
+  "connection updated successfully",
+  PasswordsDoNotMatch:
+  "Passwords do not match",
+  GeneratingResponse:
+  "Generating response...",
+  Copy:
+  "Copy",
   },
   AR: {
     Overview: "نظرة عامة",
@@ -1236,6 +1261,31 @@ export const translations = {
   IncludeRecommendations: "تضمين التوصيات",
   ProfileUpdated: "تم تحديث الملف الشخصي بنجاح",
   CompanyUpdated: "تم تحديث معلومات الشركة بنجاح",
+  AIConfigurationUpdated:
+  "تم تحديث إعدادات الذكاء الاصطناعي بنجاح",
+
+  TestingConnection:
+    "جارٍ اختبار الاتصال...",
+
+  AIConnectionSuccessful:
+    "تم الاتصال بنجاح",
+    Show: "إظهار",
+
+    Hide: "إخفاء",
+    NotificationPreferencesUpdated:
+  "تم تحديث تفضيلات الإشعارات بنجاح",
+  AppearanceUpdated:
+  "تم تحديث إعدادات المظهر بنجاح",
+  PasswordUpdated:
+  "تم تحديث كلمة المرور بنجاح",
+  ConnectionUpdated:
+  "تم تحديث الاتصال بنجاح",
+  PasswordsDoNotMatch:
+  "كلمتا المرور غير متطابقتين",
+  GeneratingResponse:
+  "جارٍ إنشاء الرد...",
+  Copy:
+  "نسخ",
   },
   ES: {
     Overview: "Resumen",
@@ -1854,6 +1904,31 @@ export const translations = {
   IncludeRecommendations: "Incluir recomendaciones",
   ProfileUpdated: "Perfil actualizado correctamente",
   CompanyUpdated: "Información de la empresa actualizada correctamente",
+  AIConfigurationUpdated:
+  "La configuración de IA se actualizó correctamente",
+
+  TestingConnection:
+    "Probando conexión...",
+
+  AIConnectionSuccessful:
+    "Conexión establecida correctamente",
+  Show: "Mostrar",
+
+  Hide: "Ocultar",
+  NotificationPreferencesUpdated:
+  "Las preferencias de notificaciones se actualizaron correctamente",
+  AppearanceUpdated:
+  "La configuración de apariencia se actualizó correctamente",
+  PasswordUpdated:
+  "La contraseña se actualizó correctamente",
+  ConnectionUpdated:
+  "conexión actualizada correctamente",
+  PasswordsDoNotMatch:
+  "Las contraseñas no coinciden",
+  GeneratingResponse:
+  "Generando respuesta...",
+  Copy:
+  "Copiar",
     },
   NL: {
     Overview: "Overzicht",
@@ -2471,6 +2546,32 @@ export const translations = {
   IncludeRecommendations: "Aanbevelingen opnemen",
   ProfileUpdated: "Profiel succesvol bijgewerkt",
   CompanyUpdated: "Bedrijfsgegevens succesvol bijgewerkt",
+  AIConfigurationUpdated:
+  "AI-configuratie succesvol bijgewerkt",
+
+  TestingConnection:
+    "Verbinding testen...",
+
+  AIConnectionSuccessful:
+    "Verbinding succesvol",
+
+    Show: "Tonen",
+
+    Hide: "Verbergen",
+    NotificationPreferencesUpdated:
+  "Meldingsvoorkeuren zijn succesvol bijgewerkt",
+  AppearanceUpdated:
+  "Weergave-instellingen zijn succesvol bijgewerkt",
+  PasswordUpdated:
+  "Wachtwoord succesvol bijgewerkt",
+  ConnectionUpdated:
+  "verbinding succesvol bijgewerkt",
+  PasswordsDoNotMatch:
+  "Wachtwoorden komen niet overeen",
+  GeneratingResponse:
+  "Reactie wordt gegenereerd...",
+  Copy:
+  "Kopiëren",
   },
   FR: {
     Overview: "Vue d'ensemble",
@@ -3089,6 +3190,32 @@ export const translations = {
   IncludeRecommendations: "Inclure les recommandations",
   ProfileUpdated: "Profil mis à jour avec succès",
   CompanyUpdated: "Informations de l'entreprise mises à jour avec succès",
+  AIConfigurationUpdated:
+  "La configuration de l'IA a été mise à jour avec succès",
+
+  TestingConnection:
+    "Test de la connexion...",
+
+  AIConnectionSuccessful:
+    "Connexion réussie",
+
+    Show: "Afficher",
+
+    Hide: "Masquer",
+    NotificationPreferencesUpdated:
+  "Les préférences de notification ont été mises à jour avec succès",
+  AppearanceUpdated:
+  "Les paramètres d'apparence ont été mis à jour avec succès",
+  PasswordUpdated:
+  "Le mot de passe a été mis à jour avec succès",
+  ConnectionUpdated:
+  "connexion mise à jour avec succès",
+  PasswordsDoNotMatch:
+  "Les mots de passe ne correspondent pas",
+  GeneratingResponse:
+  "Génération de la réponse...",
+  Copy:
+  "Copier",
      }
 } as const;
 

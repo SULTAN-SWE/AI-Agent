@@ -71,7 +71,144 @@ const [savingCompany, setSavingCompany] =
 const [companySaved, setCompanySaved] =
   React.useState(false);
 
+/* ---------------- AI Configuration ---------------- */
+
+const initialAIConfiguration = {
+
+  provider: "OpenAI",
+
+  model: "gpt-5.5",
+
+  temperature: "0.7",
+
+  maxTokens: "4096",
+
+  endpoint: "https://api.openai.com/v1",
+
+  apiKey: "sk-********************************",
+
+};
+
+const [aiConfiguration, setAiConfiguration] =
+  React.useState(initialAIConfiguration);
+
+const [savingAI, setSavingAI] =
+  React.useState(false);
+
+const [testingAI, setTestingAI] =
+  React.useState(false);
+
+const [aiSaved, setAiSaved] =
+  React.useState(false);
+
+const [aiConnected, setAiConnected] =
+  React.useState(true);
+
+const [showApiKey, setShowApiKey] =
+  React.useState(false);
+
+/* ---------------- Notifications ---------------- */
+
+const initialNotifications = {
+
+  email: true,
+
+  push: true,
+
+  sms: false,
+
+  approvals: true,
+
+  workflow: true,
+
+  security: true,
+
+};
+
+const [notifications, setNotifications] =
+  React.useState(initialNotifications);
+
+const [savingNotifications, setSavingNotifications] =
+  React.useState(false);
+
+const [notificationsSaved, setNotificationsSaved] =
+  React.useState(false);
+
+/* ---------------- Appearance ---------------- */
+
 const { t, lang, setLang } = useLanguage();
+
+const initialAppearance = {
+
+  theme: "dark",
+
+  language: lang,
+
+};
+
+const [appearance, setAppearance] =
+  React.useState(initialAppearance);
+
+const [savingAppearance, setSavingAppearance] =
+  React.useState(false);
+
+const [appearanceSaved, setAppearanceSaved] =
+  React.useState(false);
+
+/* ---------------- Security ---------------- */
+
+const initialSecurity = {
+
+  currentPassword: "",
+
+  newPassword: "",
+
+  confirmPassword: "",
+
+};
+
+const [security, setSecurity] =
+  React.useState(initialSecurity);
+
+const [savingSecurity, setSavingSecurity] =
+  React.useState(false);
+
+const [securitySaved, setSecuritySaved] =
+  React.useState(false);
+
+const [securityError, setSecurityError] =
+  React.useState("");
+
+/* ---------------- Integrations ---------------- */
+
+const initialIntegrations = [
+
+  { name: "OpenAI", connected: true },
+
+  { name: "Microsoft 365", connected: true },
+
+  { name: "Google Workspace", connected: true },
+
+  { name: "Slack", connected: false },
+
+  { name: "GitHub", connected: true },
+
+  { name: "Jira", connected: false },
+
+  { name: "SAP", connected: false },
+
+  { name: "Oracle", connected: false },
+
+];
+
+const [integrations, setIntegrations] =
+  React.useState(initialIntegrations);
+
+const [loadingIntegration, setLoadingIntegration] =
+  React.useState<string | null>(null);
+
+const [integrationUpdated, setIntegrationUpdated] =
+  React.useState<string | null>(null);
   const tabs = [
   { id: "profile", label: t.Profile, icon: User },
   { id: "company", label: t.Company, icon: Building2 },
@@ -134,6 +271,249 @@ const handleSaveCompany = () => {
 const handleResetCompany = () => {
 
   setCompany(initialCompany);
+
+};
+
+const handleSaveAI = () => {
+
+  setSavingAI(true);
+
+  setAiSaved(false);
+
+  setTimeout(() => {
+
+    setSavingAI(false);
+
+    setAiSaved(true);
+
+    setTimeout(() => {
+
+      setAiSaved(false);
+
+    }, 3000);
+
+  }, 1500);
+
+};
+
+const handleTestAIConnection = () => {
+
+  if (
+
+    !aiConfiguration.provider ||
+
+    !aiConfiguration.model ||
+
+    !aiConfiguration.endpoint ||
+
+    !aiConfiguration.apiKey.trim()
+
+  ) {
+
+    setAiConnected(false);
+
+    return;
+
+  }
+
+  setTestingAI(true);
+
+  setAiConnected(false);
+
+  setTimeout(() => {
+
+    setTestingAI(false);
+
+    setAiConnected(true);
+
+  }, 1500);
+
+};
+const handleResetAI = () => {
+
+  setAiConfiguration(initialAIConfiguration);
+
+};
+
+const handleSaveNotifications = () => {
+
+  setSavingNotifications(true);
+
+  setNotificationsSaved(false);
+
+  setTimeout(() => {
+
+    setSavingNotifications(false);
+
+    setNotificationsSaved(true);
+
+    setTimeout(() => {
+
+      setNotificationsSaved(false);
+
+    }, 3000);
+
+  }, 1500);
+
+};
+
+const handleResetNotifications = () => {
+
+  setNotifications(initialNotifications);
+
+};
+
+const handleSaveAppearance = () => {
+
+  setSavingAppearance(true);
+
+  setAppearanceSaved(false);
+
+  if (appearance.theme === "dark") {
+
+    document.documentElement.classList.add("dark");
+
+  } else {
+
+    document.documentElement.classList.remove("dark");
+
+  }
+
+  localStorage.setItem(
+
+    "theme",
+
+    appearance.theme
+
+  );
+
+  localStorage.setItem(
+
+    "language",
+
+    appearance.language
+
+  );
+
+  setLang(appearance.language as Language);
+
+  setTimeout(() => {
+
+    setSavingAppearance(false);
+
+    setAppearanceSaved(true);
+
+    setTimeout(() => {
+
+      setAppearanceSaved(false);
+
+    }, 3000);
+
+  }, 1500);
+
+};
+
+const handleResetAppearance = () => {
+
+  setAppearance(initialAppearance);
+
+  setLang(initialAppearance.language as Language);
+
+};
+
+const handleSaveSecurity = () => {
+
+  if (
+
+  security.newPassword !==
+  security.confirmPassword
+
+) {
+
+  setSecurityError(
+    t.PasswordsDoNotMatch
+  );
+
+  return;
+
+}
+
+setSecurityError("");
+
+  setSavingSecurity(true);
+
+  setSecuritySaved(false);
+
+  setTimeout(() => {
+
+    setSavingSecurity(false);
+
+    setSecuritySaved(true);
+
+    setSecurity({
+
+      currentPassword: "",
+
+      newPassword: "",
+
+      confirmPassword: "",
+
+    });
+
+    setTimeout(() => {
+
+      setSecuritySaved(false);
+
+    }, 3000);
+
+  }, 1500);
+
+};
+
+const handleResetSecurity = () => {
+
+  setSecurity(initialSecurity);
+
+};
+
+const handleToggleIntegration = (name: string) => {
+
+  const integration = integrations.find(
+    (item) => item.name === name
+  );
+
+  if (!integration) return;
+
+  setLoadingIntegration(name);
+
+  setTimeout(() => {
+
+    if (!integration.connected) {
+
+      setIntegrations((current) =>
+        current.map((item) =>
+          item.name === name
+            ? {
+                ...item,
+                connected: true,
+              }
+            : item
+        )
+      );
+
+    }
+
+    setLoadingIntegration(null);
+
+setIntegrationUpdated(name);
+
+setTimeout(() => {
+
+  setIntegrationUpdated(null);
+
+}, 3000);
+
+}, 1500);
 
 };
   return (
@@ -621,12 +1001,11 @@ const handleResetCompany = () => {
   <div className="flex gap-4">
 
     <button
-      className="rounded-lg border border-border px-5 py-2 hover:bg-muted transition"
-    >
-
-      {t.Cancel}
-
-    </button>
+  onClick={handleResetCompany}
+  className="rounded-lg border border-border px-5 py-2 hover:bg-muted transition"
+>
+  {t.Cancel}
+</button>
 
     <button
       onClick={handleSaveCompany}
@@ -663,19 +1042,117 @@ const handleResetCompany = () => {
 
       <div className="rounded-xl border border-border bg-card p-6 flex flex-col items-center">
 
-        <div className="w-32 h-32 rounded-2xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
-          <Bot className="w-16 h-16 text-primary" />
+        <div className="w-32 h-32 rounded-2xl bg-primary/10 border-2 border-primary/20 flex flex-col items-center justify-center">
+
+          <Bot className="w-10 h-10 text-primary mb-3" />
+
+          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+
+            {aiConfiguration.provider}
+
+          </span>
+
         </div>
 
         <h3 className="mt-5 text-xl font-semibold">
-          OpenAI
+
+          {aiConfiguration.model}
+
         </h3>
 
-        <p className="text-emerald-500">
-          ● {t.Connected}
+        <p className="text-sm text-muted-foreground mt-1">
+
+          {aiConfiguration.provider}
+
         </p>
 
+        <p
+      className={
+        testingAI
+          ? "text-amber-500"
+          : aiConnected
+          ? "text-emerald-500"
+          : "text-red-500"
+      }
+    >
+
+      ● {testingAI
+          ? t.TestingConnection
+          : aiConnected
+          ? t.AIConnectionSuccessful
+          : t.NotConnected}
+
+    </p>
+
+    <div className="mt-6 w-full space-y-3 border-t border-border pt-5">
+
+      <div className="flex justify-between text-sm">
+
+        <span className="text-muted-foreground">
+
+          {t.AIProvider}
+
+        </span>
+
+        <span className="font-medium">
+
+          {aiConfiguration.provider}
+
+        </span>
+
       </div>
+
+      <div className="flex justify-between text-sm">
+
+        <span className="text-muted-foreground">
+
+          {t.Model}
+
+        </span>
+
+        <span className="font-medium">
+
+          {aiConfiguration.model}
+
+        </span>
+
+      </div>
+
+      <div className="flex justify-between text-sm">
+
+        <span className="text-muted-foreground">
+
+          {t.Temperature}
+
+        </span>
+
+        <span className="font-medium">
+
+          {aiConfiguration.temperature}
+
+        </span>
+
+      </div>
+
+      <div className="flex justify-between text-sm">
+
+        <span className="text-muted-foreground">
+
+          {t.MaxTokens}
+
+        </span>
+
+        <span className="font-medium">
+
+          {aiConfiguration.maxTokens}
+
+        </span>
+
+      </div>
+
+    </div>
+
+          </div>
 
       {/* Configuration */}
 
@@ -684,48 +1161,210 @@ const handleResetCompany = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
           <div>
-            <label className="block text-sm font-medium mb-2">
-              {t.AIProvider}
-            </label>
+          <label className="block text-sm font-medium mb-2">
+            {t.AIProvider}
+          </label>
 
-            <input
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.AIProvider}
-            />
-          </div>
+          <select
+        className="w-full rounded-lg border border-border bg-background p-3"
+        value={aiConfiguration.provider}
+        onChange={(e) => {
+
+          const provider = e.target.value;
+
+          const defaultModels: Record<string, string> = {
+
+  "OpenAI": "gpt-5.5",
+
+  "Azure OpenAI": "gpt-5",
+
+  "Anthropic Claude": "Claude Sonnet 4",
+
+  "Google Gemini": "Gemini 2.5 Pro",
+
+  "Mistral AI": "Mistral Large",
+
+  "Ollama": "llama3.3",
+
+};
+
+    const defaultEndpoints: Record<string, string> = {
+
+      "OpenAI": "https://api.openai.com/v1",
+
+      "Azure OpenAI":
+        "https://YOUR-RESOURCE.openai.azure.com",
+
+      "Anthropic Claude":
+        "https://api.anthropic.com",
+
+      "Google Gemini":
+        "https://generativelanguage.googleapis.com",
+
+      "Mistral AI":
+        "https://api.mistral.ai",
+
+      "Ollama":
+        "http://localhost:11434",
+
+    };
+
+    setAiConfiguration({
+
+      ...aiConfiguration,
+
+      provider,
+
+      model: defaultModels[provider],
+
+      endpoint: defaultEndpoints[provider],
+
+    });
+
+        }}
+      >
+        <option value="OpenAI">OpenAI</option>
+        <option value="Azure OpenAI">Azure OpenAI</option>
+        <option value="Anthropic Claude">Anthropic Claude</option>
+        <option value="Google Gemini">Google Gemini</option>
+        <option value="Mistral AI">Mistral AI</option>
+        <option value="Ollama">Ollama (Local)</option>
+    </select>
+        </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">
-              {t.Model}
-            </label>
+          <label className="block text-sm font-medium mb-2">
+            {t.Model}
+          </label>
 
-            <input
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.Model}
-            />
-          </div>
+          <select
+            className="w-full rounded-lg border border-border bg-background p-3"
+            value={aiConfiguration.model}
+            onChange={(e) =>
+              setAiConfiguration({
+                ...aiConfiguration,
+                model: e.target.value,
+              })
+            }
+          >
+
+            {aiConfiguration.provider === "OpenAI" && (
+              <>
+                <option value="gpt-5.5">GPT-5.5</option>
+                <option value="gpt-5">GPT-5</option>
+                <option value="gpt-4.1">GPT-4.1</option>
+                <option value="gpt-4o">GPT-4o</option>
+              </>
+            )}
+
+            {aiConfiguration.provider === "Azure OpenAI" && (
+              <>
+                <option value="gpt-5">GPT-5</option>
+                <option value="gpt-4.1">GPT-4.1</option>
+                <option value="gpt-4o">GPT-4o</option>
+              </>
+            )}
+
+            {aiConfiguration.provider === "Anthropic Claude" && (
+              <>
+                <option value="Claude Sonnet 4">
+                  Claude Sonnet 4
+                </option>
+                <option value="Claude Opus 4">
+                  Claude Opus 4
+                </option>
+              </>
+            )}
+
+            {aiConfiguration.provider === "Google Gemini" && (
+              <>
+                <option value="Gemini 2.5 Pro">
+                  Gemini 2.5 Pro
+                </option>
+                <option value="Gemini 2.5 Flash">
+                  Gemini 2.5 Flash
+                </option>
+              </>
+            )}
+
+            {aiConfiguration.provider === "Mistral AI" && (
+              <>
+                <option value="Mistral Large">
+                  Mistral Large
+                </option>
+                <option value="Mistral Medium">
+                  Mistral Medium
+                </option>
+              </>
+            )}
+
+            {aiConfiguration.provider === "Ollama" && (
+              <>
+                <option value="llama3.3">
+                  Llama 3.3
+                </option>
+                <option value="qwen3">
+                  Qwen 3
+                </option>
+                <option value="deepseek-r1">
+                  DeepSeek R1
+                </option>
+              </>
+            )}
+
+          </select>
+        </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">
+          <div className="mb-2 flex items-center justify-between">
+
+            <label className="block text-sm font-medium">
               {t.Temperature}
             </label>
 
-            <input
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.Temperature}
-            />
+            <span className="text-sm text-muted-foreground">
+              {aiConfiguration.temperature}
+            </span>
+
           </div>
+
+          <input
+            type="range"
+            min="0"
+            max="2"
+            step="0.1"
+            className="w-full accent-primary"
+            value={aiConfiguration.temperature}
+            onChange={(e) =>
+              setAiConfiguration({
+                ...aiConfiguration,
+                temperature: e.target.value,
+              })
+            }
+          />
+
+        </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">
-              {t.MaxTokens}
-            </label>
+          <label className="block text-sm font-medium mb-2">
+            {t.MaxTokens}
+          </label>
 
-            <input
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.MaxTokens}
-            />
-          </div>
+          <input
+            type="number"
+            min="1"
+            max="32768"
+            step="1"
+            className="w-full rounded-lg border border-border bg-background p-3"
+            value={aiConfiguration.maxTokens}
+            onChange={(e) =>
+              setAiConfiguration({
+                ...aiConfiguration,
+                maxTokens: e.target.value,
+              })
+            }
+          />
+        </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">
@@ -733,36 +1372,97 @@ const handleResetCompany = () => {
             </label>
 
             <input
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.APIEndpoint}
-            />
+                className="w-full rounded-lg border border-border bg-background p-3 font-mono text-sm"
+                value={aiConfiguration.endpoint}
+                onChange={(e) =>
+                  setAiConfiguration({
+                    ...aiConfiguration,
+                    endpoint: e.target.value,
+                  })
+                }
+              />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">
-              {t.APIKey}
-            </label>
+      <label className="block text-sm font-medium mb-2">
+        {t.APIKey}
+      </label>
 
-            <input
-              type="password"
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.APIKey}
-            />
-          </div>
+      <div className="flex gap-2">
+
+        <input
+          type={showApiKey ? "text" : "password"}
+          className="flex-1 rounded-lg border border-border bg-background p-3"
+          value={aiConfiguration.apiKey}
+          onChange={(e) =>
+            setAiConfiguration({
+              ...aiConfiguration,
+              apiKey: e.target.value,
+            })
+          }
+        />
+
+        <button
+          type="button"
+          onClick={() => setShowApiKey(!showApiKey)}
+          className="rounded-lg border border-border px-4 hover:bg-muted transition"
+        >
+          {showApiKey ? t.Hide : t.Show}
+        </button>
+
+      </div>
+    </div>
 
         </div>
 
-        <div className="flex justify-end gap-4 mt-8">
+        <div className="flex items-center justify-between mt-8">
 
-          <button className="rounded-lg border border-border px-5 py-2 hover:bg-muted transition">
-            {t.TestConnection}
-          </button>
+  {aiSaved && (
 
-          <button className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90 transition">
-            {t.Save}
-          </button>
+    <span className="text-sm font-medium text-emerald-500">
 
-        </div>
+      ✓ {t.AIConfigurationUpdated}
+
+    </span>
+
+  )}
+
+  <div className="flex gap-4">
+
+  <button
+    onClick={handleResetAI}
+    className="rounded-lg border border-border px-5 py-2 hover:bg-muted transition"
+  >
+    {t.Cancel}
+  </button>
+
+  <button
+    onClick={handleTestAIConnection}
+    disabled={testingAI}
+    className="rounded-lg border border-border px-5 py-2 hover:bg-muted transition disabled:opacity-50"
+  >
+
+    {testingAI
+      ? t.TestingConnection
+      : t.TestConnection}
+
+  </button>
+
+  <button
+    onClick={handleSaveAI}
+    disabled={savingAI}
+    className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90 transition disabled:opacity-50"
+  >
+
+    {savingAI
+      ? t.Saving
+      : t.Save}
+
+  </button>
+
+</div>
+
+</div>
 
       </div>
 
@@ -773,55 +1473,121 @@ const handleResetCompany = () => {
 
           {tab === "notifications" && (
   <>
-    <h2 className="text-2xl font-bold mb-2">
-      {t.NotificationsSettings}
-    </h2>
+        <h2 className="text-2xl font-bold mb-2">
+          {t.NotificationsSettings}
+        </h2>
 
-    <p className="text-muted-foreground mb-8">
-      {t.ManageNotifications}
-    </p>
+        <p className="text-muted-foreground mb-8">
+          {t.ManageNotifications}
+        </p>
 
-    <div className="space-y-5">
+        <div className="space-y-5">
 
-      {[
-        t.EmailNotifications,
-        t.PushNotifications,
-        t.SMSNotifications,
-        t.ApprovalRequests,
-        t.WorkflowUpdates,
-        t.SecurityAlerts,
-      ].map((item, index) => (
-        <div
-          key={index}
-          className="flex items-center justify-between rounded-xl border border-border bg-card p-5"
-        >
-          <div>
-            <h3 className="font-medium">
-              {item}
-            </h3>
+          {[
+      {
+        key: "email",
+        label: t.EmailNotifications,
+      },
+      {
+        key: "push",
+        label: t.PushNotifications,
+      },
+      {
+        key: "sms",
+        label: t.SMSNotifications,
+      },
+      {
+        key: "approvals",
+        label: t.ApprovalRequests,
+      },
+      {
+        key: "workflow",
+        label: t.WorkflowUpdates,
+      },
+      {
+        key: "security",
+        label: t.SecurityAlerts,
+      },
+    ].map((item) => (
+      <div
+        key={item.key}
+        className="flex items-center justify-between rounded-xl border border-border bg-card p-5"
+      >
+        <div>
 
-            <p className="text-sm text-muted-foreground">
-              {t.EnableDisableNotifications}
-            </p>
-          </div>
+          <h3 className="font-medium">
 
-          <input
-            type="checkbox"
-            defaultChecked={index !== 2}
-            className="h-5 w-5 accent-primary"
-          />
+            {item.label}
+
+          </h3>
+
+          <p className="text-sm text-muted-foreground">
+
+            {t.EnableDisableNotifications}
+
+          </p>
+
         </div>
-      ))}
+
+        <input
+          type="checkbox"
+          checked={
+            notifications[
+              item.key as keyof typeof notifications
+            ]
+          }
+          onChange={(e) =>
+            setNotifications({
+              ...notifications,
+              [item.key]: e.target.checked,
+            })
+          }
+          className="h-5 w-5 accent-primary"
+        />
+
+      </div>
+    ))}
 
     </div>
 
-    <div className="flex justify-end mt-8">
+    <div className="flex items-center justify-between mt-8">
 
-      <button className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90">
-        {t.Save}
-      </button>
+  {notificationsSaved && (
 
-    </div>
+    <span className="text-sm font-medium text-emerald-500">
+
+      ✓ {t.NotificationPreferencesUpdated}
+
+    </span>
+
+  )}
+
+  <div className="flex gap-4">
+
+    <button
+      onClick={handleResetNotifications}
+      className="rounded-lg border border-border px-5 py-2 hover:bg-muted transition"
+    >
+
+      {t.Cancel}
+
+    </button>
+
+    <button
+      onClick={handleSaveNotifications}
+      disabled={savingNotifications}
+      className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90 transition disabled:opacity-50"
+    >
+
+      {savingNotifications
+        ? t.Saving
+        : t.Save}
+
+    </button>
+
+  </div>
+
+</div>
 
   </>
 )}
@@ -850,19 +1616,39 @@ const handleResetCompany = () => {
 
           <label className="flex items-center justify-between rounded-lg border border-border p-4 cursor-pointer hover:border-primary transition">
 
-            <span>{t.Dark}</span>
+  <span>{t.Dark}</span>
 
-            <input type="radio" name="theme" defaultChecked />
+  <input
+    type="radio"
+    name="theme"
+    checked={appearance.theme === "dark"}
+    onChange={() =>
+      setAppearance({
+        ...appearance,
+        theme: "dark",
+      })
+    }
+  />
 
-          </label>
+</label>
 
-          <label className="flex items-center justify-between rounded-lg border border-border p-4 cursor-pointer hover:border-primary transition">
+<label className="flex items-center justify-between rounded-lg border border-border p-4 cursor-pointer hover:border-primary transition">
 
-            <span>{t.Light}</span>
+  <span>{t.Light}</span>
 
-            <input type="radio" name="theme" />
+  <input
+    type="radio"
+    name="theme"
+    checked={appearance.theme === "light"}
+    onChange={() =>
+      setAppearance({
+        ...appearance,
+        theme: "light",
+      })
+    }
+  />
 
-          </label>
+</label>
 
         </div>
 
@@ -892,15 +1678,44 @@ const handleResetCompany = () => {
 
     </div>
 
-    <div className="flex justify-end mt-8">
+    <div className="flex items-center justify-between mt-8">
 
-      <button className="rounded-lg bg-primary px-6 py-2 text-primary-foreground">
+  {appearanceSaved && (
 
-        {t.Save}
+    <span className="text-sm font-medium text-emerald-500">
 
-      </button>
+      ✓ {t.AppearanceUpdated}
 
-    </div>
+    </span>
+
+  )}
+
+  <div className="flex gap-4">
+
+    <button
+      onClick={handleResetAppearance}
+      className="rounded-lg border border-border px-5 py-2 hover:bg-muted transition"
+    >
+
+      {t.Cancel}
+
+    </button>
+
+    <button
+      onClick={handleSaveAppearance}
+      disabled={savingAppearance}
+      className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90 transition disabled:opacity-50"
+    >
+
+      {savingAppearance
+        ? t.Saving
+        : t.Save}
+
+    </button>
+
+  </div>
+
+</div>
 
   </>
 )}
@@ -953,56 +1768,100 @@ const handleResetCompany = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
           <div>
-            <label className="block text-sm font-medium mb-2">
-              {t.CurrentPassword}
-            </label>
+  <label className="block text-sm font-medium mb-2">
+    {t.CurrentPassword}
+  </label>
 
-            <input
-              type="password"
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.CurrentPassword}
-            />
-          </div>
+  <input
+    type="password"
+    className="w-full rounded-lg border border-border bg-background p-3"
+    value={security.currentPassword}
+    onChange={(e) =>
+      setSecurity({
+        ...security,
+        currentPassword: e.target.value,
+      })
+    }
+  />
+</div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              {t.NewPassword}
-            </label>
+<div>
+  <label className="block text-sm font-medium mb-2">
+    {t.NewPassword}
+  </label>
 
-            <input
-              type="password"
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.NewPassword}
-            />
-          </div>
+  <input
+    type="password"
+    className="w-full rounded-lg border border-border bg-background p-3"
+    value={security.newPassword}
+    onChange={(e) =>
+      setSecurity({
+        ...security,
+        newPassword: e.target.value,
+      })
+    }
+  />
+</div>
 
-          <div className="md:col-span-2">
+<div className="md:col-span-2">
 
-            <label className="block text-sm font-medium mb-2">
-              {t.ConfirmPassword}
-            </label>
+  <label className="block text-sm font-medium mb-2">
+    {t.ConfirmPassword}
+  </label>
 
-            <input
-              type="password"
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.ConfirmPassword}
-            />
-
+  <input
+    type="password"
+    className="w-full rounded-lg border border-border bg-background p-3"
+    value={security.confirmPassword}
+    onChange={(e) =>
+      setSecurity({
+        ...security,
+        confirmPassword: e.target.value,
+      })
+    }
+  />
           </div>
 
         </div>
 
-        <div className="flex justify-end gap-4 mt-8">
+        <div className="flex items-center justify-between mt-8">
 
-          <button className="rounded-lg border border-border px-5 py-2">
-            {t.Cancel}
-          </button>
+  {securitySaved && (
 
-          <button className="rounded-lg bg-primary px-6 py-2 text-primary-foreground">
-            {t.UpdatePassword}
-          </button>
+    <span className="text-sm font-medium text-emerald-500">
 
-        </div>
+      ✓ {t.PasswordUpdated}
+
+    </span>
+
+  )}
+
+  <div className="flex gap-4">
+
+    <button
+      onClick={handleResetSecurity}
+      className="rounded-lg border border-border px-5 py-2 hover:bg-muted transition"
+    >
+
+      {t.Cancel}
+
+    </button>
+
+    <button
+      onClick={handleSaveSecurity}
+      disabled={savingSecurity}
+      className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90 transition disabled:opacity-50"
+    >
+
+      {savingSecurity
+        ? t.Saving
+        : t.UpdatePassword}
+
+    </button>
+
+  </div>
+
+</div>
 
       </div>
 
@@ -1020,60 +1879,83 @@ const handleResetCompany = () => {
     <p className="text-muted-foreground mb-8">
       {t.ConnectEnterpriseSystems}
     </p>
+<div className="space-y-6">
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+  {integrationUpdated && (
 
-      {[
-        { name: "OpenAI", status: t.Connected },
-        { name: "Microsoft 365", status: t.Connected },
-        { name: "Google Workspace", status: t.Connected },
-        { name: "Slack", status: t.NotConnected },
-        { name: "GitHub", status: t.Connected },
-        { name: "Jira", status: t.NotConnected },
-        { name: "SAP", status: t.NotConnected },
-        { name: "Oracle", status: t.NotConnected },
-      ].map((integration) => (
-        <div
-          key={integration.name}
-          className="rounded-xl border border-border bg-card p-6 hover:border-primary transition"
-        >
-          <div className="flex justify-between items-center">
+    <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-500">
 
-            <div>
-
-              <h3 className="text-lg font-semibold">
-                {integration.name}
-              </h3>
-
-              <p
-                className={`text-sm mt-2 ${
-                  integration.status === t.Connected
-                    ? "text-emerald-500"
-                    : "text-muted-foreground"
-                }`}
-              >
-                {integration.status}
-              </p>
-
-            </div>
-
-            <button className="rounded-lg bg-primary px-4 py-2 text-primary-foreground">
-
-              {integration.status === t.Connected
-                ? t.Manage
-                : t.Connect}
-
-            </button>
-
-          </div>
-
-        </div>
-      ))}
+      ✓ {integrationUpdated} {t.ConnectionUpdated}
 
     </div>
 
+  )}
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+    {integrations.map((integration) => (
+
+      <div
+        key={integration.name}
+        className="rounded-xl border border-border bg-card p-6 hover:border-primary transition"
+      >
+
+        <div className="flex justify-between items-center">
+
+          <div>
+
+            <h3 className="text-lg font-semibold">
+              {integration.name}
+            </h3>
+
+            <p
+              className={`text-sm mt-2 ${
+                integration.connected
+                  ? "text-emerald-500"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {integration.connected
+                ? t.Connected
+                : t.NotConnected}
+            </p>
+
+          </div>
+
+          <button
+            onClick={() =>
+              handleToggleIntegration(integration.name)
+            }
+            disabled={
+              loadingIntegration === integration.name
+            }
+            className="rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:opacity-90 transition disabled:opacity-50"
+          >
+
+            {loadingIntegration === integration.name
+              ? integration.connected
+                ? t.Manage
+                : t.Saving
+              : integration.connected
+              ? t.Manage
+              : t.Connect}
+
+          </button>
+
+        </div>
+
+      </div>
+
+    ))}
+
+  </div>
+
+</div>
+
   </>
+
 )}
+
 
         </CardContent>
 
