@@ -616,8 +616,7 @@ export const translations = {
   IncludeAnalytics: "Include Analytics",
   IncludeRecommendations: "Include Recommendations",
   ProfileUpdated: "Profile updated successfully",
-  
-
+  CompanyUpdated: "Company information updated successfully",
   },
   AR: {
     Overview: "نظرة عامة",
@@ -1236,6 +1235,7 @@ export const translations = {
   IncludeAnalytics: "تضمين التحليلات",
   IncludeRecommendations: "تضمين التوصيات",
   ProfileUpdated: "تم تحديث الملف الشخصي بنجاح",
+  CompanyUpdated: "تم تحديث معلومات الشركة بنجاح",
   },
   ES: {
     Overview: "Resumen",
@@ -1853,6 +1853,7 @@ export const translations = {
   IncludeAnalytics: "Incluir análisis",
   IncludeRecommendations: "Incluir recomendaciones",
   ProfileUpdated: "Perfil actualizado correctamente",
+  CompanyUpdated: "Información de la empresa actualizada correctamente",
     },
   NL: {
     Overview: "Overzicht",
@@ -2469,7 +2470,7 @@ export const translations = {
   IncludeAnalytics: "Analyses opnemen",
   IncludeRecommendations: "Aanbevelingen opnemen",
   ProfileUpdated: "Profiel succesvol bijgewerkt",
-
+  CompanyUpdated: "Bedrijfsgegevens succesvol bijgewerkt",
   },
   FR: {
     Overview: "Vue d'ensemble",
@@ -3087,7 +3088,7 @@ export const translations = {
   IncludeAnalytics: "Inclure les analyses",
   IncludeRecommendations: "Inclure les recommandations",
   ProfileUpdated: "Profil mis à jour avec succès",
-
+  CompanyUpdated: "Informations de l'entreprise mises à jour avec succès",
      }
 } as const;
 

@@ -18,7 +18,7 @@ export default function Settings() {
   const [profilePhoto, setProfilePhoto] =
   React.useState<string | null>(null);
 
-const [profile, setProfile] = React.useState({
+const initialProfile = {
 
   fullName: "John Doe",
 
@@ -32,12 +32,43 @@ const [profile, setProfile] = React.useState({
 
   timeZone: "Asia/Riyadh",
 
-});
+};
+
+const [profile, setProfile] =
+  React.useState(initialProfile);
 
 const [savingProfile, setSavingProfile] =
   React.useState(false);
 
 const [profileSaved, setProfileSaved] =
+  React.useState(false);
+
+const [companyLogo, setCompanyLogo] =
+  React.useState<string | null>(null);
+
+const initialCompany = {
+
+  companyName: "Nexus AI",
+
+  website: "https://nexus-ai.com",
+
+  country: "Saudi Arabia",
+
+  timeZone: "Asia/Riyadh",
+
+  currency: "SAR",
+
+  supportEmail: "support@nexus-ai.com",
+
+};
+
+const [company, setCompany] =
+  React.useState(initialCompany);
+
+const [savingCompany, setSavingCompany] =
+  React.useState(false);
+
+const [companySaved, setCompanySaved] =
   React.useState(false);
 
 const { t, lang, setLang } = useLanguage();
@@ -72,6 +103,39 @@ const handleSaveProfile = () => {
 
 };
 
+const handleResetProfile = () => {
+
+  setProfile(initialProfile);
+
+};
+
+const handleSaveCompany = () => {
+
+  setSavingCompany(true);
+
+  setCompanySaved(false);
+
+  setTimeout(() => {
+
+    setSavingCompany(false);
+
+    setCompanySaved(true);
+
+    setTimeout(() => {
+
+      setCompanySaved(false);
+
+    }, 3000);
+
+  }, 1500);
+
+};
+
+const handleResetCompany = () => {
+
+  setCompany(initialCompany);
+
+};
   return (
     <div className="grid grid-cols-12 gap-6 animate-in fade-in duration-500">
 
@@ -309,25 +373,43 @@ const handleSaveProfile = () => {
 
         </div>
 
-        <div className="flex justify-end gap-4 mt-8">
+        <div className="flex items-center justify-between mt-8">
 
-          <button className="rounded-lg border border-border px-5 py-2 hover:bg-muted transition">
-            {t.Cancel}
-          </button>
+  {profileSaved && (
 
-          <button
-            onClick={handleSaveProfile}
-            disabled={savingProfile}
-            className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90 transition disabled:opacity-50"
-          >
+    <span className="text-sm font-medium text-emerald-500">
 
-            {savingProfile
-              ? t.Saving
-              : t.SaveChanges}
+      ✓ {t.ProfileUpdated}
 
-          </button>
+    </span>
 
-        </div>
+  )}
+
+  <div className="flex gap-4">
+
+    <button
+        onClick={handleResetProfile}
+        className="rounded-lg border border-border px-5 py-2 hover:bg-muted transition"
+      >
+
+        {t.Cancel}
+
+      </button>
+    <button
+      onClick={handleSaveProfile}
+      disabled={savingProfile}
+      className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90 transition disabled:opacity-50"
+    >
+
+      {savingProfile
+        ? t.Saving
+        : t.SaveChanges}
+
+    </button>
+
+  </div>
+
+</div>
 
       </div>
 
@@ -349,23 +431,68 @@ const handleSaveProfile = () => {
 
       {/* Company Logo */}
 
-      <div className="rounded-xl border border-border bg-card p-6 flex flex-col items-center">
+      <div className="w-32 h-32 overflow-hidden rounded-2xl border-2 border-primary/20 bg-primary/10 flex items-center justify-center">
 
-        <div className="w-32 h-32 rounded-2xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
-          <Building2 className="w-16 h-16 text-primary" />
-        </div>
+  {companyLogo ? (
 
-        <h3 className="mt-5 text-xl font-semibold">
-          Nexus AI
-        </h3>
+    <img
+      src={companyLogo}
+      alt="Company Logo"
+      className="h-full w-full object-cover"
+    />
 
-        <p className="text-muted-foreground">
-          Enterprise Platform
-        </p>
+  ) : (
 
-        <button className="mt-6 w-full rounded-lg bg-primary px-5 py-2 text-primary-foreground hover:opacity-90 transition">
-          {t.UploadLogo}
-        </button>
+    <Building2 className="w-16 h-16 text-primary" />
+
+  )}
+
+</div>
+
+<h3 className="mt-5 text-xl font-semibold">
+
+  Nexus AI
+
+</h3>
+
+<p className="text-muted-foreground">
+
+  Enterprise Platform
+
+</p>
+
+<input
+  id="company-logo-upload"
+  type="file"
+  accept="image/*"
+  className="hidden"
+  onChange={(e) => {
+
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+
+      setCompanyLogo(reader.result as string);
+
+    };
+
+    reader.readAsDataURL(file);
+
+  }}
+/>
+
+<label
+  htmlFor="company-logo-upload"
+  className="mt-6 w-full cursor-pointer rounded-lg bg-primary px-5 py-2 text-center text-primary-foreground hover:opacity-90 transition"
+>
+
+  {t.UploadLogo}
+
+</label>
 
       </div>
 
@@ -382,7 +509,13 @@ const handleSaveProfile = () => {
 
             <input
               className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.CompanyName}
+              value={company.companyName}
+              onChange={(e) =>
+                setCompany({
+                  ...company,
+                  companyName: e.target.value,
+                })
+              }
             />
           </div>
 
@@ -392,9 +525,15 @@ const handleSaveProfile = () => {
             </label>
 
             <input
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.Website}
-            />
+                className="w-full rounded-lg border border-border bg-background p-3"
+                value={company.website}
+                onChange={(e) =>
+                  setCompany({
+                    ...company,
+                    website: e.target.value,
+                  })
+                }
+              />
           </div>
 
           <div>
@@ -403,9 +542,15 @@ const handleSaveProfile = () => {
             </label>
 
             <input
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.Country}
-            />
+                className="w-full rounded-lg border border-border bg-background p-3"
+                value={company.country}
+                onChange={(e) =>
+                  setCompany({
+                    ...company,
+                    country: e.target.value,
+                  })
+                }
+              />
           </div>
 
           <div>
@@ -414,9 +559,15 @@ const handleSaveProfile = () => {
             </label>
 
             <input
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.TimeZone}
-            />
+                className="w-full rounded-lg border border-border bg-background p-3"
+                value={company.timeZone}
+                onChange={(e) =>
+                  setCompany({
+                    ...company,
+                    timeZone: e.target.value,
+                  })
+                }
+              />
           </div>
 
           <div>
@@ -425,9 +576,15 @@ const handleSaveProfile = () => {
             </label>
 
             <input
-              className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.Currency}
-            />
+                className="w-full rounded-lg border border-border bg-background p-3"
+                value={company.currency}
+                onChange={(e) =>
+                  setCompany({
+                    ...company,
+                    currency: e.target.value,
+                  })
+                }
+              />
           </div>
 
           <div>
@@ -437,7 +594,13 @@ const handleSaveProfile = () => {
 
             <input
               className="w-full rounded-lg border border-border bg-background p-3"
-              placeholder={t.SupportEmail}
+              value={company.supportEmail}
+              onChange={(e) =>
+                setCompany({
+                  ...company,
+                  supportEmail: e.target.value,
+                })
+              }
             />
           </div>
 
@@ -445,11 +608,11 @@ const handleSaveProfile = () => {
 
         <div className="flex items-center justify-between mt-8">
 
-  {profileSaved && (
+  {companySaved && (
 
     <span className="text-sm font-medium text-emerald-500">
 
-      ✓ {t.ProfileUpdated}
+      ✓ {t.CompanyUpdated}
 
     </span>
 
@@ -466,14 +629,14 @@ const handleSaveProfile = () => {
     </button>
 
     <button
-      onClick={handleSaveProfile}
-      disabled={savingProfile}
+      onClick={handleSaveCompany}
+      disabled={savingCompany}
       className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:opacity-90 transition disabled:opacity-50"
     >
 
-      {savingProfile
+      {savingCompany
         ? t.Saving
-        : t.SaveChanges}
+        : t.Save}
 
     </button>
 
@@ -481,9 +644,7 @@ const handleSaveProfile = () => {
 
 </div>
 
-      </div>
-
-    </div>
+</div>
   </>
 )}
           {tab === "ai" && (
