@@ -642,6 +642,11 @@ export const translations = {
   "Generating response...",
   Copy:
   "Copy",
+  Regenerate:
+  "Regenerate",
+  SearchConversations:
+  "Search conversations...",
+  Stop: "Stop",
   },
   AR: {
     Overview: "نظرة عامة",
@@ -1286,6 +1291,11 @@ export const translations = {
   "جارٍ إنشاء الرد...",
   Copy:
   "نسخ",
+  Regenerate:
+  "إعادة الإنشاء",
+  SearchConversations:
+  "البحث في المحادثات...",
+  Stop: "إيقاف",
   },
   ES: {
     Overview: "Resumen",
@@ -1929,6 +1939,11 @@ export const translations = {
   "Generando respuesta...",
   Copy:
   "Copiar",
+  Regenerate:
+  "Regenerar",
+  SearchConversations:
+  "Buscar conversaciones...",
+  Stop: "Detener",
     },
   NL: {
     Overview: "Overzicht",
@@ -2572,6 +2587,11 @@ export const translations = {
   "Reactie wordt gegenereerd...",
   Copy:
   "Kopiëren",
+  Regenerate:
+  "Opnieuw genereren",
+  SearchConversations:
+  "Gesprekken zoeken...",
+  Stop: "Stoppen",
   },
   FR: {
     Overview: "Vue d'ensemble",
@@ -3216,6 +3236,11 @@ export const translations = {
   "Génération de la réponse...",
   Copy:
   "Copier",
+  Regenerate:
+  "Régénérer",
+  SearchConversations:
+  "Rechercher des conversations...",
+  Stop: "Arrêter",
      }
 } as const;
 

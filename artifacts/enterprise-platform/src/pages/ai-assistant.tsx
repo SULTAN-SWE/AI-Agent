@@ -27,6 +27,9 @@ export default function AIAssistant() {
 
   const [isGenerating, setIsGenerating] = useState(false);
 
+const generationTimeout =
+  useRef<ReturnType<typeof setTimeout> | null>(null);
+
 const messagesEndRef =
   useRef<HTMLDivElement>(null);
 
@@ -60,7 +63,58 @@ const [conversations, setConversations] = useState([
 const [activeConversation, setActiveConversation] =
   useState("HR Questions");
 
-  useEffect(() => {
+const [editingConversation, setEditingConversation] =
+  useState<string | null>(null);
+
+const [conversationTitle, setConversationTitle] =
+  useState("");
+
+const [conversationSearch, setConversationSearch] =
+  useState("");
+
+const regenerateResponse = (
+  userPrompt: string
+) => {
+
+  setIsGenerating(true);
+
+  setTimeout(() => {
+
+    const regenerated = `Regenerated response for "${userPrompt}". This simulates a new AI answer and will later be replaced by the backend AI provider.`;
+
+    setConversationMessages((current) => {
+
+      const history = [
+        ...(current[activeConversation] ?? []),
+      ];
+
+      history.pop();
+
+      history.push({
+
+        role: "assistant",
+
+        content: regenerated,
+
+      });
+
+      return {
+
+        ...current,
+
+        [activeConversation]: history,
+
+      };
+
+    });
+
+    setIsGenerating(false);
+
+  }, 1500);
+
+};
+
+useEffect(() => {
 
   messagesEndRef.current?.scrollIntoView({
 
@@ -137,65 +191,65 @@ const prompts = [
 
   const handleSend = () => {
 
-    if (!message.trim() || isGenerating) return;
+  if (!message.trim() || isGenerating) return;
 
-    const userMessage = message;
+  const userMessage = message.trim();
 
-let conversationKey = activeConversation;
+  let conversationKey = activeConversation;
 
-if (activeConversation.startsWith("New Chat")) {
+  if (activeConversation.startsWith("New Chat")) {
 
-  conversationKey =
-    userMessage.length > 30
-      ? userMessage.substring(0, 30) + "..."
-      : userMessage;
+    conversationKey =
+      userMessage.length > 30
+        ? userMessage.substring(0, 30) + "..."
+        : userMessage;
 
-  setConversations((current) =>
-    current.map((conversation) =>
-      conversation === activeConversation
-        ? conversationKey
-        : conversation
-    )
-  );
+    setConversations((current) =>
+      current.map((conversation) =>
+        conversation === activeConversation
+          ? conversationKey
+          : conversation
+      )
+    );
+
+    setConversationMessages((current) => ({
+
+      ...current,
+
+      [conversationKey]:
+        current[activeConversation] ?? [],
+
+    }));
+
+    setActiveConversation(conversationKey);
+
+  }
 
   setConversationMessages((current) => ({
 
     ...current,
 
-    [conversationKey]:
-      current[activeConversation] ?? [],
+    [conversationKey]: [
+
+      ...(current[conversationKey] ?? []),
+
+      {
+
+        role: "user",
+
+        content: userMessage,
+
+      },
+
+    ],
 
   }));
 
-  setActiveConversation(conversationKey);
+  setMessage("");
 
-}
+  setIsGenerating(true);
 
-setConversationMessages((current) => ({
-
-  ...current,
-
-  [conversationKey]: [
-
-    ...(current[conversationKey] ?? []),
-
-    {
-
-      role: "user",
-
-      content: userMessage,
-
-    },
-
-  ],
-
-}));
-
-    setMessage("");
-
-    setIsGenerating(true);
-
-    setTimeout(() => {
+    generationTimeout.current = setTimeout(() => {
 
   let response = "";
 
@@ -252,29 +306,45 @@ setConversationMessages((current) => ({
 
   setConversationMessages((current) => ({
 
-  ...current,
+    ...current,
 
-  [conversationKey]: [
+    [conversationKey]: [
 
-    ...(current[conversationKey] ?? []),
+      ...(current[conversationKey] ?? []),
 
-    {
+      {
 
-      role: "assistant",
+        role: "assistant",
 
-      content: response,
+        content: response,
 
-    },
+      },
 
-  ],
+    ],
 
-}));
+  }));
 
   setIsGenerating(false);
 
+  generationTimeout.current = null;
+
 }, 1500);
 
-  };
+};
+
+const handleStopGenerating = () => {
+
+  if (generationTimeout.current) {
+
+    clearTimeout(generationTimeout.current);
+
+    generationTimeout.current = null;
+
+  }
+
+  setIsGenerating(false);
+
+};
 
   return (
     <div className="grid grid-cols-12 gap-6 h-[calc(100vh-140px)] animate-in fade-in duration-500">
@@ -296,9 +366,26 @@ setConversationMessages((current) => ({
   {t.ConversationHistory}
 </h3>
 
+<Input
+  value={conversationSearch}
+  onChange={(e) =>
+    setConversationSearch(e.target.value)
+  }
+  placeholder={t.SearchConversations}
+  className="mb-4"
+/>
+
 <div className="space-y-2 flex-1">
 
-  {conversations.map((item) => (
+  {conversations
+  .filter((item) =>
+    item
+      .toLowerCase()
+      .includes(
+        conversationSearch.toLowerCase()
+      )
+  )
+  .map((item) => (
 
     <div
       key={item}
@@ -322,11 +409,84 @@ setConversationMessages((current) => ({
           }`}
         />
 
-        <span className="truncate text-sm">
+        {editingConversation === item ? (
 
-          {item}
+  <Input
+    autoFocus
+    value={conversationTitle}
+    onChange={(e) =>
+      setConversationTitle(e.target.value)
+    }
+    onBlur={() => {
 
-        </span>
+      if (conversationTitle.trim()) {
+
+        setConversations((current) =>
+          current.map((conversation) =>
+            conversation === item
+              ? conversationTitle
+              : conversation
+          )
+        );
+
+        setConversationMessages((current) => {
+
+          const updated = { ...current };
+
+          updated[conversationTitle] =
+            updated[item];
+
+          delete updated[item];
+
+          return updated;
+
+        });
+
+        if (activeConversation === item) {
+
+          setActiveConversation(
+            conversationTitle
+          );
+
+        }
+
+      }
+
+      setEditingConversation(null);
+
+    }}
+    onKeyDown={(e) => {
+
+      if (e.key === "Enter") {
+
+        (
+          e.target as HTMLInputElement
+        ).blur();
+
+      }
+
+    }}
+    className="h-7 text-sm"
+  />
+
+) : (
+
+  <span
+    className="truncate text-sm"
+    onDoubleClick={() => {
+
+      setEditingConversation(item);
+
+      setConversationTitle(item);
+
+    }}
+  >
+
+    {item}
+
+  </span>
+
+)}
 
       </button>
 
@@ -482,24 +642,56 @@ setConversationMessages((current) => ({
 
   {item.role === "assistant" && (
 
-    <div className="mt-3 flex justify-end">
+  <div className="mt-3 flex justify-end gap-4">
 
-      <button
-        onClick={() =>
-          navigator.clipboard.writeText(
-            item.content
-          )
+    <button
+      onClick={() =>
+        navigator.clipboard.writeText(
+          item.content
+        )
+      }
+      className="text-xs text-primary hover:underline"
+    >
+
+      {t.Copy}
+
+    </button>
+
+    <button
+      onClick={() => {
+
+        const history =
+          conversationMessages[
+            activeConversation
+          ] ?? [];
+
+        const previousUser =
+          history[index - 1];
+
+        if (
+          previousUser &&
+          previousUser.role === "user"
+        ) {
+
+          regenerateResponse(
+            previousUser.content
+          );
+
         }
-        className="text-xs text-primary hover:underline"
-      >
 
-        {t.Copy}
+      }}
+      className="text-xs text-primary hover:underline"
+    >
 
-      </button>
+      {t.Regenerate}
 
-    </div>
+    </button>
 
-  )}
+  </div>
+
+)}
+
+  
 
 </div>
 
@@ -555,23 +747,34 @@ setConversationMessages((current) => ({
     }}
     placeholder={t.AskAssistantPlaceholder}
   />
+  
+  {isGenerating ? (
+
+  <Button
+    onClick={handleStopGenerating}
+    variant="destructive"
+    className="gap-2"
+  >
+
+    Stop
+
+  </Button>
+
+) : (
 
   <Button
     onClick={handleSend}
-    disabled={
-      isGenerating ||
-      !message.trim()
-    }
+    disabled={!message.trim()}
     className="gap-2"
   >
 
     <Send className="w-4 h-4" />
 
-    {isGenerating
-      ? t.GeneratingResponse
-      : t.Send}
+    {t.Send}
 
   </Button>
+
+)}
 
 </div>
 
