@@ -35,6 +35,7 @@ export default defineConfig({
   },
   root: path.resolve(import.meta.dirname),
   build: {
+  sourcemap: true,
   outDir:
     process.env.VERCEL === "1"
       ? "dist"
