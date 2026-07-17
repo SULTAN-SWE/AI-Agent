@@ -39,7 +39,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { data: user, isLoading } = useGetMe();
   const logout = useLogout();
   const { data: notifications } = useListNotifications();
-  console.log("Notifications:", notifications);
   const { lang, setLang, t } = useLanguage();
   const [theme, setTheme] = React.useState<"light" | "dark">("dark");
   const [mobileOpen, setMobileOpen] = React.useState(false);
