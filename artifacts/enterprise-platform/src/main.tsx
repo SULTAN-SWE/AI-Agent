@@ -5,5 +5,5 @@ import { setBaseUrl } from "@workspace/api-client-react";
 
 // Apply dark mode by default — the platform is dark-first
 document.documentElement.classList.add("dark");
-setBaseUrl("https://ai-agent-api-a03t.onrender.com");
+setBaseUrl(import.meta.env.VITE_API_URL);
 createRoot(document.getElementById("root")!).render(<App />);
