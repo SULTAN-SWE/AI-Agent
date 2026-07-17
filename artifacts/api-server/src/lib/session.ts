@@ -33,9 +33,15 @@ export async function getSessionUser(req: Request) {
 }
 
 export function setSessionCookie(res: Response, token: string): void {
-  res.setHeader("Set-Cookie", `platform_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400`);
+  res.setHeader(
+    "Set-Cookie",
+    `platform_session=${token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=86400`
+  );
 }
 
 export function clearSessionCookie(res: Response): void {
-  res.setHeader("Set-Cookie", "platform_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0");
+  res.setHeader(
+    "Set-Cookie",
+    "platform_session=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0"
+  );
 }
