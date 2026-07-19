@@ -56,7 +56,7 @@ The project follows a modular architecture, making it scalable, maintainable, an
 ## Frontend
 
 ```text
-https://ai-agent-enterprise-platform-fg1yqy5vv-ai-excellence.vercel.app/login
+https://ai-agent-enterprise-platform-git-master-ai-excellence.vercel.app/
 ```
 
 ## Backend
